@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.ParseException;
@@ -18,7 +19,15 @@ import java.util.Set;
 public class FileEngine {
 	
 	
-	
+	public static ICommand iCommandFromString(String c)
+	{
+		ICommand ret= null;
+		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand();
+		//if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand();
+		if(c.compareToIgnoreCase("ls")==0) ret=new LSCommand();
+		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand();
+		return ret;
+	}
 	
 	public DirectoryStream<Path> getStreamFromParameter(CommandParameter param) throws IOException{
 		DirectoryStream<Path> stream = null;
@@ -72,7 +81,8 @@ public class FileEngine {
 		try {
 			paramDateGC = convertDateString(param.getValue());
 			paramLastModTime=FileTime.fromMillis(paramDateGC.getTimeInMillis());
-			Utility.mf("PARAMETRO DATA: "+paramLastModTime.toString());
+			Utility.mf("PARAM DATA: "+paramLastModTime.toString());
+			Utility.mf("ELEME DATA: "+pft.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,7 +93,8 @@ public class FileEngine {
 		
 		if((ftMInt==0 & (sign==SignType.UG | sign==SignType.MINUG | sign==SignType.MAGUG))|
 				(ftMInt!=0 & sign==SignType.DIV)|
-				(ftMInt>0 & sign==SignType.MAG)|(ftMInt<0 & sign==SignType.MIN)){
+				(ftMInt>0 & (sign==SignType.MAG|sign==SignType.MAGUG))|
+				(ftMInt<0 & (sign==SignType.MIN | sign==SignType.MINUG))){
 			return true;//match
 		}
 		if((ftMInt!=0 & (sign==SignType.UG | sign==SignType.MINUG | sign==SignType.MAGUG))|
@@ -100,16 +111,17 @@ public class FileEngine {
 		if(param==null)
 			return true;
 		
-		Set<PosixFilePermission> paramPermissions= PosixFilePermissions.fromString(param.getValue());
-    	Utility.mf("Parametro PERMESSO: "+PosixFilePermissions.toString(paramPermissions));
-		
 		SignType sign=param.getSign();
-		String pathPerm = PosixFilePermissions.toString(pfp);
-		String pivot = PosixFilePermissions.toString(paramPermissions);
+		Integer pathPerm = new Integer(permissionsToOctal(PosixFilePermissions.toString(pfp)));
+		Integer pivot = Integer.parseInt(param.getValue());//param
 		
+		Utility.mf("Param PERMESSO: "+pivot.toString());
+    	Utility.mf("Eleme PERMESSO: "+pathPerm.toString());
+    	
 		if((pathPerm.compareTo(pivot)==0 & (sign==SignType.UG | sign==SignType.MINUG | sign==SignType.MAGUG))|
 				(pathPerm.compareTo(pivot)!=0 & sign==SignType.DIV)|
-				(pathPerm.compareTo(pivot)>0 & sign==SignType.MAG)|(pathPerm.compareTo(pivot)<0 & sign==SignType.MIN)){
+				(pathPerm.compareTo(pivot)>0 & (sign==SignType.MAG|sign==SignType.MAGUG))|
+				(pathPerm.compareTo(pivot)<0 & (sign==SignType.MIN|sign==SignType.MINUG))){
 			
 			Utility.mf("match permesso");
 			return true;
@@ -125,6 +137,39 @@ public class FileEngine {
 		
 	}//fine match
 	
+	public boolean matchSize(CommandParameter param, long ps)
+	{
+		if(param==null)
+			return true;
+		
+		//Set<PosixFilePermission> paramPermissions= PosixFilePermissions.fromString(param.getValue());
+    	Utility.mf("Param SIZE: "+param.getValue());
+    	Utility.mf("Eleme SIZE: "+ps);
+		
+		SignType sign=param.getSign();
+		//String pathPerm = PosixFilePermissions.toString(pfp); //del file attuale
+		//String pivot = PosixFilePermissions.toString(paramPermissions); //del param
+		Long pivot=Long.parseLong(param.getValue());//del param
+		Long psobj = new Long(ps);
+		if((psobj.compareTo(pivot)==0 & (sign==SignType.UG | sign==SignType.MINUG | sign==SignType.MAGUG))|
+				(psobj.compareTo(pivot)!=0 & sign==SignType.DIV)|
+				(psobj.compareTo(pivot)>0 & (sign==SignType.MAG|sign==SignType.MAGUG)|
+				(psobj.compareTo(pivot)<0 & (sign==SignType.MIN|sign==SignType.MINUG)))){
+			
+			Utility.mf("match size");
+			return true;
+		}
+		if((psobj.compareTo(pivot)!=0 & (sign==SignType.UG | sign==SignType.MINUG | sign==SignType.MAGUG))|
+				(psobj.compareTo(pivot)==0 & sign==SignType.DIV)){
+			
+			Utility.mf("no match size");
+			return false;
+		}
+		return false;
+		
+		
+	}//fine match
+	
 	public GregorianCalendar convertDateString(String dateString) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 		java.util.Date date = sdf.parse(dateString);
@@ -132,5 +177,27 @@ public class FileEngine {
 		calendar.setTime(date);
 		return calendar;
 		}
+	
+	/**
+	 * trasforma la stringa dei permessi rwx in forma ottale
+	 * @param attributes
+	 * @return
+	 */
+	private int permissionsToOctal(String attributes){
+		int j, d=100, value=0;
+		String s;
+		for(int i=0;i<3;i++){
+			j = i*3;
+			s = attributes.substring(j, j+3);
+			if(s.contains("r"))
+				value+=4*d;
+			if(s.contains("w"))
+				value+=2*d;
+			if(s.contains("x"))
+				value+=1*d;
+			d/=10;
+		}
+		return value;
+	}
 
 }

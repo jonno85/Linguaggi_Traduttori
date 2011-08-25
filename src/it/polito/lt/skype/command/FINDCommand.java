@@ -84,14 +84,16 @@ public class FINDCommand implements ICommand {
                         while(n_file>0)
                         {
                             n_file--;
-                            stream = eng.getStreamFromParameter(new CommandParameter(ParamType.FILE, params[1][n_dir]+"/"+params[0][n_file], SignType.MAG));
+                            Utility.mf(params[1][n_dir].getValue()+"/"+params[0][n_file].getValue());
+                            stream = eng.getStreamFromParameter(new CommandParameter(ParamType.FILE, params[1][n_dir].getValue()+"/"+params[0][n_file].getValue(), SignType.MAG));
+                            
                             for(Path file : stream)
                             {
                                 filterAddResult(file);
                             }
                         }
                     }
-                    
+                     
                     Utility.mf(pathResult.toString());
                     
                     
@@ -116,19 +118,29 @@ public class FINDCommand implements ICommand {
 	{
 		PosixFileAttributes pathAttributes = Files.readAttributes(path, PosixFileAttributes.class);
 		Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
-                /**
-                 * se abbiamo filtri sui permessi
-                 */
-                if(params[2].length>1)
+                
+                if(params[2]!=null)//permessi, se uno non è soddisfatto, esce senza fare l'add
                 {
-                    //if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[3],pathAttributes.permissions()))
-                    {   
-			pathResult.add(path);
-			string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
-                    }
+                	for(int i=0; i< params[2].length; i++) 
+                		if(!eng.matchPermissions(params[2][i], pathAttributes.permissions()))
+                			return;
                 }
-		
-	
+                
+                if(params[3]!=null)//data, se uno non è soddisfatto, esce senza fare l'add
+                {
+                	for(int i=0; i< params[3].length; i++) 
+                		if(!eng.matchLastModDate(params[3][i],pathAttributes.lastModifiedTime()))
+                			return;
+                }
+                
+                if(params[4]!=null)//dimensione, se uno non è soddisfatto, esce senza fare l'add
+                {
+                	for(int i=0; i< params[4].length; i++) 
+                		if(!eng.matchSize(params[4][i],pathAttributes.size()))
+                			return;
+                }
+                pathResult.add(path);
+    			string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
 	}
 
 	@Override
