@@ -1,5 +1,8 @@
 package it.polito.lt.skype.command;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class Test {
 
 	/**
@@ -8,7 +11,7 @@ public class Test {
 	public static void main(String[] args) {
                 ICommand cmd = null;
                 CommandParameter[][] p = null;
-            
+                Path current =Paths.get("/home/robizz/prf/");
             /*  RMCommand
 		cmd = new RMCommand();
 		p = new CommandParameter[1];

@@ -24,6 +24,8 @@ import java.nio.file.NoSuchFileException;
 
 public class LSCommand implements ICommand {
 
+		private Path currentPath = null;
+	
 		private CommandParameter[] params = null;
 		private FileEngine eng = new FileEngine();
 		private int n_par = 0;
@@ -50,12 +52,12 @@ public class LSCommand implements ICommand {
          */
         
         
-        public LSCommand()
+        public LSCommand(Path current)
         {
                 pathResult = new ArrayList<>();       
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-                paramPath = position = Paths.get("/");
+                paramPath = position = currentPath = current;
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;
