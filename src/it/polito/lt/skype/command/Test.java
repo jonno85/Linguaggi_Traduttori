@@ -39,8 +39,8 @@ public class Test {
              // MVCommand
 		cmd = new MVCommand();
 		p = new CommandParameter[2];
-                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/*",null);
-                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h",null);
+                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/w",null);
+                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/w",null);
              
              /*
                 cmd=new FINDCommand();
