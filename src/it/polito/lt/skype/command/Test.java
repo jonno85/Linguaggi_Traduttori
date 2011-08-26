@@ -1,5 +1,8 @@
 package it.polito.lt.skype.command;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class Test {
 
 	/**
@@ -8,6 +11,9 @@ public class Test {
 	public static void main(String[] args) {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
+                Path current =Paths.get("/home/robizz/prf/");
+               
+          
             
             /*  RMCommand
 		cmd = new RMCommand();
@@ -52,8 +58,10 @@ public class Test {
                 p[2] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
                 p[3] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
                 p[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
+              
               * 
               */
+             
 		cmd.setCommandParameter(p);
                 try{
                     cmd.exec();
