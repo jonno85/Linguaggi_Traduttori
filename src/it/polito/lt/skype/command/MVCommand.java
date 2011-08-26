@@ -16,6 +16,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
@@ -59,7 +60,6 @@ public class MVCommand implements ICommand{
     }
     
     public static void moveFile(Path source, Path target){
-        CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES,REPLACE_EXISTING};
         Utility.mf("target"+target.toString());
         Utility.mf("source"+source.toString());
         //target = Paths.get(target.toString()+"/"+source.getFileName().toString());
@@ -70,10 +70,10 @@ public class MVCommand implements ICommand{
         //{
 
             try{
-                Files.move(source, target, options);
+                Files.move(source, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                 Utility.mf("ciao");
-            }catch(IOException ioe){
-                System.err.format("Impossibile muovere: %s %s%n", source,ioe);
+            }catch(  UnsupportedOperationException | IOException uoe){
+                System.err.format("Impossibile muovere: %s %s%n", source,uoe);
             }
         //}
     }
@@ -188,13 +188,11 @@ public class MVCommand implements ICommand{
 
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-            
-            CopyOption[] options = new CopyOption[] { COPY_ATTRIBUTES };
-            
+
             Path dest = target.resolve(source.relativize(dir));
             
             try{
-                Files.move(dir, dest, options);
+                Files.move(dir, dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){

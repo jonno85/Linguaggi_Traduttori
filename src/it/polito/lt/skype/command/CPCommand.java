@@ -16,6 +16,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class CPCommand implements ICommand{
     }
     
     public static void copyFile(Path source, Path target){
-        CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES};
+        //CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES};
         Utility.mf("target"+target.toString());
         Utility.mf("source"+source.toString());
         //target = Paths.get(target.toString()+"/"+source.getFileName().toString());
@@ -70,7 +71,7 @@ public class CPCommand implements ICommand{
         //{
 
             try{
-                Files.copy(source, target, options);
+                Files.copy(source, target, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
                 Utility.mf("ciao");
             }catch(IOException ioe){
                 System.err.format("Impossibile copiare: %s %s%n", source,ioe);
@@ -189,12 +190,12 @@ public class CPCommand implements ICommand{
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             
-            CopyOption[] options = new CopyOption[] { COPY_ATTRIBUTES };
+            //CopyOption[] options = new CopyOption[] { COPY_ATTRIBUTES };
             
             Path dest = target.resolve(source.relativize(dir));
             
             try{
-                Files.copy(dir, dest, options);
+                Files.copy(dir, dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.ATOMIC_MOVE);
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){
