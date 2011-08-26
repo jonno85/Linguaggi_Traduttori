@@ -27,7 +27,7 @@ import static java.nio.file.StandardCopyOption.*;
  *
  * @author jo
  */
-public class CPCommand implements ICommand{
+public class MVCommand implements ICommand{
     
     private CommandParameter[] params = null;
     private int tot_elem = 0;
@@ -50,7 +50,7 @@ public class CPCommand implements ICommand{
          */
         
         
-    public CPCommand()
+    public MVCommand()
     {
             result = new ArrayList<>();       
             position_src = Paths.get(".");
@@ -58,8 +58,8 @@ public class CPCommand implements ICommand{
             target = Paths.get(".");
     }
     
-    public static void copyFile(Path source, Path target){
-        CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES};
+    public static void moveFile(Path source, Path target){
+        CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES,REPLACE_EXISTING};
         Utility.mf("target"+target.toString());
         Utility.mf("source"+source.toString());
         //target = Paths.get(target.toString()+"/"+source.getFileName().toString());
@@ -70,10 +70,10 @@ public class CPCommand implements ICommand{
         //{
 
             try{
-                Files.copy(source, target, options);
+                Files.move(source, target, options);
                 Utility.mf("ciao");
             }catch(IOException ioe){
-                System.err.format("Impossibile copiare: %s %s%n", source,ioe);
+                System.err.format("Impossibile muovere: %s %s%n", source,ioe);
             }
         //}
     }
@@ -110,14 +110,14 @@ public class CPCommand implements ICommand{
                 if(Files.isDirectory(file))
                 {
                     EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
-                    TreeCopier tc = new TreeCopier(file, dest, result);
+                    TreeMover tc = new TreeMover(file, dest, result);
                     Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
                     tot_elem += tc.get_n_dir()+tc.get_n_file();
                 }
                 else
                 {
                     Utility.mf("target file singolo: "+target.toString());
-                    copyFile(file, dest);
+                    moveFile(file, dest);
                     result.add(file);
                     tot_elem++;
                 }
@@ -145,7 +145,7 @@ public class CPCommand implements ICommand{
     @Override
     public String getCommandStringResult() {
         string_result = result.toString();
-        string_result += "\nElementi copiati: "+tot_elem;
+        string_result += "\nElementi spostati: "+tot_elem;
         return string_result;
     }
 
@@ -159,7 +159,7 @@ public class CPCommand implements ICommand{
     public void setCommandParameter(CommandParameter[][] cpl) {
     }
     
-    public static class TreeCopier implements FileVisitor<Path>
+    public static class TreeMover implements FileVisitor<Path>
     {
         private final Path source;
         private final Path target;
@@ -169,7 +169,7 @@ public class CPCommand implements ICommand{
         private int num_dir = 0;
         private List<Path> internal_result = null;
 
-        public TreeCopier(Path source, Path target, List<Path>result){
+        public TreeMover(Path source, Path target, List<Path>result){
             this.source = source;
             this.target = target;
             internal_result = result;
@@ -194,7 +194,7 @@ public class CPCommand implements ICommand{
             Path dest = target.resolve(source.relativize(dir));
             
             try{
-                Files.copy(dir, dest, options);
+                Files.move(dir, dest, options);
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){
@@ -210,7 +210,7 @@ public class CPCommand implements ICommand{
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             System.err.format("%s dentro il FileVisit%n", file);
             
-            copyFile(file, target.resolve(source.relativize(file)));
+            moveFile(file, target.resolve(source.relativize(file)));
             internal_result.add(file);
             num_file++;
             return FileVisitResult.CONTINUE;
@@ -223,7 +223,7 @@ public class CPCommand implements ICommand{
             if (exc instanceof FileSystemLoopException) {
                 System.err.println("ciclo rilevato: " + file);
             } else {
-                System.err.format("Impossibile copiare: %s: %s%n", file, exc);
+                System.err.format("Impossibile spostare: %s: %s%n", file, exc);
             }
             return FileVisitResult.CONTINUE;
         }
@@ -238,7 +238,7 @@ public class CPCommand implements ICommand{
                     FileTime time = Files.getLastModifiedTime(dir);
                     Files.setLastModifiedTime(new_dir, time);
                 }catch(IOException ioe){
-                    System.err.format("Impossibile copiare tutti gli attributi: %s: %s%n",new_dir,ioe);
+                    System.err.format("Impossibile spostare tutti gli attributi: %s: %s%n",new_dir,ioe);
                 }
             }
             return FileVisitResult.CONTINUE;

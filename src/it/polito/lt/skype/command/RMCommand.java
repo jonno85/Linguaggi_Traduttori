@@ -34,7 +34,6 @@ public class RMCommand implements ICommand{
     private boolean isRegFolder;
     private boolean isFile;
     private List<Path> result = null;
-    //private List<String> string_result = null;
     private String string_result = null;
     private Boolean dir = null;
     private String pattern = null;

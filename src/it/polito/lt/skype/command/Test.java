@@ -7,7 +7,7 @@ public class Test {
 	 */
 	public static void main(String[] args) {
                 ICommand cmd = null;
-                CommandParameter[][] p = null;
+                CommandParameter[] p = null;
             
             /*  RMCommand
 		cmd = new RMCommand();
@@ -36,6 +36,13 @@ public class Test {
                  *          6 = [] parametri (esegui)
                  */
                 
+             // MVCommand
+		cmd = new MVCommand();
+		p = new CommandParameter[2];
+                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/*",null);
+                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h",null);
+             
+             /*
                 cmd=new FINDCommand();
                 p = new CommandParameter[6][];
                 
@@ -45,6 +52,8 @@ public class Test {
                 p[2] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
                 p[3] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
                 p[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
+              * 
+              */
 		cmd.setCommandParameter(p);
                 try{
                     cmd.exec();
