@@ -29,7 +29,8 @@ import static java.nio.file.StandardCopyOption.*;
  */
 public class MVCommand implements ICommand{
     
-    private CommandParameter[] params = null;
+	private Path currentPath=null;
+	private CommandParameter[] params = null;
     private int tot_elem = 0;
     
     private Path paramPath_src;
@@ -50,12 +51,14 @@ public class MVCommand implements ICommand{
          */
         
         
-    public MVCommand()
+    public MVCommand(Path current)
     {
             result = new ArrayList<>();       
-            position_src = Paths.get(".");
+            /*position_src = Paths.get(".");
             pattern_src = "";
-            target = Paths.get(".");
+            target = Paths.get(".");*/
+            position_src = currentPath = current;
+            pattern_src = "";
     }
     
     public static void moveFile(Path source, Path target){

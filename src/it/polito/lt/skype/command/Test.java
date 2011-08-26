@@ -11,6 +11,7 @@ public class Test {
 	public static void main(String[] args) {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
+                CommandParameter[][] pm = null;
                 Path current =Paths.get("/home/robizz/prf/");
                
           
@@ -42,25 +43,25 @@ public class Test {
                  *          6 = [] parametri (esegui)
                  */
                 
-             // MVCommand
-		cmd = new MVCommand();
+         /*     // MVCommand
+		cmd = new MVCommand(current);
 		p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/*",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h",null);
-             
-             /*
-                cmd=new FINDCommand();
-                p = new CommandParameter[6][];
+             */
+            
+                cmd=new FINDCommand(current);
+                pm = new CommandParameter[6][];
                 
-                p[0] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "*.txt", null),
+                pm[0] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "*.txt", null),
                 		new CommandParameter(ParamType.FILE, "*.htm", null)};
-                p[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf", null)};
-                p[2] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
-                p[3] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
-                p[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
+                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf", null)};
+                pm[2] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
+                pm[3] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
+                pm[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
               
-              * 
-              */
+               
+              
              
 		cmd.setCommandParameter(p);
                 try{
