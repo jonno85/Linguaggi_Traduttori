@@ -53,17 +53,19 @@ public class Test {
                 cmd=new FINDCommand(current);
                 pm = new CommandParameter[6][];
                 
-                pm[0] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "*.txt", null),
-                		new CommandParameter(ParamType.FILE, "*.htm", null)};
-                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf", null)};
-                pm[2] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
-                pm[3] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
+                pm[0] =null;//new CommandParameter[]{//new CommandParameter(ParamType.FILE, "*.txt", null),
+                		//new CommandParameter(ParamType.FILE, "*", null)};
+                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf/ciccia/", null)};
+                		//,new CommandParameter(ParamType.FILE, "/home/robizz/prf/ci/", null)
+                		//,new CommandParameter(ParamType.FILE, "/home/robizz/prf/cicciax/", null)};
+                pm[2] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
+                pm[3] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
                 pm[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
               
                
               
              
-		cmd.setCommandParameter(p);
+		cmd.setCommandParameter(pm);
                 try{
                     cmd.exec();
                 }catch(CommandException ce)
