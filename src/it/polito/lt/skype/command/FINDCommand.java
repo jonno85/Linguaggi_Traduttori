@@ -24,7 +24,9 @@ import java.nio.file.NoSuchFileException;
 
 public class FINDCommand implements ICommand {
 
-        private CommandParameter[][] params = null;
+		private Path currentPath = null;		
+	
+		private CommandParameter[][] params = null;
         private FileEngine eng = null;
         private int n_par = 0;
         private boolean goAsc;
@@ -52,12 +54,12 @@ public class FINDCommand implements ICommand {
          */
         
         
-        public FINDCommand()
+        public FINDCommand(Path current)
         {
                 pathResult = new ArrayList<>();       
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-                paramPath = position = Paths.get("/");
+                paramPath = position = currentPath= current;
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;

@@ -25,7 +25,7 @@ public class FileEngine {
 		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand();
 		//if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand();
 		if(c.compareToIgnoreCase("ls")==0) ret=new LSCommand(current);
-		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand();
+		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand(current);
 		return ret;
 	}
 	
