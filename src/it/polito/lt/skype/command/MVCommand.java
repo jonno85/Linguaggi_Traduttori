@@ -6,7 +6,6 @@ package it.polito.lt.skype.command;
 
 import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
-import java.nio.file.CopyOption;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -16,7 +15,6 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ public class MVCommand implements ICommand{
         //{
 
             try{
-                Files.move(source, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                Files.move(source, target, REPLACE_EXISTING, ATOMIC_MOVE);
                 Utility.mf("ciao");
             }catch(  UnsupportedOperationException | IOException uoe){
                 System.err.format("Impossibile muovere: %s %s%n", source,uoe);
@@ -192,7 +190,7 @@ public class MVCommand implements ICommand{
             Path dest = target.resolve(source.relativize(dir));
             
             try{
-                Files.move(dir, dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                Files.move(dir, dest, REPLACE_EXISTING, ATOMIC_MOVE);
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){
