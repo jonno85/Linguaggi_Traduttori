@@ -38,6 +38,7 @@ public class FINDCommand implements ICommand {
         private String position = null;
         private String pattern = null;
        
+        private List<Path> pathList= new ArrayList<Path>();
  
         private List<Path> pathResult = null;
         private List<String> string_result = null;
@@ -72,7 +73,7 @@ public class FINDCommand implements ICommand {
 	public boolean exec() throws CommandException {
 		
                
-                List<String> pathList= new ArrayList<String>();
+                
                 try{
                     
                    
@@ -93,21 +94,23 @@ public class FINDCommand implements ICommand {
                 			   acontb++;
                 	   }
                 	   if(acontb==1){//se a contiene b, più di una volta a non va aggiunta
-                		   pathList.add(params[1][i].getValue());
+                		   pathList.add(Paths.get(params[1][i].getValue()));
                 		   Utility.mf("subfolder: checked: "+a);
                 	   }
                 	   else
                 		   Utility.mf("subfolder: deleted: "+a);
                    }
                    
-                   for(String p : pathList)//per ogni path unico
+                   for(Path p : pathList)//per ogni path unico
                    {
                 	   for(int i=0; i<n_file;i++)//per ogni pattern
                 	   {
                 		   Utility.mf("Ricerca di: "+params[0][i].getValue()+" in: "+p);
                 		   Finder finder = new Finder(params[0][i].getValue());
-		                   Files.walkFileTree(Paths.get(p), finder);//avvio la ricerca filtrante
+		                   Files.walkFileTree(p, finder);//avvio la ricerca filtrante
 		                   finder.done();
+		                   
+		                	   
                 	   }
                    }
                    
@@ -158,7 +161,7 @@ public class FINDCommand implements ICommand {
 	private void filterAddResult(Path path) throws IOException
 	{
 		PosixFileAttributes pathAttributes = Files.readAttributes(path, PosixFileAttributes.class);
-		Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
+		//Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
                 
                 if(params[2]!=null)//permessi, se uno non è soddisfatto, esce senza fare l'add
                 {
@@ -180,8 +183,16 @@ public class FINDCommand implements ICommand {
                 		if(!eng.matchSize(params[4][i],pathAttributes.size()))
                 			return;
                 }
+                for(Path p : pathList)//per ogni path unico
+                {
+                	if(path.compareTo(p)==0)//siamo in una delle directory di start ricerca
+                		return;
+                }
+                
                 pathResult.add(path);
-    			string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
+    			//add di tutto il percorso nello string_result
+                //string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
+                string_result.add(path.toString()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
 	}
 
 	@Override
@@ -250,7 +261,7 @@ public class FINDCommand implements ICommand {
 
         //Prints the total number of matches to standard out.
         void done() {
-            Utility.mf("Matched: " + numMatches);
+            Utility.mf("Matched(start included): " + numMatches);
         }
 
         //Invoke the pattern matching method on each file.

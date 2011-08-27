@@ -55,9 +55,9 @@ public class Test {
                 
                 pm[0] =null;//new CommandParameter[]{//new CommandParameter(ParamType.FILE, "*.txt", null),
                 		//new CommandParameter(ParamType.FILE, "*", null)};
-                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf/ciccia/", null)};
+                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf/ciccia/", null)//};
                 		//,new CommandParameter(ParamType.FILE, "/home/robizz/prf/ci/", null)
-                		//,new CommandParameter(ParamType.FILE, "/home/robizz/prf/cicciax/", null)};
+                		,new CommandParameter(ParamType.FILE, "/home/robizz/prf/ci", null)};
                 pm[2] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
                 pm[3] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
                 pm[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
