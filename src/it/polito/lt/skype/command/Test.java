@@ -15,13 +15,13 @@ public class Test {
                
           
             
-            /*  RMCommand
+            // RMCommand
 		cmd = new RMCommand();
 		p = new CommandParameter[1];
-                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e2*",null);
-             * 
+                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/z",null);
+              
              
-            //CPCommand
+            /*CPCommand
                 cmd = new CPCommand();
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE, "/home/jo/lt/e/", null);
@@ -42,7 +42,7 @@ public class Test {
                  *          6 = [] parametri (esegui)
                  */
                 
-             // MVCommand
+             /* MVCommand
 		cmd = new MVCommand();
 		p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/g/q*",null);

@@ -51,6 +51,17 @@ public class RMCommand implements ICommand{
             pattern = "";
     }
     
+    public static void removeFile(Path target){
+        Utility.mf("target"+target.toString());
+
+        try{
+            Files.delete(target);
+            Utility.mf("ciao");
+        }catch(IOException ioe){
+            System.err.format("Impossibile eliminare: %s %s%n", target,ioe);
+        }
+
+    }
     
     @Override
     public boolean exec() throws CommandException {
@@ -64,28 +75,11 @@ public class RMCommand implements ICommand{
         isRegFolder = false;
         isFile = false;
         
+        FileEngine fe = new FileEngine();
         try {
-            b_attr = Files.readAttributes(paramPath,BasicFileAttributes.class);
-            isFile = b_attr.isRegularFile();
-        }
-        catch(NoSuchFileException nsfe)
-        {
-            System.err.println("NoSuchFileException!\n or Regular expression identified");
-            isRegFolder = true;
-        }
-        catch (IOException ex) {
-            System.err.println(ex.getCause());
-        }
-        
-        try {
-            if(isRegFolder || isFile)
-                stream = Files.newDirectoryStream(position, pattern);
-            else
-                stream = Files.newDirectoryStream(paramPath);                             	
-        }
-        catch (IOException ex) {
-            System.err.println("il file non esiste!!");
-            System.err.println(ex.getCause());
+            stream = fe.getStreamFromParameter(params);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
                     
         for (Path file: stream) {
@@ -94,7 +88,7 @@ public class RMCommand implements ICommand{
                 attr = Files.readAttributes(file, PosixFileAttributes.class);
                 if(attr.isDirectory())
                     throw new DirectoryNotEmptyException(file.toString());
-                Files.delete(file);
+                removeFile(file);
                 tot_elem++;
             } catch (NoSuchFileException x) {
                 System.err.format("%s: no such file or directory%n", file);
@@ -103,8 +97,7 @@ public class RMCommand implements ICommand{
                 try {
                     System.err.format("%s dentro il try%n", file);
                     Treefinder tf = new Treefinder(file,result);
-                    
-                    Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
+                    Files.walkFileTree(file.getParent(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
                     tot_elem += tf.get_matches_dir()+tf.get_matches_file();
                 } catch (IOException ex) {
                     System.err.println(ex.getCause());
@@ -208,20 +201,20 @@ public class RMCommand implements ICommand{
                 if (my_perm.owner().equals(file_attr.owner()))
                 {
                     Utility.mf("stessi attributi "+file.toString());
-                    Files.delete(file);
+                    removeFile(file);
                     numMatches_file++;
                     internal_result.add(file);
                 }
             } catch (NoSuchFileException x) {
                 System.err.format("%s: no such file or directory%n", file);
-            } catch (DirectoryNotEmptyException x) {
+            } /*catch (DirectoryNotEmptyException x) {
                 Treefinder tf_depth = new Treefinder(file, internal_result);
                 Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, tf_depth);
                 numMatches_dir += tf_depth.get_matches_dir();
                 numMatches_file += tf_depth.get_matches_file();
                 System.err.format("%s new WalkFileTree per la cartella ", file);
                 System.err.format("%s not empty%n", file);
-            } catch (IOException ex) {
+            } */catch (IOException ex) {
                 //File permission problems are caught here.
                 System.err.println(ex);
             }
@@ -243,7 +236,7 @@ public class RMCommand implements ICommand{
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
             System.err.format("%s dentro il postDirectory visit%n", dir);
-            Files.delete(dir);
+            removeFile(dir);
             numMatches_dir++;
             return FileVisitResult.CONTINUE;
         }   
