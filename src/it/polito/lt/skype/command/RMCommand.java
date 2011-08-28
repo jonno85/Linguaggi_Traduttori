@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class RMCommand implements ICommand{
     
-    private CommandParameter params = null;
+    private CommandParameter[] params = null;
     private int tot_elem = 0;
     private Path paramPath;
     private Path position = null;
@@ -44,10 +44,10 @@ public class RMCommand implements ICommand{
          */
         
         
-    public RMCommand()
+    public RMCommand(Path current)
     {
             result = new ArrayList<>();       
-            position = Paths.get(".");
+            position = current;
             pattern = "";
     }
     
@@ -69,7 +69,7 @@ public class RMCommand implements ICommand{
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
         
-        paramPath = ((Path)Paths.get(params.getValue()).normalize());
+        paramPath = ((Path)Paths.get(params[0].getValue()).normalize());
         pattern = paramPath.getFileName().toString();
         position = paramPath.getParent();
         isRegFolder = false;
@@ -77,7 +77,7 @@ public class RMCommand implements ICommand{
         
         FileEngine fe = new FileEngine();
         try {
-            stream = fe.getStreamFromParameter(params);
+            stream = fe.getStreamFromParameter(params[0]);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -114,8 +114,10 @@ public class RMCommand implements ICommand{
     public void setCommandParameter(CommandParameter[] cpl) {
        if (cpl.length==1)
        {
-            params = cpl[0];
+            params = cpl;
        }
+       else
+           System.err.println("Numero parametri incorretto: "+cpl.length);
     } 
 
     @Override
@@ -139,6 +141,36 @@ public class RMCommand implements ICommand{
     @Override
     public void setCommandParameter(CommandParameter[][] cpl) {
         
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        for (Path file: stream) {
+            PosixFileAttributes attr;
+            try {
+                attr = Files.readAttributes(file, PosixFileAttributes.class);
+                if(attr.isDirectory())
+                    throw new DirectoryNotEmptyException(file.toString());
+                removeFile(file);
+                tot_elem++;
+            } catch (NoSuchFileException x) {
+                System.err.format("%s: no such file or directory%n", file);
+            } catch (DirectoryNotEmptyException x) {
+                System.err.format("%s not empty%n", file);
+                try {
+                    System.err.format("%s dentro il try%n", file);
+                    Treefinder tf = new Treefinder(file,result);
+                    Files.walkFileTree(file.getParent(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
+                    tot_elem += tf.get_matches_dir()+tf.get_matches_file();
+                } catch (IOException ex) {
+                    System.err.println(ex.getCause());
+                }
+            } catch (IOException ex) {
+                //File permission problems are caught here.
+                System.err.println(ex);
+            }
+        }
+        return true;
     }
     
     public static class Treefinder implements FileVisitor<Path>

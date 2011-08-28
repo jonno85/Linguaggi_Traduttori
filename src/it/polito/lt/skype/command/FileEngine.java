@@ -8,12 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
 public class FileEngine {
@@ -22,10 +22,11 @@ public class FileEngine {
 	public static ICommand iCommandFromString(String c, Path current)
 	{
 		ICommand ret= null;
-		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand();
-		//if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand();
+		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand(current);
+		if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand(current);
 		if(c.compareToIgnoreCase("ls")==0) ret=new LSCommand(current);
-		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand();
+                if(c.compareToIgnoreCase("rm")==0) ret=new RMCommand(current);
+		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand(current);
 		return ret;
 	}
 	
@@ -199,5 +200,4 @@ public class FileEngine {
 		}
 		return value;
 	}
-
 }

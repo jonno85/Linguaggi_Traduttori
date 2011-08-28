@@ -28,7 +28,8 @@ import static java.nio.file.StandardCopyOption.*;
  */
 public class CPCommand implements ICommand{
     
-    private CommandParameter[] params = null;
+    private Path currentPath=null;
+	private CommandParameter[] params = null;
     private int tot_elem = 0;
     
     private Path paramPath_src;
@@ -49,12 +50,15 @@ public class CPCommand implements ICommand{
          */
         
         
-    public CPCommand()
+    public CPCommand(Path current)
     {
             result = new ArrayList<>();       
-            position_src = Paths.get(".");
+           /* position_src = Paths.get(".");
             pattern_src = "";
             target = Paths.get(".");
+            */
+            position_src = currentPath = current;
+            pattern_src = "";
     }
     
     public static void copyFile(Path source, Path target){
@@ -69,7 +73,7 @@ public class CPCommand implements ICommand{
         //{
 
             try{
-                Files.copy(source, target, COPY_ATTRIBUTES, ATOMIC_MOVE, REPLACE_EXISTING);
+                Files.copy(source, target, COPY_ATTRIBUTES,  REPLACE_EXISTING);
                 Utility.mf("ciao");
             }catch(IOException ioe){
                 System.err.format("Impossibile copiare: %s %s%n", source,ioe);
@@ -134,6 +138,8 @@ public class CPCommand implements ICommand{
        {
             params = cpl;
        }
+       else
+           System.err.println("Numero parametri incorretto: "+cpl.length);
     } 
 
     @Override
@@ -156,6 +162,38 @@ public class CPCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[][] cpl) {
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        target = Paths.get(params[1].getValue()).normalize();   
+        for (Path file: stream) {
+            PosixFileAttributes p_attr;
+            try {
+                
+                boolean isDir = Files.isDirectory(target);
+                Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
+                
+                if(Files.isDirectory(file))
+                {
+                    EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+                    TreeCopier tc = new TreeCopier(file, dest, result);
+                    Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
+                    tot_elem += tc.get_n_dir()+tc.get_n_file();
+                }
+                else
+                {
+                    Utility.mf("target file singolo: "+target.toString());
+                    copyFile(file, dest);
+                    result.add(file);
+                    tot_elem++;
+                }
+            } catch (IOException ex) {
+                //File permission problems are caught here.
+                System.err.println(ex);
+            }
+        }
+        return true;
     }
     
     public static class TreeCopier implements FileVisitor<Path>

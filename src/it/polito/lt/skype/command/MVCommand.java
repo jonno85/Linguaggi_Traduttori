@@ -28,6 +28,7 @@ import static java.nio.file.StandardCopyOption.*;
  */
 public class MVCommand implements ICommand{
     
+    private Path currentPath=null;
     private CommandParameter[] params = null;
     private int tot_elem = 0;
     
@@ -49,12 +50,11 @@ public class MVCommand implements ICommand{
          */
         
         
-    public MVCommand()
+    public MVCommand(Path current)
     {
             result = new ArrayList<>();       
-            position_src = Paths.get(".");
+            position_src = currentPath = current;
             pattern_src = "";
-            target = Paths.get(".");
     }
     
     public static void moveFile(Path source, Path target){
@@ -133,6 +133,8 @@ public class MVCommand implements ICommand{
        {
             params = cpl;
        }
+       else
+           System.err.println("Numero parametri incorretto: "+cpl.length);
     } 
 
     @Override
@@ -155,6 +157,38 @@ public class MVCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[][] cpl) {
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        target = Paths.get(params[1].getValue()).normalize();                          
+        for (Path file: stream) {
+            PosixFileAttributes p_attr;
+            try {
+                
+                boolean isDir = Files.isDirectory(target);
+                Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
+                
+                if(Files.isDirectory(file))
+                {
+                    EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+                    TreeMover tc = new TreeMover(file, dest, result);
+                    Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
+                    tot_elem += tc.get_n_dir()+tc.get_n_file();
+                }
+                else
+                {
+                    Utility.mf("target file singolo: "+target.toString());
+                    moveFile(file, dest);
+                    result.add(file);
+                    tot_elem++;
+                }
+            } catch (IOException ex) {
+                //File permission problems are caught here.
+                System.err.println(ex);
+            }
+        }
+        return true;
     }
     
     public static class TreeMover implements FileVisitor<Path>

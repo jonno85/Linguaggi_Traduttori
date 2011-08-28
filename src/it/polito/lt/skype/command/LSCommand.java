@@ -4,33 +4,29 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.Set;
-import java.nio.file.NoSuchFileException;
+
 
 
 
 public class LSCommand implements ICommand {
 
-		private Path currentPath = null;
-	
-		private CommandParameter[] params = null;
-		private FileEngine eng = new FileEngine();
-		private int n_par = 0;
-		private boolean goAsc;
-		private boolean includeFolders;
+        private Path currentPath = null;
+
+        private CommandParameter[] params = null;
+        private FileEngine eng = new FileEngine();
+        private int n_par = 0;
+        private boolean goAsc;
+        private boolean includeFolders;
         private Path paramPath;
         private Path position = null;
         private String pattern = null;
@@ -61,6 +57,7 @@ public class LSCommand implements ICommand {
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;
+                params = new CommandParameter[5];
                 
         }
         
@@ -68,10 +65,17 @@ public class LSCommand implements ICommand {
 	public boolean exec() throws CommandException {
 		
                 DirectoryStream<Path> stream = null;
-        
-                    Boolean isDir = false;
-       try{
-    	   			stream=eng.getStreamFromParameter(params[2]);
+                Boolean isDir = false;
+                try{
+                    System.out.printf("lunghezza vetto para "+params.length);
+                    if(params[2]!=null){
+                        stream=eng.getStreamFromParameter(params[2]);
+                    }else{
+                        stream = eng.getStreamFromParameter(new CommandParameter(ParamType.FILE, position.toString(), SignType.MAG));
+                    }
+                        
+                    
+                   
                     for (Path file: stream) {
                         PosixFileAttributes attr = Files.readAttributes(file, PosixFileAttributes.class);
                         isDir = attr.isDirectory();
@@ -89,11 +93,11 @@ public class LSCommand implements ICommand {
                     return false;
 		}
 		//sorting risultati
-        Collections.sort(string_result);
-        if(!goAsc)
-            Collections.reverse(string_result);
+            Collections.sort(string_result);
+            if(!goAsc)
+                Collections.reverse(string_result);
 
-		return true;
+            return true;
 	}
 	
 	
@@ -124,10 +128,10 @@ public class LSCommand implements ICommand {
                 
                 if(params[0]!=null)
                 {//ascendente o discendente
-                	if(params[0].getValue().compareToIgnoreCase("asc")==0)
-                		goAsc=true;
-                	else
-                		goAsc=false;
+                    if(params[0].getValue().compareToIgnoreCase("asc")==0)
+                	goAsc=true;
+                    else
+                	goAsc=false;
                 }
                 
                 if(params[1]!=null)
@@ -165,6 +169,8 @@ public class LSCommand implements ICommand {
                 	
                 }//fatto in file engine*/
             }
+            else
+                System.err.println("Numero parametri incorretto: "+cpl.length);
 	}
 	
 	
@@ -187,6 +193,28 @@ public class LSCommand implements ICommand {
 
     @Override
     public void setCommandParameter(CommandParameter[][] cpl) {
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        Boolean isDir = false;
+        for (Path file: stream) {
+            PosixFileAttributes attr;
+            try {
+                attr = Files.readAttributes(file, PosixFileAttributes.class);
+                isDir = attr.isDirectory();
+                if(params[1]==null || (includeFolders && isDir) || (!includeFolders && !isDir))
+                {
+                    filterAddResult(file);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        Collections.sort(string_result);
+        if(!goAsc)
+            Collections.reverse(string_result);
+        return true;
     }
     
     
