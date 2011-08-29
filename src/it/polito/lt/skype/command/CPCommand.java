@@ -57,6 +57,7 @@ public class CPCommand implements ICommand{
             pattern_src = "";
             target = Paths.get(".");
             */
+            target=current;
             position_src = currentPath = current;
             pattern_src = "";
     }

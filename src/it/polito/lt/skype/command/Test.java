@@ -21,20 +21,20 @@ public class Test {
                 p[2] = null;
                 p[3] = null;
                 p[4] = null;
-            */  
+             
           
              cmd = new RMCommand(current);
              p = new CommandParameter[1];
              p[0] = new CommandParameter(ParamType.FILE,"/home/robizz/prf/.git/",null);
               
-             
-            /*CPCommand
-                cmd = new CPCommand();
+              
+            CPCommand*/
+                cmd = new MVCommand(current);
                 p = new CommandParameter[2];
-                p[0] = new CommandParameter(ParamType.FILE, "/home/jo/lt/e/", null);
-                p[1] = null;//(ParamType.NULL, null, SignType.MAG)//null;//new CommandParameter(ParamType.FILE, "/home/jo/lt/.", null);
+                p[0] = new CommandParameter(ParamType.FILE, "/home/robizz/prf/COPYNG", null);
+                p[1] = new CommandParameter(ParamType.FILE, "/home/robizz/prf/COPYNG.bak", null);//(ParamType.NULL, null, SignType.MAG)//null;//new CommandParameter(ParamType.FILE, "/home/jo/lt/.", null);
 		cmd.setCommandParameter(p);
-                */
+                
                 
                 //find command senza exec
                 
