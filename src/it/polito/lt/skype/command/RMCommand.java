@@ -96,7 +96,7 @@ public class RMCommand implements ICommand{
                 System.err.format("%s not empty%n", file);
                 try {
                     System.err.format("%s dentro il try%n", file);
-                    Treefinder tf = new Treefinder(file,result);
+                    Treefinder tf = new Treefinder(file,result,position);
                     Files.walkFileTree(file.getParent(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
                     tot_elem += tf.get_matches_dir()+tf.get_matches_file();
                 } catch (IOException ex) {
@@ -159,8 +159,8 @@ public class RMCommand implements ICommand{
                 System.err.format("%s not empty%n", file);
                 try {
                     System.err.format("%s dentro il try%n", file);
-                    Treefinder tf = new Treefinder(file,result);
-                    Files.walkFileTree(file.getParent(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
+                    Treefinder tf = new Treefinder(file,result,position);
+                    Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
                     tot_elem += tf.get_matches_dir()+tf.get_matches_file();
                 } catch (IOException ex) {
                     System.err.println(ex.getCause());
@@ -181,17 +181,20 @@ public class RMCommand implements ICommand{
         private int numMatches_file = 0;
         private int numMatches_dir = 0;
         private List<Path> internal_result = null;
+        private Path root=null;
 
         public Treefinder(Path file, BasicFileAttributes readAttributes){
-            try {
+            //root=file;
+        	try {
                 my_perm = Files.readAttributes(file, PosixFileAttributes.class);
             } catch (IOException ex) {
                 System.err.println(ex.getCause());
             }
         }
         
-        public Treefinder(Path file, List<Path> result){
-            try {
+        public Treefinder(Path file, List<Path> result, Path superRoot){
+        	root=superRoot;
+        	try {
                 my_perm = Files.readAttributes(file, PosixFileAttributes.class);
                 internal_result = result;
             } catch (IOException ex) {
@@ -268,8 +271,11 @@ public class RMCommand implements ICommand{
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
             System.err.format("%s dentro il postDirectory visit%n", dir);
+           if(dir.compareTo(root)!=0)
+           {
             removeFile(dir);
             numMatches_dir++;
+           }
             return FileVisitResult.CONTINUE;
         }   
         

@@ -12,7 +12,7 @@ public class Test {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
                 CommandParameter[][] pm = null;
-                Path current =Paths.get("/home/jo/lt");
+                Path current =Paths.get("/home/robizz/prf");
             /* LSCommand
                 cmd = new LSCommand(current);
                 p = new CommandParameter[5];
@@ -23,11 +23,9 @@ public class Test {
                 p[4] = null;
             */  
           
-            
-            /* RMCommand
-		cmd = new RMCommand();
-		p = new CommandParameter[1];
-                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/z",null);
+             cmd = new RMCommand(current);
+             p = new CommandParameter[1];
+             p[0] = new CommandParameter(ParamType.FILE,"/home/robizz/prf/.git/",null);
               
              
             /*CPCommand
@@ -56,23 +54,23 @@ public class Test {
 		p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/*",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h",null);
-             */
+             
             
                 cmd=new FINDCommand(current);
                 pm = new CommandParameter[7][];
                 
-                pm[0] =new CommandParameter[]{new CommandParameter(ParamType.FILE, "*.zip", null)};
+                pm[0] =new CommandParameter[]{new CommandParameter(ParamType.FILE, "*", null)};
                 		//new CommandParameter(ParamType.FILE, "*", null)};
-                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h/h2", null)};
+                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/robizz/prf", null)};
                 		//,new CommandParameter(ParamType.FILE, "/home/robizz/prf/ci/", null)
                 		//,new CommandParameter(ParamType.FILE, "/home/jo/lt/ci", null)};
                 pm[2] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
                 pm[3] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "23082011", SignType.MAGUG)};
                 pm[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
-                pm[5] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "ls", SignType.MINUG)};
-                pm[6] = new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
-
-		cmd.setCommandParameter(pm);
+                pm[5] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "rm", SignType.MINUG)};
+                pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
+*/
+		cmd.setCommandParameter(p);
                 try{
                     cmd.exec();
                 }catch(CommandException ce)
