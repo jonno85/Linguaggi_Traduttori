@@ -119,6 +119,9 @@ public class FINDCommand implements ICommand {
         
 	@Override
 	public boolean exec() throws CommandException {
+		
+               
+                
                 try{
                     
                    
