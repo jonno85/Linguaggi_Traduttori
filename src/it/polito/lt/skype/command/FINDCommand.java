@@ -76,7 +76,7 @@ public class FINDCommand implements ICommand {
                  * necessario scambio di parametri aggiuntivi
                  */
                 
-                rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),null);
+                rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),Paths.get(position));
                 
                 CommandParameter[] dyn_param = null;
                 if(params[6]!=null){
@@ -104,6 +104,7 @@ public class FINDCommand implements ICommand {
                 
                 rec_cmd.setCommandParameter(dyn_param); 
                 try {
+                	Utility.mf("ESECUZIONE RM SU: "+pathResult.toString());
                     rec_cmd.exec_from_prev_result(pathResult);
                     pathResult_rec.addAll(rec_cmd.getCommandResult());
                     string_result = null;
@@ -159,36 +160,7 @@ public class FINDCommand implements ICommand {
 		                   finder.done();
                 	   }
                    }
-                   
-                   
-                    
-                    
-                    
-                    
-                    /*
-                     * Matching di tutte le possibili combinazioni 
-                     * path e file | reg_exp
-                     
-                    while(n_dir>0)
-                    {
-                        n_dir--;
-                        while(n_file>0)
-                        {
-                            n_file--;
-                            Utility.mf(params[1][n_dir].getValue()+"/"+params[0][n_file].getValue());
-                            stream = eng.getStreamFromParameter(new CommandParameter(ParamType.FILE, params[1][n_dir].getValue()+"/"+params[0][n_file].getValue(), SignType.MAG));
-                            
-                            for(Path file : stream)
-                            {
-                                filterAddResult(file);
-                            }
-                        }
-                    }
-                     
-                    Utility.mf(pathResult.toString());
-                    */
-                    
-                              
+                 
 		} 
 		catch (IOException | DirectoryIteratorException x) {
 		    //IOException can never be thrown by the iteration.
