@@ -12,7 +12,7 @@ public class Test {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
                 CommandParameter[][] pm = null;
-                Path current =Paths.get("/home/robizz/prf");
+                Path current =Paths.get("/home/jo/lt");
             /* LSCommand
                 cmd = new LSCommand(current);
                 p = new CommandParameter[5];
@@ -28,11 +28,11 @@ public class Test {
              p[0] = new CommandParameter(ParamType.FILE,"/home/robizz/prf/.git/",null);
               
               
-            CPCommand*/
-                cmd = new MVCommand(current);
+            CPCommand
+                cmd = new CPCommand(current);
                 p = new CommandParameter[2];
-                p[0] = new CommandParameter(ParamType.FILE, "/home/robizz/prf/COPYNG", null);
-                p[1] = new CommandParameter(ParamType.FILE, "/home/robizz/prf/COPYNG.bak", null);//(ParamType.NULL, null, SignType.MAG)//null;//new CommandParameter(ParamType.FILE, "/home/jo/lt/.", null);
+                p[0] = new CommandParameter(ParamType.FILE, "/home/jo/lt/g", null);
+                p[1] = new CommandParameter(ParamType.FILE, "/home/jo/lt/g4", null);//(ParamType.NULL, null, SignType.MAG)//null;//new CommandParameter(ParamType.FILE, "/home/jo/lt/.", null);
 		cmd.setCommandParameter(p);
                 
                 
@@ -70,6 +70,13 @@ public class Test {
                 pm[5] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "rm", SignType.MINUG)};
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
 */
+                
+                cmd = new MKDCommand(current);
+                p = new CommandParameter[2];
+                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
+                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);
+                
+                
 		cmd.setCommandParameter(p);
                 try{
                     cmd.exec();

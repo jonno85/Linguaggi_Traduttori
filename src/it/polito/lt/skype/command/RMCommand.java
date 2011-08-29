@@ -270,13 +270,13 @@ public class RMCommand implements ICommand{
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            System.err.format("%s dentro il postDirectory visit%n", dir);
+           System.err.format("%s dentro il postDirectory visit%n", dir);
            if(dir.compareTo(root)!=0)
            {
             removeFile(dir);
             numMatches_dir++;
            }
-            return FileVisitResult.CONTINUE;
+           return FileVisitResult.CONTINUE;
         }   
         
         public int get_matches_file(){

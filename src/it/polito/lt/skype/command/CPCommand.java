@@ -232,7 +232,7 @@ public class CPCommand implements ICommand{
             Path dest = target.resolve(source.relativize(dir));
             
             try{
-                Files.copy(dir, dest,REPLACE_EXISTING,COPY_ATTRIBUTES,ATOMIC_MOVE);
+                Files.copy(dir, dest,REPLACE_EXISTING,COPY_ATTRIBUTES);
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){
