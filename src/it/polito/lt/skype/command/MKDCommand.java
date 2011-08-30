@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
@@ -22,20 +21,10 @@ import java.util.Set;
  */
 public class MKDCommand implements ICommand {
 
-    private Path currentPath = null;
-
     private CommandParameter[] params = null;
-    private FileEngine eng = new FileEngine();
     private int n_par = 0;
-    private boolean goAsc;
-    private boolean includeFolders;
-    private Path paramPath;
     private Path position = null;
-    private String pattern = null;
     private Set<PosixFilePermission> paramPermissions =null;
-    private FileTime paramLastModTime =null;
-    private boolean isRegFolder;
-    private boolean isFile;
     private List<Path> pathResult = null;
     private List<String> string_result = null;
 
@@ -49,11 +38,11 @@ public class MKDCommand implements ICommand {
     @Override
     public boolean exec() throws CommandException {
         Path dir = null;
-        int n_par = params.length;
+        n_par = params.length;
         while(n_par>0)
         {
             n_par--;
-            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxr-x---");
+            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxr-----");
             FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
             try {
                 dir = Paths.get(params[n_par].getValue());
@@ -73,7 +62,7 @@ public class MKDCommand implements ICommand {
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-        if (cpl.length>=1)
+       if (cpl.length>=1)
        {
             params = cpl;
        }
@@ -101,5 +90,4 @@ public class MKDCommand implements ICommand {
         System.err.println("mkdir <path>");
         System.exit(-1);
     }
-    
 }
