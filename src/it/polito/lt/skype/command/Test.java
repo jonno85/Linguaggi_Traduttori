@@ -49,7 +49,7 @@ public class Test {
                  *          6 = [] parametri (esegui)
                  */
                 
-         /*     // MVCommand
+        /*     // MVCommand
 		cmd = new MVCommand(current);
 		p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/*",null);
@@ -69,9 +69,9 @@ public class Test {
                 pm[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
                 pm[5] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "rm", SignType.MINUG)};
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
-*/
+        */
                 
-                cmd = new MKDCommand(current);
+                cmd = new CPCommand(current);
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);
