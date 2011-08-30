@@ -8,7 +8,6 @@ import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -69,9 +68,10 @@ public class MVCommand implements ICommand{
 
             try{
                 Files.move(source, target, REPLACE_EXISTING, ATOMIC_MOVE);
-                Utility.mf("ciao");
-            }catch(  UnsupportedOperationException | IOException uoe){
-                System.err.format("Impossibile muovere: %s %s%n", source,uoe);
+            }catch(  UnsupportedOperationException uoe){
+                Utility.mf(uoe);
+            }catch(IOException ioe){
+                Utility.mf(ioe);
             }
         //}
     }
@@ -95,7 +95,7 @@ public class MVCommand implements ICommand{
         try {
             stream = fe.getStreamFromParameter(params[0]);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Utility.mf(ex);
         }  
                          
         for (Path file: stream) {
@@ -121,7 +121,7 @@ public class MVCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                System.err.println(ex);
+                Utility.mf(ex);
             }
         }
         return true;
@@ -152,7 +152,6 @@ public class MVCommand implements ICommand{
     @Override
     public void usage() {
         System.err.println("cp <source> <destination>");
-        System.exit(-1);
     }
 
     @Override
@@ -184,8 +183,7 @@ public class MVCommand implements ICommand{
                     tot_elem++;
                 }
             } catch (IOException ex) {
-                //File permission problems are caught here.
-                System.err.println(ex);
+                throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "MV recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;
@@ -214,12 +212,12 @@ public class MVCommand implements ICommand{
                     System.exit(-1);
                 }
             } catch (IOException ex) {
-                System.err.println(ex.getCause());
+                Utility.mf(ex);
             }
         }
 
         @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
 
             Path dest = target.resolve(source.relativize(dir));
             
@@ -227,19 +225,16 @@ public class MVCommand implements ICommand{
                 Files.move(dir, dest, REPLACE_EXISTING, ATOMIC_MOVE);
                 internal_result.add(dir);
                 num_dir++;
-            }catch(FileAlreadyExistsException x){
-                
+            //}catch(FileAlreadyExistsException x){  
             }catch(IOException ioe){
-                System.err.format("Impossibile creare: %s: %s%n",dest,ioe);
+                Utility.mf(ioe);
                 return FileVisitResult.SKIP_SUBTREE;
             }
             return FileVisitResult.CONTINUE;
         }
         
         @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            System.err.format("%s dentro il FileVisit%n", file);
-            
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {            
             moveFile(file, target.resolve(source.relativize(file)));
             internal_result.add(file);
             num_file++;
@@ -247,20 +242,19 @@ public class MVCommand implements ICommand{
         }
         
         @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        public FileVisitResult visitFileFailed(Path file, IOException exc) {
             System.err.format("%s dentro il visitFileFailed%n", file);
             System.err.format("%s: impossibile leggere il file%n", file);
             if (exc instanceof FileSystemLoopException) {
                 System.err.println("ciclo rilevato: " + file);
             } else {
-                System.err.format("Impossibile spostare: %s: %s%n", file, exc);
+                Utility.mf(exc);
             }
             return FileVisitResult.CONTINUE;
         }
 
         @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            System.err.format("%s dentro il postDirectory visit%n", dir);
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc){
             if(exc == null)
             {
                 Path new_dir = target.resolve(source.relativize(dir));
@@ -268,7 +262,7 @@ public class MVCommand implements ICommand{
                     FileTime time = Files.getLastModifiedTime(dir);
                     Files.setLastModifiedTime(new_dir, time);
                 }catch(IOException ioe){
-                    System.err.format("Impossibile spostare tutti gli attributi: %s: %s%n",new_dir,ioe);
+                    Utility.mf(ioe);
                 }
             }
             return FileVisitResult.CONTINUE;

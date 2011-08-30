@@ -53,12 +53,10 @@ public class RMCommand implements ICommand{
     
     public static void removeFile(Path target){
         Utility.mf("target"+target.toString());
-
         try{
             Files.delete(target);
-            Utility.mf("ciao");
         }catch(IOException ioe){
-            System.err.format("Impossibile eliminare: %s %s%n", target,ioe);
+            Utility.mf(ioe);
         }
 
     }
@@ -79,7 +77,7 @@ public class RMCommand implements ICommand{
         try {
             stream = fe.getStreamFromParameter(params[0]);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Utility.mf(ex);
         }
                     
         for (Path file: stream) {
@@ -91,20 +89,19 @@ public class RMCommand implements ICommand{
                 removeFile(file);
                 tot_elem++;
             } catch (NoSuchFileException x) {
-                System.err.format("%s: no such file or directory%n", file);
+                Utility.mf(x);
             } catch (DirectoryNotEmptyException x) {
-                System.err.format("%s not empty%n", file);
+                Utility.mf(x);
                 try {
-                    System.err.format("%s dentro il try%n", file);
                     Treefinder tf = new Treefinder(file,result,position);
                     Files.walkFileTree(file.getParent(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
                     tot_elem += tf.get_matches_dir()+tf.get_matches_file();
-                } catch (IOException ex) {
-                    System.err.println(ex.getCause());
+                }catch(IOException ex){
+                    Utility.mf(ex);
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                System.err.println(ex);
+                throw new CommandException(4,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;
@@ -135,7 +132,6 @@ public class RMCommand implements ICommand{
     @Override
     public void usage() {
         System.err.println("rm <path>");
-        System.exit(-1);
     }
 
     @Override
@@ -156,18 +152,17 @@ public class RMCommand implements ICommand{
             } catch (NoSuchFileException x) {
                 System.err.format("%s: no such file or directory%n", file);
             } catch (DirectoryNotEmptyException x) {
-                System.err.format("%s not empty%n", file);
+                Utility.mf(x);
                 try {
-                    System.err.format("%s dentro il try%n", file);
                     Treefinder tf = new Treefinder(file,result,position);
                     Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
                     tot_elem += tf.get_matches_dir()+tf.get_matches_file();
                 } catch (IOException ex) {
-                    System.err.println(ex.getCause());
+                    Utility.mf(ex);
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                System.err.println(ex);
+                throw new CommandException(4,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;
@@ -194,40 +189,41 @@ public class RMCommand implements ICommand{
         
         public Treefinder(Path file, List<Path> result, Path superRoot){
         	root=superRoot;
-        	try {
+            try {
                 my_perm = Files.readAttributes(file, PosixFileAttributes.class);
                 internal_result = result;
             } catch (IOException ex) {
-                System.err.println(ex.getCause());
+                Utility.mf(ex);
             }
         }
 
         @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
+            try{
+                folder_attr = Files.readAttributes(dir,PosixFileAttributes.class);
+                Utility.mf("directory "+dir.toString()+" attrb "+folder_attr.owner()+"->folder\n"+"directory "+dir.getParent().toString()+" attrb "+my_perm.owner()+"->parent folder");
             
-            folder_attr = Files.readAttributes(dir,PosixFileAttributes.class);
-            
-            Utility.mf("directory "+dir.toString()+" attrb "+folder_attr.owner()+"->folder\n"+"directory "+dir.getParent().toString()+" attrb "+my_perm.owner()+"->parent folder");
-            
-            /**
-             * Verifico che il propietario del percorso dal quale provengo sia lo stesso della cartella
-             * destinazione altrimenti salto il sottoalbero
-             */
-            if(my_perm.owner().equals(folder_attr.owner()))
-            {
-                
-                internal_result.add(dir);
-                return FileVisitResult.CONTINUE;
+                /**
+                 * Verifico che il propietario del percorso dal quale provengo sia lo stesso della cartella
+                 * destinazione altrimenti salto il sottoalbero
+                 */
+                if(my_perm.owner().equals(folder_attr.owner()))
+                {
+                    internal_result.add(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                else
+                {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+            }catch(IOException ioe){
+                Utility.mf(ioe);
             }
-            else
-            {
-                return FileVisitResult.SKIP_SUBTREE;
-            }
-             
+            return FileVisitResult.SKIP_SUBTREE;
         }
 
         @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs){
             System.err.format("%s dentro il FileVisit%n", file);
             
             try{
@@ -241,23 +237,16 @@ public class RMCommand implements ICommand{
                     internal_result.add(file);
                 }
             } catch (NoSuchFileException x) {
-                System.err.format("%s: no such file or directory%n", file);
-            } /*catch (DirectoryNotEmptyException x) {
-                Treefinder tf_depth = new Treefinder(file, internal_result);
-                Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, tf_depth);
-                numMatches_dir += tf_depth.get_matches_dir();
-                numMatches_file += tf_depth.get_matches_file();
-                System.err.format("%s new WalkFileTree per la cartella ", file);
-                System.err.format("%s not empty%n", file);
-            } */catch (IOException ex) {
+                Utility.mf(x);
+            }catch (IOException ex) {
                 //File permission problems are caught here.
-                System.err.println(ex);
+                Utility.mf(ex);
             }
             return FileVisitResult.CONTINUE;
         }
 
         @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        public FileVisitResult visitFileFailed(Path file, IOException exc){
             System.err.format("%s dentro il visitFileFailed%n", file);
             System.err.format("%s: impossibile leggere il file%n", file);
             if (exc instanceof FileSystemLoopException) {

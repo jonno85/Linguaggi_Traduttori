@@ -3,13 +3,13 @@ package it.polito.lt.skype.command;
 
 public class CommandException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private int id; // a unique id
-	  private String classname; // the name of the class
-	  private CommandErrorType cet=null; //type of exception
-	  private String method; // the name of the method
-	  private String message; // a detailed message 
-	  private CommandException previous = null; // the exception which was caught
-	  private String separator = "\n"; // line separator
+        private int id; // a unique id
+        private String classname; // the name of the class
+        private CommandErrorType cet=null; //type of exception
+        private String method; // the name of the method
+        private String message; // a detailed message 
+        private CommandException previous = null; // the exception which was caught
+        private String separator = "\n"; // line separator
 	  
 	  public CommandException(int id, String classname, String method, 
 	    String message, CommandException previous) {

@@ -49,11 +49,8 @@ public class FINDCommand implements ICommand {
                 pathList = new ArrayList<>();
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-                
                 position = current.toString();
                 pattern = "*";
-                
-                
                 eng = new FileEngine();
         }
         
@@ -64,7 +61,7 @@ public class FINDCommand implements ICommand {
          *          6 = []parametri
          */
         
-        public void recursive_cmd(){
+        public void recursive_cmd() throws CommandException{
             if(params[5]!=null)
             {
                 ICommand rec_cmd = null;
@@ -104,14 +101,14 @@ public class FINDCommand implements ICommand {
                 
                 rec_cmd.setCommandParameter(dyn_param); 
                 try {
-                	Utility.mf("ESECUZIONE RM SU: "+pathResult.toString());
+                    Utility.mf("ESECUZIONE RM SU: "+pathResult.toString());
                     rec_cmd.exec_from_prev_result(pathResult);
                     pathResult_rec.addAll(rec_cmd.getCommandResult());
                     string_result = null;
                     string_result = new ArrayList<>();
                     string_result.add(rec_cmd.getCommandStringResult());
                 } catch (CommandException ex) {
-                    System.err.format("Impossibile eseguire il comando: %s: %s%n", pathResult, ex);
+                    throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
                 }
                 //}
 
@@ -120,59 +117,55 @@ public class FINDCommand implements ICommand {
         
 	@Override
 	public boolean exec() throws CommandException {
-		
-               
-                
-                try{
-                    
-                   
-                    /*
-                     *usando il walk tree occorre prima vedere se le directory passate sono contenute luna nell'altra ed eventualmente scartarle
-                     *poi per le directory diverse lanciare la ricerca con filtro
-                     *poi chiedere a jonni come lavorano i comandi per vedere se bisogna agire prima sulla cartella o prima sul file
-                     */
-                   int acontb=0;
-                   String a=null;
-                   String b=null;
-                   for(int i =0; i<n_dir;i++){
-                	   acontb=0;
-                	   for(int j=0;j<n_dir;j++){ //ou yea!
-                		    a = Paths.get(params[1][i].getValue()).normalize().toString()+"/";//ou yea!
-                		    b = Paths.get(params[1][j].getValue()).normalize().toString()+"/";
-                		   if(a.contains(b)) 
-                			   acontb++;
-                	   }
-                	   if(acontb==1){//se a contiene b, più di una volta a non va aggiunta
-                		   pathList.add(Paths.get(params[1][i].getValue()));
-                		   Utility.mf("subfolder: checked: "+a);
-                	   }
-                	   else
-                		   Utility.mf("subfolder: deleted: "+a);
-                   }
-                   
-                   for(Path p : pathList)//per ogni path unico
-                   {
-                	   for(int i=0; i<n_file;i++)//per ogni pattern
-                	   {
-                		   Utility.mf("Ricerca di: "+params[0][i].getValue()+" in: "+p);
-                		   Finder finder = new Finder(params[0][i].getValue());
-		                   Files.walkFileTree(p, finder);//avvio la ricerca filtrante
-		                   finder.done();
-                	   }
-                   }
-                 
-		} 
-		catch (IOException | DirectoryIteratorException x) {
-		    //IOException can never be thrown by the iteration.
-		    //In this snippet, it can only be thrown by newDirectoryStream.
-		    System.err.println(x);
-                    return false;
-		}
-		//sorting risultati
-                Collections.sort(string_result);
-       
-                recursive_cmd();
-		return true;
+            try{
+
+
+                /*
+                 *usando il walk tree occorre prima vedere se le directory passate sono contenute luna nell'altra ed eventualmente scartarle
+                 *poi per le directory diverse lanciare la ricerca con filtro
+                 *poi chiedere a jonni come lavorano i comandi per vedere se bisogna agire prima sulla cartella o prima sul file
+                 */
+               int acontb=0;
+               String a=null;
+               String b=null;
+               for(int i =0; i<n_dir;i++){
+                       acontb=0;
+                       for(int j=0;j<n_dir;j++){ //ou yea!
+                                a = Paths.get(params[1][i].getValue()).normalize().toString()+"/";//ou yea!
+                                b = Paths.get(params[1][j].getValue()).normalize().toString()+"/";
+                               if(a.contains(b)) 
+                                       acontb++;
+                       }
+                       if(acontb==1){//se a contiene b, più di una volta a non va aggiunta
+                               pathList.add(Paths.get(params[1][i].getValue()));
+                               Utility.mf("subfolder: checked: "+a);
+                       }
+                       else
+                               Utility.mf("subfolder: deleted: "+a);
+               }
+
+               for(Path p : pathList)//per ogni path unico
+               {
+                       for(int i=0; i<n_file;i++)//per ogni pattern
+                       {
+                               Utility.mf("Ricerca di: "+params[0][i].getValue()+" in: "+p);
+                               Finder finder = new Finder(params[0][i].getValue());
+                               Files.walkFileTree(p, finder);//avvio la ricerca filtrante
+                               finder.done();
+                       }
+               }
+
+            } 
+            catch (IOException | DirectoryIteratorException ex) {
+                //IOException can never be thrown by the iteration.
+                //In this snippet, it can only be thrown by newDirectoryStream.
+                throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
+            }
+            //sorting risultati
+            Collections.sort(string_result);
+
+            recursive_cmd();
+            return true;
 	}
 	
 	
@@ -230,7 +223,6 @@ public class FINDCommand implements ICommand {
     @Override
     public void usage() {
         System.err.println("find <file> <path> [<filter>] [exec cmd [<filter>]] ");
-        System.exit(-1);
     }
 
     @Override
@@ -298,11 +290,10 @@ public class FINDCommand implements ICommand {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
             try {
-				find(file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                find(file);
+            } catch (IOException e) {
+                Utility.mf(e);
+            }
             return FileVisitResult.CONTINUE;
         }
 
@@ -310,17 +301,16 @@ public class FINDCommand implements ICommand {
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
             try {
-				find(dir);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                find(dir);
+            } catch (IOException e) {
+                Utility.mf(e);
+            }
             return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) {
-            System.err.println(exc);
+            Utility.mf(exc);
             return FileVisitResult.CONTINUE;
         }
     }

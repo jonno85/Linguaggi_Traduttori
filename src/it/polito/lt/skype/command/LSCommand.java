@@ -86,11 +86,8 @@ public class LSCommand implements ICommand {
                         }
         	    }          
 		} 
-		catch (IOException | DirectoryIteratorException x) {
-		    //IOException can never be thrown by the iteration.
-		    //In this snippet, it can only be thrown by newDirectoryStream.
-		    System.err.println(x);
-                    return false;
+		catch (IOException | DirectoryIteratorException ex) {
+		    throw new CommandException(2,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "LS recursive Exception: "+ex.getMessage(), null);
 		}
 		//sorting risultati
             Collections.sort(string_result);
@@ -103,14 +100,13 @@ public class LSCommand implements ICommand {
 	
 	private void filterAddResult(Path path) throws IOException
 	{
-		PosixFileAttributes pathAttributes =Files.readAttributes(path, PosixFileAttributes.class);
-		Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
-		if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[3],pathAttributes.permissions()))
-		{
-			pathResult.add(path);
-			string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
-		}
-	
+            PosixFileAttributes pathAttributes = Files.readAttributes(path, PosixFileAttributes.class);
+            Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
+            if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[3],pathAttributes.permissions()))
+            {
+                pathResult.add(path);
+                string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
+            }
 	}
 	
 	
@@ -147,27 +143,7 @@ public class LSCommand implements ICommand {
 	                paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
 	           	 	pattern = paramPath.getFileName().toString();
 	                position = paramPath.getParent();
-	            }
-                
-                /*if(params[3]!=null)
-                {//permessi
-                	paramPermissions= PosixFilePermissions.fromString(params[3].getValue());
-                	Utility.mf("Parametro PERMESSO: "+PosixFilePermissions.toString(paramPermissions));
-                }// fatta nel file Engine*/
-                
-               /* if(params[4]!=null)
-                {
-                	GregorianCalendar paramDateGC;
-					try {
-						paramDateGC = convertDateString(params[4].getValue());
-						paramLastModTime=FileTime.fromMillis(paramDateGC.getTimeInMillis());
-						Utility.mf("PARAMETRO DATA: "+paramLastModTime.toString());
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-                	
-                }//fatto in file engine*/
+	        }              
             }
             else
                 System.err.println("Numero parametri incorretto: "+cpl.length);
@@ -208,7 +184,7 @@ public class LSCommand implements ICommand {
                     filterAddResult(file);
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
+                throw new CommandException(2,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), ex.getMessage(), null);
             }
         }
         Collections.sort(string_result);

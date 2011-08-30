@@ -9,8 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +27,7 @@ public class MKDCommand implements ICommand {
     private Set<PosixFilePermission> paramPermissions =null;
     private List<Path> pathResult = null;
     private List<String> string_result = null;
+    private PosixFileAttributes my_perm;
 
     
     public MKDCommand(Path current){
@@ -42,14 +43,14 @@ public class MKDCommand implements ICommand {
         while(n_par>0)
         {
             n_par--;
-            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxr-----");
-            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
             try {
+                my_perm = Files.readAttributes(position,PosixFileAttributes.class);
+                FileAttribute<Set<PosixFilePermission>> attr = (FileAttribute<Set<PosixFilePermission>>) my_perm.permissions();
                 dir = Paths.get(params[n_par].getValue());
                 Files.createDirectories(dir, attr);
                 pathResult.add(dir);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                throw new CommandException(5,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;
@@ -88,6 +89,5 @@ public class MKDCommand implements ICommand {
     @Override
     public void usage() {
         System.err.println("mkdir <path>");
-        System.exit(-1);
     }
 }
