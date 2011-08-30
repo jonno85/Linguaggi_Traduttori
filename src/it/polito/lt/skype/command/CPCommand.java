@@ -125,7 +125,9 @@ public class CPCommand implements ICommand{
             } catch (IOException| UnsupportedOperationException ex) {
                 //File permission problems are caught here.
                 System.err.println(ex);
-                throw new CommandException(0, this.getClass().getName(), this.getClass().getm, message, previous)
+                throw new CommandException(0, this.getClass().getName(), 
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		ex.getMessage(), previous)
             }
         }
         return true;
