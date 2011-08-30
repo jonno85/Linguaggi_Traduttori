@@ -3,7 +3,7 @@ package it.polito.lt.skype.command;
 
 public class CommandException extends Exception {
 	private static final long serialVersionUID = 1L;
-        private int id; // a unique id
+        private CommandErrorType ce; // a unique id
         private String classname; // the name of the class
         private CommandErrorType cet=null; //type of exception
         private String method; // the name of the method
@@ -11,9 +11,9 @@ public class CommandException extends Exception {
         private CommandException previous = null; // the exception which was caught
         private String separator = "\n"; // line separator
 	  
-	  public CommandException(int id, String classname, String method, 
+	  public CommandException(CommandErrorType ce, String classname, String method, 
 	    String message, CommandException previous) {
-	    this.id        = id;
+	    this.ce        = ce;
 	    this.classname = classname;
 	    this.method    = method;
 	    this.message   = message;
@@ -33,7 +33,7 @@ public class CommandException extends Exception {
 	      level++;
 	      text += line("--level " + level + "--------------------------------------");
 	      text += line("Class/Method: " + e.classname + "/" + e.method);
-	      text += line("Id          : " + e.id);
+	      text += line("Id          : " + e.ce);
 	      text += line("Message     : " + e.message);
 	      e = e.previous;
 	    }  

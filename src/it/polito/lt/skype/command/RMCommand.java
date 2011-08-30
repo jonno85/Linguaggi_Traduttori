@@ -101,7 +101,7 @@ public class RMCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                throw new CommandException(4,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;
@@ -162,7 +162,7 @@ public class RMCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                throw new CommandException(4,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;

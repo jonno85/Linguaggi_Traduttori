@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -75,9 +76,11 @@ public class Test {
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);
-                
-                
-		cmd.setCommandParameter(p);
+                try {
+                    cmd.setCommandParameter(p);
+                } catch (ParserException ex) {
+                    ex.printStackTrace();
+                }
                 try{
                     cmd.exec();
                 }catch(CommandException ce)

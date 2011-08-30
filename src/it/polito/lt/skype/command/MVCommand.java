@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
@@ -135,7 +136,7 @@ public class MVCommand implements ICommand{
             params = cpl;
        }
        else
-           Utility.mf(new ParserException(3, this.getClass().getName(),
+           Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception"));
     } 
 
@@ -186,7 +187,7 @@ public class MVCommand implements ICommand{
                         tot_elem++;
                     }
                 } catch (IOException ex) {
-                    throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "MV recursive Exception: "+ex.getMessage(), null);
+                    throw new CommandException(CommandErrorType.MOVE_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "MV recursive Exception: "+ex.getMessage(), null);
                 }
             }
         }

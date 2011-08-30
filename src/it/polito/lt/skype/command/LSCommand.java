@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -87,7 +88,7 @@ public class LSCommand implements ICommand {
         	    }          
 		} 
 		catch (IOException | DirectoryIteratorException ex) {
-		    throw new CommandException(2,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "LS recursive Exception: "+ex.getMessage(), null);
+		    throw new CommandException(CommandErrorType.LIST_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "LS recursive Exception: "+ex.getMessage(), null);
 		}
 		//sorting risultati
                 Collections.sort(string_result);
@@ -112,28 +113,28 @@ public class LSCommand implements ICommand {
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl) {
 
-            if (cpl.length==5)
+            if (cpl.length == 5)
             {
                 params = cpl;
                 n_par = cpl.length;
                 
-                if(params[0]!=null)
+                if(params[0] != null)
                 {//ascendente o discendente
                     if(params[0].getValue().compareToIgnoreCase("asc")==0)
-                	goAsc=true;
+                	goAsc = true;
                     else
-                	goAsc=false;
+                	goAsc = false;
                 }
                 
-                if(params[1]!=null)
+                if(params[1] != null)
                 {//file o folders
-	                if(params[0].getValue().compareToIgnoreCase("d")==0)
-	                	includeFolders=true;
-	                else
-	                	includeFolders=false;
+                    if(params[0].getValue().compareToIgnoreCase("d")==0)
+                        includeFolders = true;
+                    else
+                        includeFolders = false;
                 }
                 
-                if(params[2]!=null)
+                if(params[2] != null)
                 {//estrazione del path
 	            paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
                     pattern = paramPath.getFileName().toString();
@@ -141,7 +142,7 @@ public class LSCommand implements ICommand {
 	        }              
             }
             else
-                Utility.mf(new ParserException(3, this.getClass().getName(),
+                Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "LS Parameter Exception"));
 	}
 	
@@ -174,12 +175,12 @@ public class LSCommand implements ICommand {
             try {
                 attr = Files.readAttributes(file, PosixFileAttributes.class);
                 isDir = attr.isDirectory();
-                if(params[1]==null || (includeFolders && isDir) || (!includeFolders && !isDir))
+                if(params[1] == null || (includeFolders && isDir) || (!includeFolders && !isDir))
                 {
                     filterAddResult(file);
                 }
             } catch (IOException ex) {
-                throw new CommandException(2,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.LIST_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), ex.getMessage(), null);
             }
         }
         Collections.sort(string_result);
@@ -187,7 +188,4 @@ public class LSCommand implements ICommand {
             Collections.reverse(string_result);
         return true;
     }
-    
-    
-
 }

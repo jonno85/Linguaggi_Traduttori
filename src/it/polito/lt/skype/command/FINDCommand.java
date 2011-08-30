@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -62,7 +63,7 @@ public class FINDCommand implements ICommand {
          *          6 = []parametri
          */
         
-        public void recursive_cmd() throws CommandException{
+        public void recursive_cmd() throws CommandException, ParserException{
             if(params[5]!=null)
             {
                 ICommand rec_cmd = null;
@@ -109,7 +110,7 @@ public class FINDCommand implements ICommand {
                     string_result = new ArrayList<>();
                     string_result.add(rec_cmd.getCommandStringResult());
                 } catch (CommandException ex) {
-                    throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
+                    throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
                 }
                 //}
 
@@ -160,12 +161,15 @@ public class FINDCommand implements ICommand {
             catch (IOException | DirectoryIteratorException ex) {
                 //IOException can never be thrown by the iteration.
                 //In this snippet, it can only be thrown by newDirectoryStream.
-                throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
             }
             //sorting risultati
             Collections.sort(string_result);
-
-            recursive_cmd();
+            try {
+                recursive_cmd();
+            } catch (ParserException ex) {
+                Utility.mf(ex);
+            }
             return true;
 	}
 	
@@ -252,7 +256,7 @@ public class FINDCommand implements ICommand {
         	params[1]=new CommandParameter[]{new CommandParameter(null,position,null)};
         
         if(params[1]==null && params[0]==null)
-            Utility.mf(new ParserException(3, this.getClass().getName(),
+            Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "Find Parameter Exception"));
     }
 
