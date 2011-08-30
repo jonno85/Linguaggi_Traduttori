@@ -127,7 +127,7 @@ public class CPCommand implements ICommand{
                 System.err.println(ex);
                 throw new CommandException(0, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
-                		ex.getMessage(), previous)
+                		ex.getMessage(), null);
             }
         }
         return true;
