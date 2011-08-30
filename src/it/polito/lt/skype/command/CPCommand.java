@@ -105,11 +105,13 @@ public class CPCommand implements ICommand{
         }  
                          
         for (Path file: stream) {
-            PosixFileAttributes p_attr;
+            
             try {
                 
+                PosixFileAttributes p_attr;
                 boolean isDir = Files.isDirectory(target);
                 Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
+                
                 
                 if(Files.isDirectory(file))
                 {
@@ -127,6 +129,7 @@ public class CPCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
+                
                 System.err.println(ex);
             }
         }
