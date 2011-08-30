@@ -6,6 +6,8 @@
             <name>Linguaggi_Traduttori</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.parser.dir"/>
+                <root id="src.input.dir"/>
             </source-roots>
             <test-roots/>
         </data>

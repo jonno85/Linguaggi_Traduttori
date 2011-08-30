@@ -1,5 +1,6 @@
 /* Esercitazione 2 - Esercizio 1 (Main) */
 import java.io.*;
+import java_cup.parser;
    
 public class Main {
   static public void main(String argv[]) {    

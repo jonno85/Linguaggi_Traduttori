@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Calendar;
-import manager.*;
-import command.*;
+import it.polito.lt.skype.manager.*;
+import it.polito.lt.skype.command.*;
 
 
 init with {:
