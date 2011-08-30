@@ -124,10 +124,13 @@ public class CPCommand implements ICommand{
                 }
             } catch (IOException| UnsupportedOperationException ex) {
                 //File permission problems are caught here.
-                System.err.println(ex);
-                throw new CommandException(0, this.getClass().getName(), 
+                
+                CommandException ce= new CommandException(0, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
                 		ex.getMessage(), null);
+               Utility.mf(ce); 
+               throw ce;
+                
             }
         }
         return true;
@@ -191,7 +194,11 @@ public class CPCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                System.err.println(ex);
+            	CommandException ce= new CommandException(0, this.getClass().getName(), 
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		ex.getMessage(), null);
+               Utility.mf(ce); 
+               throw ce;
             }
         }
         return true;
@@ -216,11 +223,14 @@ public class CPCommand implements ICommand{
                 target_perm = Files.readAttributes(target, PosixFileAttributes.class);
                 if(!my_perm.owner().equals(target_perm.owner()))
                 {
-                    System.err.println("Il proprietario della cartella di destinazione non risulta uguale:\ncopia interrotta");
-                    System.exit(-1);
+                	CommandException ce= new CommandException(0, this.getClass().getName(), 
+                    		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                    		"Permissions mismatch: copy aborted", null);
+                   Utility.mf(ce); 
+                   throw ce;
                 }
             } catch (IOException ex) {
-                System.err.println(ex.getCause());
+               Utility.mf(ex);
             }
         }
 
@@ -236,18 +246,16 @@ public class CPCommand implements ICommand{
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){
-                
+            	Utility.mf(x);
             }catch(IOException ioe){
-                System.err.format("Impossibile creare: %s: %s%n",dest,ioe);
+            	Utility.mf(ioe);
                 return FileVisitResult.SKIP_SUBTREE;
             }
             return FileVisitResult.CONTINUE;
         }
         
         @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            System.err.format("%s dentro il FileVisit%n", file);
-            
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {            
             copyFile(file, target.resolve(source.relativize(file)));
             internal_result.add(file);
             num_file++;
@@ -256,19 +264,22 @@ public class CPCommand implements ICommand{
         
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            System.err.format("%s dentro il visitFileFailed%n", file);
-            System.err.format("%s: impossibile leggere il file%n", file);
+            String mes =String.format("%svisitFileFailed%n", file);
+            mes+=String.format("%s: Can't read file%n", file);
             if (exc instanceof FileSystemLoopException) {
-                System.err.println("ciclo rilevato: " + file);
+               mes+="detected cycle: " + file.toString();
+              
             } else {
-                System.err.format("Impossibile copiare: %s: %s%n", file, exc);
+            	mes+=String.format("Impossibile copiare: %s: %s%n", file, exc);
             }
+            IOException ioe= new IOException(mes+exc.getMessage(),exc);
+            Utility.mf(ioe);
             return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            System.err.format("%s dentro il postDirectory visit%n", dir);
+            
             if(exc == null)
             {
                 Path new_dir = target.resolve(source.relativize(dir));
@@ -276,7 +287,8 @@ public class CPCommand implements ICommand{
                     FileTime time = Files.getLastModifiedTime(dir);
                     Files.setLastModifiedTime(new_dir, time);
                 }catch(IOException ioe){
-                    System.err.format("Impossibile copiare tutti gli attributi: %s: %s%n",new_dir,ioe);
+                   IOException ioexc= new IOException( String.format("Impossibile copiare tutti gli attributi: %s: %s%n",new_dir,ioe)+ioe.getMessage(),ioe);
+                   Utility.mf(ioexc);
                 }
             }
             return FileVisitResult.CONTINUE;
