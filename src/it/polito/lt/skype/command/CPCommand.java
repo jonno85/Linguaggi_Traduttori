@@ -62,23 +62,20 @@ public class CPCommand implements ICommand{
             pattern_src = "";
     }
     
-    public static void copyFile(Path source, Path target){
+    public static void copyFile(Path source, Path target)throws IOException, UnsupportedOperationException{
         //CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES};
-        Utility.mf("target"+target.toString());
-        Utility.mf("source"+source.toString());
+        Utility.mf("COMANDO CP: source"+source.toString()+" target"+target.toString());
         //target = Paths.get(target.toString()+"/"+source.getFileName().toString());
-        
-        
-        Utility.mf("target"+target.toString());
+  
         //if(Files.notExists(target))
         //{
-
-            try{
+        Files.copy(source, target, COPY_ATTRIBUTES,  REPLACE_EXISTING);
+         /*   try{
                 Files.copy(source, target, COPY_ATTRIBUTES,  REPLACE_EXISTING);
-                Utility.mf("ciao");
-            }catch(IOException ioe){
-                System.err.format("Impossibile copiare: %s %s%n", source,ioe);
-            }
+            }catch(IOException | UnsupportedOperationException ioe){
+                
+            	System.err.format("Impossibile copiare: %s %s%n", source,ioe);
+            }*/
         //}
     }
     
@@ -125,9 +122,10 @@ public class CPCommand implements ICommand{
                     result.add(file);
                     tot_elem++;
                 }
-            } catch (IOException ex) {
+            } catch (IOException| UnsupportedOperationException ex) {
                 //File permission problems are caught here.
                 System.err.println(ex);
+                throw new CommandException(0, this.getClass().getName(), this.getClass().getm, message, previous)
             }
         }
         return true;
