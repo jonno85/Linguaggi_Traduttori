@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
 import java.io.IOException;
@@ -17,6 +18,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import static java.nio.file.StandardCopyOption.*;
@@ -59,10 +62,6 @@ public class MVCommand implements ICommand{
     public static void moveFile(Path source, Path target){
         Utility.mf("target"+target.toString());
         Utility.mf("source"+source.toString());
-        //target = Paths.get(target.toString()+"/"+source.getFileName().toString());
-        
-        
-        Utility.mf("target"+target.toString());
         //if(Files.notExists(target))
         //{
 
@@ -92,36 +91,38 @@ public class MVCommand implements ICommand{
         BasicFileAttributes attr = null;
         
         FileEngine fe = new FileEngine();
-        try {
-            stream = fe.getStreamFromParameter(params[0]);
-        } catch (IOException ex) {
-            Utility.mf(ex);
-        }  
-                         
-        for (Path file: stream) {
-            PosixFileAttributes p_attr;
+        synchronized(this){
             try {
-                
-                boolean isDir = Files.isDirectory(target);
-                Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
-                
-                if(Files.isDirectory(file))
-                {
-                    EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
-                    TreeMover tc = new TreeMover(file, dest, result);
-                    Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
-                    tot_elem += tc.get_n_dir()+tc.get_n_file();
-                }
-                else
-                {
-                    Utility.mf("target file singolo: "+target.toString());
-                    moveFile(file, dest);
-                    result.add(file);
-                    tot_elem++;
-                }
+                stream = fe.getStreamFromParameter(params[0]);
             } catch (IOException ex) {
-                //File permission problems are caught here.
                 Utility.mf(ex);
+            }  
+
+            for (Path file: stream) {
+                PosixFileAttributes p_attr;
+                try {
+
+                    boolean isDir = Files.isDirectory(target);
+                    Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
+
+                    if(Files.isDirectory(file))
+                    {
+                        EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+                        TreeMover tc = new TreeMover(file, dest, result);
+                        Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
+                        tot_elem += tc.get_n_dir()+tc.get_n_file();
+                    }
+                    else
+                    {
+                        Utility.mf("target file singolo: "+target.toString());
+                        moveFile(file, dest);
+                        result.add(file);
+                        tot_elem++;
+                    }
+                } catch (IOException ex) {
+                    //File permission problems are caught here.
+                    Utility.mf(ex);
+                }
             }
         }
         return true;
@@ -134,24 +135,25 @@ public class MVCommand implements ICommand{
             params = cpl;
        }
        else
-           System.err.println("Numero parametri incorretto: "+cpl.length);
+           Utility.mf(new ParserException(3, this.getClass().getName(),
+                   Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception"));
     } 
 
     @Override
     public List<Path> getCommandResult() {
-        return result;
+        return Collections.synchronizedList(result);
     }
 
     @Override
     public String getCommandStringResult() {
-        string_result = result.toString();
+        string_result = Collections.synchronizedList(result).toString();
         string_result += "\nElementi spostati: "+tot_elem;
         return string_result;
     }
 
     @Override
     public void usage() {
-        System.err.println("cp <source> <destination>");
+        Utility.mf("cp <source> <destination>");
     }
 
     @Override
@@ -162,28 +164,30 @@ public class MVCommand implements ICommand{
     public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
         target = Paths.get(params[1].getValue()).normalize();                          
         for (Path file: stream) {
-            PosixFileAttributes p_attr;
-            try {
-                
-                boolean isDir = Files.isDirectory(target);
-                Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
-                
-                if(Files.isDirectory(file))
-                {
-                    EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
-                    TreeMover tc = new TreeMover(file, dest, result);
-                    Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
-                    tot_elem += tc.get_n_dir()+tc.get_n_file();
+            synchronized(file){
+                PosixFileAttributes p_attr;
+                try {
+
+                    boolean isDir = Files.isDirectory(target);
+                    Path dest = (isDir) ? target.resolve(file.getFileName()) : target;
+
+                    if(Files.isDirectory(file))
+                    {
+                        EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+                        TreeMover tc = new TreeMover(file, dest, result);
+                        Files.walkFileTree(file, opts, Integer.MAX_VALUE, tc);
+                        tot_elem += tc.get_n_dir()+tc.get_n_file();
+                    }
+                    else
+                    {
+                        Utility.mf("target file singolo: "+target.toString());
+                        moveFile(file, dest);
+                        result.add(file);
+                        tot_elem++;
+                    }
+                } catch (IOException ex) {
+                    throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "MV recursive Exception: "+ex.getMessage(), null);
                 }
-                else
-                {
-                    Utility.mf("target file singolo: "+target.toString());
-                    moveFile(file, dest);
-                    result.add(file);
-                    tot_elem++;
-                }
-            } catch (IOException ex) {
-                throw new CommandException(1,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "MV recursive Exception: "+ex.getMessage(), null);
             }
         }
         return true;
@@ -208,8 +212,7 @@ public class MVCommand implements ICommand{
                 target_perm = Files.readAttributes(target, PosixFileAttributes.class);
                 if(!my_perm.owner().equals(target_perm.owner()))
                 {
-                    System.err.println("Il proprietario della cartella di destinazione non risulta uguale:\ncopia interrotta");
-                    System.exit(-1);
+                    throw new IOException("Permission Denied");
                 }
             } catch (IOException ex) {
                 Utility.mf(ex);

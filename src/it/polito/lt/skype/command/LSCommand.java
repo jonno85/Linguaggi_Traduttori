@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,8 +65,9 @@ public class LSCommand implements ICommand {
 	@Override
 	public boolean exec() throws CommandException {
 		
-                DirectoryStream<Path> stream = null;
-                Boolean isDir = false;
+            DirectoryStream<Path> stream = null;
+            Boolean isDir = false;
+            synchronized(this){
                 try{
                     System.out.printf("lunghezza vetto para "+params.length);
                     if(params[2]!=null){
@@ -73,16 +75,14 @@ public class LSCommand implements ICommand {
                     }else{
                         stream = eng.getStreamFromParameter(new CommandParameter(ParamType.FILE, position.toString(), SignType.MAG));
                     }
-                        
-                    
-                   
+
                     for (Path file: stream) {
                         PosixFileAttributes attr = Files.readAttributes(file, PosixFileAttributes.class);
                         isDir = attr.isDirectory();
                         
                         if(params[1]==null || (includeFolders && isDir) || (!includeFolders && !isDir))
                         {
-                        	filterAddResult(file);
+                            filterAddResult(file);
                         }
         	    }          
 		} 
@@ -90,10 +90,10 @@ public class LSCommand implements ICommand {
 		    throw new CommandException(2,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "LS recursive Exception: "+ex.getMessage(), null);
 		}
 		//sorting risultati
-            Collections.sort(string_result);
-            if(!goAsc)
-                Collections.reverse(string_result);
-
+                Collections.sort(string_result);
+                if(!goAsc)
+                    Collections.reverse(string_result);
+            }
             return true;
 	}
 	
@@ -108,11 +108,6 @@ public class LSCommand implements ICommand {
                 string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
             }
 	}
-	
-	
-	
-	
-	
 
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl) {
@@ -140,26 +135,26 @@ public class LSCommand implements ICommand {
                 
                 if(params[2]!=null)
                 {//estrazione del path
-	                paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
-	           	 	pattern = paramPath.getFileName().toString();
-	                position = paramPath.getParent();
+	            paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
+                    pattern = paramPath.getFileName().toString();
+	            position = paramPath.getParent();
 	        }              
             }
             else
-                System.err.println("Numero parametri incorretto: "+cpl.length);
+                Utility.mf(new ParserException(3, this.getClass().getName(),
+                   Thread.currentThread().getStackTrace()[2].getMethodName(), "LS Parameter Exception"));
 	}
 	
 	
 
     @Override
     public List<Path> getCommandResult() {
-            return pathResult;
+            return Collections.synchronizedList(pathResult);
     }
 
     @Override
     public void usage() {
-        System.err.println("ls <path> <flags>");
-        System.exit(-1);
+        Utility.mf("ls <path> <flags>");
     }
 
     @Override

@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserException;
 import java.io.IOException;
 
 /**
@@ -29,6 +30,10 @@ public class Utility {
         System.out.println("Warning: "+ioe.getMessage());
     }
     public static void mf(CommandException ce)
+    {
+        System.out.println("Error: "+ce.getMessage()+"\nClass: "+ce.getClass()+"\nMethod: "+ce.getStackTrace()[0].getMethodName());
+    }
+    public static void mf(ParserException ce)
     {
         System.out.println("Error: "+ce.getMessage()+"\nClass: "+ce.getClass()+"\nMethod: "+ce.getStackTrace()[0].getMethodName());
     }

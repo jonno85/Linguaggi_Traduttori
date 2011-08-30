@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -215,14 +216,14 @@ public class FINDCommand implements ICommand {
     @Override
     public List<Path> getCommandResult() {
         if(pathResult_rec!=null)
-            return pathResult_rec;
+            return Collections.unmodifiableList(pathResult_rec);
         else
-            return pathResult;
+            return Collections.unmodifiableList(pathResult);
     }
 
     @Override
     public void usage() {
-        System.err.println("find <file> <path> [<filter>] [exec cmd [<filter>]] ");
+        Utility.mf("find <file> <path> [<filter>] [exec cmd [<filter>]] ");
     }
 
     @Override
@@ -249,6 +250,10 @@ public class FINDCommand implements ICommand {
         }
         else
         	params[1]=new CommandParameter[]{new CommandParameter(null,position,null)};
+        
+        if(params[1]==null && params[0]==null)
+            Utility.mf(new ParserException(3, this.getClass().getName(),
+                   Thread.currentThread().getStackTrace()[2].getMethodName(), "Find Parameter Exception"));
     }
 
     @Override

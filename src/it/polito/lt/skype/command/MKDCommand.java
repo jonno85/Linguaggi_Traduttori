@@ -12,6 +12,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -39,18 +40,20 @@ public class MKDCommand implements ICommand {
     @Override
     public boolean exec() throws CommandException {
         Path dir = null;
-        n_par = params.length;
-        while(n_par>0)
-        {
-            n_par--;
-            try {
-                my_perm = Files.readAttributes(position,PosixFileAttributes.class);
-                FileAttribute<Set<PosixFilePermission>> attr = (FileAttribute<Set<PosixFilePermission>>) my_perm.permissions();
-                dir = Paths.get(params[n_par].getValue());
-                Files.createDirectories(dir, attr);
-                pathResult.add(dir);
-            } catch (IOException ex) {
-                throw new CommandException(5,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
+        synchronized(this){
+            n_par = params.length;
+            while(n_par>0)
+            {
+                n_par--;
+                try {
+                    my_perm = Files.readAttributes(position,PosixFileAttributes.class);
+                    FileAttribute<Set<PosixFilePermission>> attr = (FileAttribute<Set<PosixFilePermission>>) my_perm.permissions();
+                    dir = Paths.get(params[n_par].getValue());
+                    Files.createDirectories(dir, attr);
+                    pathResult.add(dir);
+                } catch (IOException ex) {
+                    throw new CommandException(5,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
+                }
             }
         }
         return true;
@@ -78,16 +81,16 @@ public class MKDCommand implements ICommand {
 
     @Override
     public List<Path> getCommandResult() {
-        return pathResult;
+        return Collections.synchronizedList(pathResult);
     }
 
     @Override
     public String getCommandStringResult() {
-        return pathResult.toString();
+        return Collections.synchronizedList(pathResult).toString();
     }
 
     @Override
     public void usage() {
-        System.err.println("mkdir <path>");
+        Utility.mf("mkdir <path>");
     }
 }
