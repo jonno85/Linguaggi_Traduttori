@@ -7,7 +7,7 @@ import java.util.Calendar;
 import it.polito.lt.skype.manager.*;
 import it.polito.lt.skype.command.*;
 
-public final String position = /home/jo/lt;
+
 
 init with {:
 	vm = new VarManager();
@@ -72,7 +72,7 @@ i_stmt		::= stmt
 stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}	
 		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); :}
 		| str_stmt EL
-		| sh_stmt:x EL		{: ((ICommand)x[0]).setCommandParamter(x[1]); ((ICommand)x[0]).exec(); System.out.println(((ICommand)x[0]).getCommandStringResult()); :}
+		| sh_stmt:x EL		{:System.out.println("raccolto sh stmt"); ((ICommand)x[0]).setCommandParamter(x[1]); ((ICommand)x[0]).exec(); System.out.println(((ICommand)x[0]).getCommandStringResult()); :}
 		| comm_find EL
 		| start_s EL
 		| throw_s EL
@@ -173,7 +173,7 @@ sh_stmt		::= commands param
 commands_oa	::= Com_Cd
 		| Com_Cd Minor
 		| Com_Ls		{: RESULT = new Object[2];
-					RESULT[0] = new LSCommand(position);
+					RESULT[0] = new LSCommand("/home/robizz/lt");
 					RESULT[1] = new CommandParameter[6];			:}
 		| Com_Ls Order
 ;
