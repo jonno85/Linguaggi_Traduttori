@@ -17,7 +17,11 @@
 	<property name="bin.dir" location="${basedir}/bin" />
 	<property name="lib.dir" location="${basedir}/lib" />
 	
+	<property name="scanner.file" location="${parser.dir}/scanner.jflex" />
 	<property name="parser.file" location="${parser.dir}/parser.cup" />
+	
+	<property name="jflexclasspath" value="~/tooljava/jflex-1.4.1/lib" />
+	<property name="cupclasspath" value="~/tooljava/cup/java_cup" />
 	
 	<property name="debug" value="true" />
 	<property name="debuglevel" value="source,lines,vars" />
@@ -62,7 +66,10 @@
 		  classpathref="cupclasspath"
 		/>
 
-	<taskdef classname="JFlex.anttask.JFlexTask" name="jflex" />
+	<taskdef name="jflex" 
+		classname="JFlex.anttask.JFlexTask" 
+		classpathref="jflexclasspath"
+	/>
 
 
 	
@@ -89,7 +96,7 @@
 		</javac>
 	</target>
 		
-	<target name="run.server" depends="build, setseed" description="lancia il server">
+	<target name="run.server" depends="build" description="lancia il server">
         <echo>Running SKYBot...</echo>
         <java classname="it.polito.lt.skype.bot.SKYBot" failonerror="true" fork="yes">
                

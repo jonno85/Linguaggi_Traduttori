@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="generated"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/skype.jar"/>
+	<classpathentry kind="lib" path="lib/swt-3.1.1-win32-win32-x86.zip"/>
+	<classpathentry kind="lib" path="lib/swt-awt-win32-3139.dll"/>
+	<classpathentry kind="lib" path="lib/swt-gdip-win32-3139.dll"/>
+	<classpathentry kind="lib" path="lib/swt-win32-3139.dll"/>
+	<classpathentry kind="lib" path="lib/swt-win32-3325.dll"/>
+	<classpathentry kind="lib" path="lib/swt.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
