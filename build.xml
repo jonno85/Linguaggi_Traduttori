@@ -28,10 +28,11 @@
 	<property name="generated.dir" location="${basedir}/generated" />
 	<property name="bin.dir" location="${basedir}/bin" />
 	<property name="lib.dir" location="${basedir}/lib" />
-	<property name="generated.package" location="${basedir}/generated/it/polito/lt/skype/generated/parser" />
+	<property name="generated.package" location="${generated.dir}/it/polito/lt/skype/generated/parser" />
 	
 	<property name="scanner.file" location="${parser.dir}/scanner.jflex" />
 	<property name="parser.file" location="${parser.dir}/parser.cup" />
+	
 	
 
 	
@@ -61,7 +62,17 @@
 	<target name="clean" description="Clean all">
 		<delete dir="${bin.dir}" />
 		<delete dir="${generated.dir}" />
-	</target>	
+	</target>
+	
+	<target name="clean-scanner" description="Clean scanner generated file (not binary)">
+			<delete file="${generated.package}/Lexer.java" />
+			<delete file ="${generated.package}/sym.java" />
+	</target>
+	
+	<target name="clean-parser" description="Clean parser generated file (not binary)">
+			<delete file="${generated.package}/parser.java" />
+		
+	</target>
 	
 	<target name="chk-parser-artifacts">
 		<uptodate property="generate-artifacts.notRequired" targetfile="${generated.dir}/.flagfile">
@@ -98,9 +109,9 @@
 		</javac>
 	</target>
 		
-	<target name="run.server" depends="build" description="lancia il server">
-        <echo>Running SKYBot...</echo>
-        <java classname="it.polito.lt.skype.bot.SKYBot" failonerror="true" fork="yes">
+	<target name="run.commandline" depends="build" description="launch parser in command line">
+        <echo>Running COMMAND LINE...</echo>
+        <java classname="it.polito.lt.skype.parser.ParseMain" failonerror="true" fork="yes">
                
                 <classpath>
                         <path refid="lib.dir.classpath" />

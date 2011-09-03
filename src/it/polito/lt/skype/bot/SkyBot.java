@@ -36,7 +36,7 @@ import com.skype.Skype;
 import com.skype.SkypeException;
 
 
-public class AutoAnswering {
+public class SkyBot {
     public static void main(String[] args) throws Exception {
     	final Profile profilo = Skype.getProfile();
     	Skype.setDeamon(false); // to prevent exiting from this program
@@ -50,43 +50,19 @@ public class AutoAnswering {
                 	System.out.println("messaggio ricevuto: "+mes);
                 	received.getSender().send("hai detto: "+mes);
                 	//received.getSender().send("Risposta Automatica: Non ci sono :P");
-                	//esecuzione comando nella shell
-                	Process p=null;
-                	String line=null;
-                	try {
-						p = Runtime.getRuntime().exec(mes);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} 
-					//ricezione output comando
-					InputStream inputS = p.getInputStream();
-			        InputStreamReader inputSRead = new InputStreamReader(inputS);
-			        BufferedReader buffRead = new BufferedReader(inputSRead);
-
-			        try {
-						p.waitFor();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			        try {//stampa risultati comando
-			        	received.getSender().send("risultati comando:\n");
-						while ((line = buffRead.readLine()) != null) {
-						    System.out.println("output console: "+line);
-						    received.getSender().send(line);
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+                	
+                	//parsing comando
+                	
+                	//stampa risultato sull chat del client con                	
+                	received.getSender().send("risultati comando:\n");
+			     
 					
 					
 					
                 	
                 }
             }
-        };
+        };//fine chatmessage adapter
         Skype.addChatMessageListener(meslis);
         //Skype.removeChatMessageListener(meslis);
         //System.out.println("bot eliminato");

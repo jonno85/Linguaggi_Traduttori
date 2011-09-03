@@ -3,6 +3,18 @@ package it.polito.lt.skype.generated.parser;
 import java_cup.runtime.*;
 import it.polito.lt.skype.generated.parser.sym;
 
+
+ 	/* NB: dato che JFlex genera la classe e i costruttori omettendo "public" 
+	* e dato che l'ant-clean deve pulire anche i generati, 
+	* ricordarsi ad ogni generazione dello scanner di aggiungere public 
+	* al nome della classe Lexer ai costruttori!
+	* NB2: risolto nel nome della classe NON RISOLTO nei costruttori!
+	* */
+
+
+
+//rende la classe lexer pubblica, aggiunto a causa di problemi di visibilità
+public
 %%
 %class Lexer
 %cup
