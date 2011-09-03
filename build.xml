@@ -10,65 +10,93 @@
 <project name="Linguaggi_Traduttori" default="default" basedir=".">
     <description>Builds, tests, and runs the project Linguaggi_Traduttori.</description>
     <import file="nbproject/build-impl.xml"/>
-    <!--
+    
+	<property name="parser.dir" location="${basedir}/parser" />
+	<property name="src.dir" location="${basedir}/src" />
+	<property name="generated.dir" location="${basedir}/generated" />
+	<property name="bin.dir" location="${basedir}/bin" />
+	<property name="lib.dir" location="${basedir}/lib" />
+	
+	<property name="parser.file" location="${parser.dir}/parser.cup" />
+	
+	<property name="debug" value="true" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.7" />
+	<property name="source" value="1.7" />
+	
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+	 
+	
+	<path id="project.classpath">
+			<pathelement location="${bin.dir}" />
+	</path>
+	<path id="lib.dir.classpath">
+		<pathelement location="${bin.dir}" />
+		<fileset dir="${lib.dir}" casesensitive="true" >
+			<include name="*.jar" />
+		</fileset>	
+	</path>		
+	
+	<target name="init">
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${generated.dir}" />
+	</target>
+	
+	<target name="clean" description="Clean all">
+		<delete dir="${bin.dir}" />
+		<delete dir="${generated.dir}" />
+	</target>	
+	
+	<target name="chk-parser-artifacts">
+		<uptodate property="generate-artifacts.notRequired" targetfile="${generated.dir}/.flagfile">
+			<srcfiles dir="${parser.dir}">
+				<include name="**/*.cup" />
+				<include name="**/*.jflex" />
+			</srcfiles>FDSControl.wsdl
+		</uptodate>
+	</target>
+	
+	
+		<taskdef name="cup"
+		  classname="java_cup.AntTask"
+		  classpathref="cupclasspath"
+		/>
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
-
-    (Targets beginning with '-' are not intended to be called on their own.)
-
-    Example of inserting an obfuscator after compilation could look like this:
-
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
-
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
+	<taskdef classname="JFlex.anttask.JFlexTask" name="jflex" />
 
 
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
+	
+	<target name="generate-parser-artifacts" unless="generate-artifacts.notRequired" depends="init, chk-parser-artifacts" description="generate-parser-artifatcs">
+		
+		<jflex
+		    file="${parser.dir}"
+		    outdir="${generated.dir}"
+		/>
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
-
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="Linguaggi_Traduttori-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
-
-    -->
+		<cup srcfile="${parser.dir}"
+			  destdir="${generated.dir}"
+			  interface="true"
+			/>
+		<touch file="${generated.dir}/.flagfile" />
+	</target>
+		
+	<target name="build" depends="init, generate-parser-artifacts" description="Build the sources">
+		<javac debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" destdir="${bin.dir}">
+			<src path="${generated.dir}" />
+			<src path="${src.dir}" />
+			<classpath refid="project.classpath" />
+			<classpath refid="lib.dir.classpath" />
+		</javac>
+	</target>
+		
+	<target name="run.server" depends="build, setseed" description="lancia il server">
+        <echo>Running SKYBot...</echo>
+        <java classname="it.polito.lt.skype.bot.SKYBot" failonerror="true" fork="yes">
+               
+                <classpath>
+                        <path refid="lib.dir.classpath" />
+                        <pathelement path="${build.dir}" />
+                </classpath>
+        </java>
+    </target>
 </project>
