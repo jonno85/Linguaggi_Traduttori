@@ -13,3 +13,8 @@
 #
 #
 #
+
+NOTE: per far funzionare il buildfile occorre:
+1) scaricare da dropbox cup.jar (patchato e jarrato da me) e jflex.jar
+2) creare un link ai due file nella cartella /usr/share/ant
+3) pregare

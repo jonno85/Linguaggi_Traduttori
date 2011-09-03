@@ -9,19 +9,31 @@
 <!-- in the project's Project Properties dialog box.-->
 <project name="Linguaggi_Traduttori" default="default" basedir=".">
     <description>Builds, tests, and runs the project Linguaggi_Traduttori.</description>
-    <import file="nbproject/build-impl.xml"/>
     
+	<import file="nbproject/build-impl.xml"/>
+    
+	<!--TASK ESTERNO-->
+	<taskdef name="jflex" 
+		classname="JFlex.anttask.JFlexTask" 	
+	/>
+	
+	<!--TASK ESTERNO-->
+		<taskdef name="cup"
+		  classname="java_cup.AntTask"
+		/>
+	
+	
 	<property name="parser.dir" location="${basedir}/parser" />
 	<property name="src.dir" location="${basedir}/src" />
 	<property name="generated.dir" location="${basedir}/generated" />
 	<property name="bin.dir" location="${basedir}/bin" />
 	<property name="lib.dir" location="${basedir}/lib" />
+	<property name="generated.package" location="${basedir}/generated/it/polito/lt/skype/generated/parser" />
 	
 	<property name="scanner.file" location="${parser.dir}/scanner.jflex" />
 	<property name="parser.file" location="${parser.dir}/parser.cup" />
 	
-	<property name="jflexclasspath" value="~/tooljava/jflex-1.4.1/lib" />
-	<property name="cupclasspath" value="~/tooljava/cup/java_cup" />
+
 	
 	<property name="debug" value="true" />
 	<property name="debuglevel" value="source,lines,vars" />
@@ -56,34 +68,24 @@
 			<srcfiles dir="${parser.dir}">
 				<include name="**/*.cup" />
 				<include name="**/*.jflex" />
-			</srcfiles>FDSControl.wsdl
+			</srcfiles>
 		</uptodate>
 	</target>
 	
-	
-		<taskdef name="cup"
-		  classname="java_cup.AntTask"
-		  classpathref="cupclasspath"
-		/>
-
-	<taskdef name="jflex" 
-		classname="JFlex.anttask.JFlexTask" 
-		classpathref="jflexclasspath"
-	/>
 
 
-	
 	<target name="generate-parser-artifacts" unless="generate-artifacts.notRequired" depends="init, chk-parser-artifacts" description="generate-parser-artifatcs">
 		
 		<jflex
-		    file="${parser.dir}"
-		    outdir="${generated.dir}"
+		    file="/${scanner.file}"
+		    destdir="${generated.dir}"
 		/>
-
-		<cup srcfile="${parser.dir}"
-			  destdir="${generated.dir}"
-			  interface="true"
-			/>
+		<!--non fa il settaggio della property package...agisco direttamente sulla dir di output-->
+		<cup 
+			file="/${parser.file}" 
+			dir="${generated.package}"
+			package="${generated.pakage}"
+		/>
 		<touch file="${generated.dir}/.flagfile" />
 	</target>
 		

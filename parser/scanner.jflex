@@ -1,4 +1,7 @@
+package it.polito.lt.skype.generated.parser;
+
 import java_cup.runtime.*;
+import it.polito.lt.skype.generated.parser.sym;
 
 %%
 %class Lexer
