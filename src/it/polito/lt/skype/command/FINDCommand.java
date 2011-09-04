@@ -45,13 +45,13 @@ public class FINDCommand implements ICommand {
          */
         
         
-        public FINDCommand(Path current)
+        public FINDCommand(String current)
         {
                 pathResult = new ArrayList<>();          
                 pathList = new ArrayList<>();
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-                position = current.toString();
+                position = current;
                 pattern = "*";
                 eng = new FileEngine();
         }
@@ -75,7 +75,7 @@ public class FINDCommand implements ICommand {
                  * necessario scambio di parametri aggiuntivi
                  */
                 
-                rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),Paths.get(position));
+                rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),position);
                 
                 CommandParameter[] dyn_param = null;
                 if(params[6]!=null){

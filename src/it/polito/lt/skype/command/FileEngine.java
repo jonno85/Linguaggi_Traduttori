@@ -19,7 +19,7 @@ import java.util.Set;
 public class FileEngine {
 	
 	
-	public static ICommand iCommandFromString(String c, Path current)
+	public static ICommand iCommandFromString(String c, String current)
 	{
 		ICommand ret= null;
 		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand(current);

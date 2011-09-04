@@ -50,15 +50,15 @@ public class CPCommand implements ICommand{
          */
         
         
-    public CPCommand(Path current)
+    public CPCommand(String current)
     {
             result = new ArrayList<>();       
            /* position_src = Paths.get(".");
             pattern_src = "";
             target = Paths.get(".");
             */
-            target=current;
-            position_src = currentPath = current;
+            target=Paths.get(current);
+            position_src = currentPath = Paths.get(current);
             pattern_src = "";
     }
     

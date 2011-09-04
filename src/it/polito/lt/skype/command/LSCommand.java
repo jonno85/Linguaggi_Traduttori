@@ -50,12 +50,12 @@ public class LSCommand implements ICommand {
          */
         
         
-        public LSCommand(Path current)
+        public LSCommand(String current)
         {
                 pathResult = new ArrayList<>();       
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-                paramPath = position = currentPath = current;
+                paramPath = position = currentPath = Paths.get(current);
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;

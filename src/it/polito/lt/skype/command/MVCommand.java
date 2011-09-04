@@ -53,10 +53,10 @@ public class MVCommand implements ICommand{
          */
         
         
-    public MVCommand(Path current)
+    public MVCommand(String current)
     {
             result = new ArrayList<>();       
-            position_src = currentPath = current;
+            position_src = currentPath = Paths.get(current);
             pattern_src = "";
     }
     

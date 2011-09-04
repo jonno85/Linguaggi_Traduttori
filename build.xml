@@ -64,7 +64,7 @@
 		<delete dir="${generated.dir}" />
 	</target>
 	
-	<target name="clean-scanner" description="Clean scanner generated file (not binary)">
+	<!--<target name="clean-scanner" description="Clean scanner generated file (not binary)">
 			<delete file="${generated.package}/Lexer.java" />
 			<delete file ="${generated.package}/sym.java" />
 	</target>
@@ -72,7 +72,7 @@
 	<target name="clean-parser" description="Clean parser generated file (not binary)">
 			<delete file="${generated.package}/parser.java" />
 		
-	</target>
+	</target> -->
 	
 	<target name="chk-parser-artifacts">
 		<uptodate property="generate-artifacts.notRequired" targetfile="${generated.dir}/.flagfile">

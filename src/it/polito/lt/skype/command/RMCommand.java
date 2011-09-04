@@ -44,10 +44,10 @@ public class RMCommand implements ICommand{
          */
         
         
-    public RMCommand(Path current)
+    public RMCommand(String current)
     {
             result = new ArrayList<>();       
-            position = current;
+            position = Paths.get(current);
             pattern = "";
     }
     

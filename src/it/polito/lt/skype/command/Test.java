@@ -13,7 +13,7 @@ public class Test {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
                 CommandParameter[][] pm = null;
-                Path current =Paths.get("/home/jo/lt");
+                String current ="/home/jo/lt";
             /* LSCommand
                 cmd = new LSCommand(current);
                 p = new CommandParameter[5];
