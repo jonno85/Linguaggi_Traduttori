@@ -111,7 +111,7 @@
 		
 	<target name="run.commandline" depends="build" description="launch parser in command line">
         <echo>Running COMMAND LINE...</echo>
-        <java classname="it.polito.lt.skype.parser.ParseMain" failonerror="true" fork="yes">
+        <java classname="it.polito.lt.skype.parser.ParserMain" failonerror="true" fork="yes">
                
                 <classpath>
                         <path refid="lib.dir.classpath" />

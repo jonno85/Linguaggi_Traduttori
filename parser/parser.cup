@@ -186,9 +186,12 @@ sh_stmt		::= commands param
 // ***************** comandi con argomenti opzionali cd, ls
 commands_oa	::= Com_Cd
 		| Com_Cd Minor
-		| Com_Ls		{: RESULT = new Object[2];
-					RESULT[0] = new LSCommand("/home/robizz/lt");
-					RESULT[1] = new CommandParameter[6];			:}
+		| Com_Ls		{: 
+						Utility.mf("LS!");
+						RESULT = new Object[2];
+						RESULT[0] = new LSCommand("/home/robizz/lt");
+						RESULT[1] = new CommandParameter[6];			
+					:}
 		| Com_Ls Order
 ;
 

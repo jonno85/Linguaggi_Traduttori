@@ -17,16 +17,24 @@ import java.io.*;
 	       * al nome della classe Lexer ai costruttori!
 	       * NB2: risolto nel nome della classe NON RISOLTO nei costruttori!
 	       * */
-	    	Utility.mf("scrivi un comando: \n");
+	    	Utility.mf("scrivi un comando: ");
 	    	
 	    	InputStreamReader reader = new InputStreamReader (System.in);
             BufferedReader myInput = new BufferedReader (reader);
            
+	    	//reader.
+            //myInput.readLine();
+            //reader.read(myInput.readLine().toCharArray());
+            Utility.mf("LETTO: "+ reader.toString());
+           
+            
 			Lexer l = new Lexer(myInput);
 			/* Istanzio il parser */
 			parser p = new parser(l);
 			/* Avvio il parser */
-			Object result = p.parse();
+			//Object result = p.parse();
+			p.debug_parse();
+			Utility.mf("finito");
 			
 	    } catch (Exception e) {
 	      e.printStackTrace();
