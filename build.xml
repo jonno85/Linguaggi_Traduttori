@@ -121,7 +121,7 @@
         </java>
     </target>
 	
-	<target name="run.filearg" depends="build" description="launch parser with file input">
+	<target name="run.filearg" depends="build" description="launch parser with file input: /input/prova.txt">
 	        <echo>Running COMMAND LINE...</echo>
 	        <java classname="it.polito.lt.skype.parser.ParserFileInputMain" failonerror="true" fork="yes">
 	               
@@ -129,7 +129,7 @@
 	                        <path refid="lib.dir.classpath" />
 	                        <pathelement path="${build.dir}" />
 	                </classpath>
-	        	 <arg value="${input.dir}}/prova.txt"/>
+	        	 <arg value="${input.dir}/prova.txt"/>
 	        </java>
 	    </target>
 	

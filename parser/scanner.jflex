@@ -85,6 +85,7 @@ com_ex = (esegui|exec)
 com_script_start = (start|inizio)
 com_script_end = (end|fine)
 com_script_throw = (launch|lancia)
+com_mkdir = (mkdir)
 com_cp = (copia|cp|copy)
 com_mv = (muovi|mv|move)
 com_cd = (vai|go|change|cd)
@@ -159,12 +160,12 @@ str= '([^\n\r']+|\\)*'
 
 {data}					{
 						Utility.mf("Data raccolta: " +yytext());
-						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+						/*SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 						Date date = sdf.parse(yytext());
 						GregorianCalendar calendar = new GregorianCalendar();
 						calendar.setTime(date);
-						Utility.mf("Date: " calendar.toString());
-						return symbol(sym.GMA,calendar);
+						Utility.mf("Date: "+calendar.toString());
+						return symbol(sym.GMA,calendar);*/
 					}
 //{month}					{return symbol(sym.Month);}
 //{giorn}					{return symbol(sym.Day);}
@@ -194,6 +195,7 @@ str= '([^\n\r']+|\\)*'
 {com_ls}				{return symbol(sym.Com_Ls);}
 {com_str}				{return symbol(sym.Com_Str);}
 {com_mv}				{return symbol(sym.Com_Mov);}
+{com_mkdir}				{return symbol(sym.Com_MKDir);}
 {com_p}					{return symbol(sym.Com_P);}
 {com_if}				{return symbol(sym.Com_If);}
 {com_if_2}				{return symbol(sym.Com_If_2);}

@@ -31,8 +31,8 @@ public class MKDCommand implements ICommand {
     private PosixFileAttributes my_perm;
 
     
-    public MKDCommand(Path current){
-        position = current;
+    public MKDCommand(String current){
+        position = Paths.get(current);
         pathResult = new ArrayList<>();
         string_result = new ArrayList<>();
     }

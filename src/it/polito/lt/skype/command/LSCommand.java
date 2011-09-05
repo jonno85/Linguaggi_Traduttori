@@ -44,9 +44,10 @@ public class LSCommand implements ICommand {
          * vettore Params: 
          *          0 = asc|desc
          *          1 = file|directory|tutto
-         *          2 = path
-         *          3 = permessi
-         *          4 = data
+         *          2 = path src | rm target | ls target
+         *      	3 = path dst cp | mv
+         *      	4 =	permessi
+         *          5 = data
          */
         
         
@@ -114,7 +115,7 @@ public class LSCommand implements ICommand {
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl) {
 
-            if (cpl.length == 5)
+            if (cpl.length == 6)
             {
                 params = cpl;
                 n_par = cpl.length;
