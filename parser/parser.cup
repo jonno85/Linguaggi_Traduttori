@@ -31,13 +31,14 @@ terminal Boolean Bool;
 
 
 non terminal S;
-non terminal stmt, sh_stmt, init_stmt, str_stmt, assig_stmt, i_stmt;
+non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
 non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find, comm_find_2, i_cc_conds, cc_conds, script;
 non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
 non terminal myVar[] for_head;
 non terminal String i_Op, i_Op_ps, commands, param, start_s, throw_s, bool_op, conf_exp, conf;
 non terminal String[] for_tail;
-non terminal Object[] commands_oa, for_stmt, if_stmt;
+non terminal Object[]  commands_oa,sh_stmt, for_stmt, if_stmt;
+non terminal Calendar date_arg;
 
 precedence left Minus, Plus, C_Or;
 precedence left Div, Times, C_And;
@@ -190,9 +191,17 @@ commands_oa	::= Com_Cd
 						Utility.mf("LS!");
 						RESULT = new Object[2];
 						RESULT[0] = new LSCommand("/home/robizz/lt");
-						RESULT[1] = new CommandParameter[6];			
+						RESULT[1] = new CommandParameter[5];			
 					:}
-		| Com_Ls Order
+		| Com_Ls Order:o		{: 
+						Utility.mf("LS Order!");
+						RESULT = new Object[2];
+						RESULT[0] = new LSCommand("/home/robizz/lt");
+						CommandParameter[] cp = new CommandParameter[5];
+						cp[0]=new CommandParameter(null,o,null);						
+						RESULT[1] = cp;
+									
+					:}
 ;
 
 // ***************** comandi standard mv, rm, cp
@@ -226,6 +235,8 @@ i_cc_conds	::= cc_conds
 
 cc_conds	::=  _where Criteria Cond:x i_arg
 		| _where Criteria C_Ug i_arg
+		|  _where Criteria Cond:x date_arg
+		| _where Criteria C_Ug date_arg
 ;
 
 
@@ -233,11 +244,12 @@ bool_op		::= C_And:x 	{: RESULT =x; :}
 		| C_Or:x 	{: RESULT =x; :}
 ;
 
-
+// ***************** argomento data
+date_arg	::= GMA:x	{: RESULT = x;			:};
 // ***************** argomento generico
 
-i_arg		::= GMA:x	{: RESULT = new myVar(myVar._string, x);			:}
-		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
+	//GMA:x	{: RESULT = new myVar(myVar._string, x);			:}
+i_arg		::= Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
 		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 		:}
 		| Str:x		{: System.out.println("str: "+x); 
 					RESULT= new myVar(myVar._string, x); 			:}

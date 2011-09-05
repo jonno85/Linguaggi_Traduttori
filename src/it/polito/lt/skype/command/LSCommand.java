@@ -54,7 +54,7 @@ public class LSCommand implements ICommand {
         {
                 pathResult = new ArrayList<>();       
                 string_result = new ArrayList<>();
-                string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
+                
                 paramPath = position = currentPath = Paths.get(current);
                 pattern = "*";
                 goAsc=true;
@@ -70,7 +70,7 @@ public class LSCommand implements ICommand {
             Boolean isDir = false;
             synchronized(this){
                 try{
-                    System.out.printf("lunghezza vetto para "+params.length);
+                    //System.out.printf("lunghezza vetto para "+params.length);
                     if(params[2]!=null){
                         stream=eng.getStreamFromParameter(params[2]);
                     }else{
@@ -92,8 +92,9 @@ public class LSCommand implements ICommand {
 		}
 		//sorting risultati
                 Collections.sort(string_result);
-                if(!goAsc)
+                if(!goAsc){
                     Collections.reverse(string_result);
+                }
             }
             return true;
 	}
@@ -102,7 +103,7 @@ public class LSCommand implements ICommand {
 	private void filterAddResult(Path path) throws IOException
 	{
             PosixFileAttributes pathAttributes = Files.readAttributes(path, PosixFileAttributes.class);
-            Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
+            //Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
             if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[3],pathAttributes.permissions()))
             {
                 pathResult.add(path);
@@ -160,7 +161,8 @@ public class LSCommand implements ICommand {
 
     @Override
     public String getCommandStringResult() {
-        return string_result.toString();
+    	string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
+    	return string_result.toString();
     }
 
     @Override

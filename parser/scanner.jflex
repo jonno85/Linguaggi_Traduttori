@@ -2,6 +2,11 @@ package it.polito.lt.skype.generated.parser;
 
 import java_cup.runtime.*;
 import it.polito.lt.skype.generated.parser.sym;
+import java.util.*;
+import java.text.*;
+import it.polito.lt.skype.manager.*;
+import it.polito.lt.skype.command.*;
+import it.polito.lt.skype.bot.*;
 
 
  	/* NB: dato che JFlex genera la classe e i costruttori omettendo "public" 
@@ -62,15 +67,15 @@ pv = ";"
 sep_dir = "/"
 //sep = {sep_dir}|{minus}|{sp}
 
-des_mont = (naio|braio|zo|ile|gio|gno|lio|sto|tembre|obre|embre|uary|ruary|ch|il|e|y|tember|ober|ember)
-des_day = ((t|col|v)?edi|erdi|ato|enica|(s|nes|rs|ur)?day)
-Month = (gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic|jan|may|jun|jul|sep|oct|dec){des_mont}?
-Day = (lun|mar|mer|gio|ven|sab|dom|sun|mon|tue|wed|thu|fri|sat){des_day}?
-g = (01|02|03|04|05|06|07|08|09)
+//des_mont = (naio|braio|zo|ile|gio|gno|lio|sto|tembre|obre|embre|uary|ruary|ch|il|e|y|tember|ober|ember)
+//des_day = ((t|col|v)?edi|erdi|ato|enica|(s|nes|rs|ur)?day)
+Month = jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec
+//Day = (lun|mar|mer|gio|ven|sab|dom|sun|mon|tue|wed|thu|fri|sat){des_day}?
+//g = (01|02|03|04|05|06|07|08|09)
 //data = ({g}|[10-31]){minus}({g}|[10-12]){minus}((199{digit})|(20{digit}{digit}))
-
-data	= {day}\/{month}\/{year}
-day	= 0[1-9]|[1-2][0-9]|3[0-1]|{Day}
+sep_data= {sep_dir}|{minus}|{sp}
+data	= {day}{sep_data}{month}{sep_data}{year}
+day	= 0[1-9]|[1-2][0-9]|3[0-1]//|{Day}
 month	= 0[1-9]|1[0-2]|{Month}
 year	= [0-9]{4}
 
@@ -152,18 +157,26 @@ str= '([^\n\r']+|\\)*'
 {com_script_throw}			{return symbol(sym.Throw_S);}
 {com_script_end}			{/*yybegin(YYINITIAL);*/ return symbol(sym.End_S); }
 
-{data}					{return symbol(sym.GMA);}
+{data}					{
+						Utility.mf("Data raccolta: " +yytext());
+						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+						Date date = sdf.parse(yytext());
+						GregorianCalendar calendar = new GregorianCalendar();
+						calendar.setTime(date);
+						Utility.mf("Date: " calendar.toString());
+						return symbol(sym.GMA,calendar);
+					}
 //{month}					{return symbol(sym.Month);}
 //{giorn}					{return symbol(sym.Day);}
 
 {where}					{return symbol(sym.Where);}
-({times}?".")?{ext}			{return symbol(sym.Ext);}
-{criteria}				{return symbol(sym.Criteria);}
-{obj}					{return symbol(sym.Obj);}
+({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
+{criteria}				{return symbol(sym.Criteria,new String(yytext()));}
+{obj}					{return symbol(sym.Obj,new String(yytext()));}
 
 {prep_supporto}				{return symbol(sym.Prep_supp);}
 
-{order}					{return symbol(sym.Order);}
+{order}					{return symbol(sym.Order,new String(yytext()));}
 {c_dis}|{c_quan}|{c_ugg}		{return symbol(sym.Cond);}
 {c_ug}					{return symbol(sym.C_Ug);}
 //{c_ugg}					{return symbol(sym.C_Ugg);}

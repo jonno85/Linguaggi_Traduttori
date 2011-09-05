@@ -10,7 +10,7 @@ public class CommandParameter {
 
 	public CommandParameter(ParamType type, String value, SignType segno){
 		this.tipo = type;
-                this.value = value;
+        this.value = value;
 		this.segno = segno;
 	}
 
