@@ -37,7 +37,7 @@ terminal Boolean Bool;
 
 non terminal S;
 non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
-non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find, comm_find_2, i_cc_conds, cc_conds, script;
+non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find, comm_find_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
 non terminal myVar[] for_head;
 non terminal String i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf;
@@ -292,7 +292,7 @@ cc_conds	::=
 ;
 
 //dimensione
-cc_date_cond ::=
+cc_dimension_cond ::=
 		  _where Dimension_Criteria Min i_arg:a 	{: 
 									Utility.mf("Dimension Criteria raccolto");
 									parser.cp[1]=new CommandParameter(ParamType.BINARIO,a.toString(),null);					
@@ -306,14 +306,16 @@ cc_date_cond ::=
 			
 //permessi
 cc_permission_cond ::=
-		| _where Permission_Criteria Min i_arg 
+		 _where Permission_Criteria Min i_arg 
 		| _where Permission_Criteria Magg i_arg
 		| _where Permission_Criteria Minug i_arg
 		| _where Permission_Criteria Maggug i_arg
 		| _where Permission_Criteria Div i_arg
 		| _where Permission_Criteria C_Ug i_arg
-			//date
-		| _where Date_Criteria Min date_arg
+;		
+//date
+cc_date_cond ::=
+		 _where Date_Criteria Min date_arg
 		| _where Date_Criteria Magg date_arg
 		| _where Date_Criteria Minug date_arg
 		| _where Date_Criteria Maggug date_arg
