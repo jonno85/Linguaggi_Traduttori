@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-ls desc dir /home
-=======
-ls desc dir /home/robizz/lt
->>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
