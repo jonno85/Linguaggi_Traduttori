@@ -101,6 +101,9 @@
 		<touch file="${generated.dir}/.flagfile" />
 		<echo>Running REWRITE Lexer.java</echo>
 		<replaceregexp file="${generated.package}/Lexer.java" match="Lexer\(java." replace="public Lexer\(java." byline="true"/>
+		<echo>...</echo>
+		<replaceregexp file="${generated.package}/Lexer.java" match="class Lexer " replace="public class Lexer "/>
+		<echo>REWRITE DONE!</echo>
 	</target>
 		
 	<target name="build" depends="init, generate-parser-artifacts" description="Build the sources">

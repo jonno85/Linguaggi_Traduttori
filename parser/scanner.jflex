@@ -13,13 +13,12 @@ import it.polito.lt.skype.bot.*;
 	* e dato che l'ant-clean deve pulire anche i generati, 
 	* ricordarsi ad ogni generazione dello scanner di aggiungere public 
 	* al nome della classe Lexer ai costruttori!
-	* NB2: risolto nel nome della classe NON RISOLTO nei costruttori!
+	* NB2: risolto con ant task da jonni
 	* */
 
 
 
-//rende la classe lexer pubblica, aggiunto a causa di problemi di visibilità
-public
+
 %%
 %class Lexer
 %cup
@@ -108,9 +107,19 @@ prep_supporto = ("più"|piu|meno|to|for) //da rivedere
 
 c_ug = (uguale|equal|like|=)
 c_ugg = (==)
-minor = <
-c_dis = (min|max|"?"|diverso|include|>|<=|>=|"!="|"<>"|{minor})
+
+c_dis = (min|max|"?"|diverso|include)
+
+min = ("<")
+magg = (">")
+minug = ("<=")
+maggug = (">=")
+diver = ("!="|"<>")
+
+
 c_quan = (all|only|just)
+
+
 
 c_or = (or|"|")
 c_and = (and|"&")
@@ -122,7 +131,11 @@ bool = (true|false)
 
 
 obj = (file|cartella|cartelle|file|directory|directories|dir)
-criteria = (((dat|or)(a|e))|((giorn|tip|modificat|permess)(o|i))|dimensione|type|modify|named|nome|((date|hour|dimension|permission|day)s?))
+
+date_criteria = (((dat|or)(a|e))|((giorn|tip|modificat)(o|i))|modify|((date|hour|day)s?))
+dimension_criteria = (dimension(o|i))|((dimension)s?)
+permission_criteria = (((permess)(o|i))|(permission)s?)
+
 
 order = (asc|desc|cres|decr)
 unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
@@ -166,19 +179,30 @@ str= '([^\n\r']+|\\)*'
 						calendar.setTime(date);
 						Utility.mf("Date: "+calendar.toString());
 						return symbol(sym.GMA,calendar);*/
+						return symbol(sym.Data, new String(yytext()));
 					}
 //{month}					{return symbol(sym.Month);}
 //{giorn}					{return symbol(sym.Day);}
 
 {where}					{return symbol(sym.Where);}
 ({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
-{criteria}				{return symbol(sym.Criteria,new String(yytext()));}
+
+{date_criteria}				{return symbol(sym.Date_Criteria);}
+{dimension_criteria}			{return symbol(sym.Dimension_Criteria);}
+{permission_criteria}			{return symbol(sym.Permission_Criteria);}
+
 {obj}					{return symbol(sym.Obj,new String(yytext()));}
 
 {prep_supporto}				{return symbol(sym.Prep_supp);}
 
 {order}					{return symbol(sym.Order,new String(yytext()));}
-{c_dis}|{c_quan}|{c_ugg}		{return symbol(sym.Cond);}
+
+{min}					{return symbol(sym.Min);}
+{magg}					{return symbol(sym.Magg);}
+{minug}					{return symbol(sym.Minug);}
+{maggug} 				{return symbol(sym.Maggug);}
+{diver} 				{return symbol(sym.Diver);}
+
 {c_ug}					{return symbol(sym.C_Ug);}
 //{c_ugg}					{return symbol(sym.C_Ugg);}
 {c_or}					{return symbol(sym.C_Or,new String("|"));}
