@@ -14,17 +14,17 @@ import it.polito.lt.skype.bot.*;
 init with {:
 	vm = new VarManager();
 	cp = new CommandParameter[7];
-	com = null;
-	com_rec = null;
 	cpm = new CommandParameter[7][];
-
+	com = null;
+	comFind = null;
 :}
 
 parser code {:
 	public VarManager vm;
 	public CommandParameter[] cp, datap, permp, dimp ;
 	public CommandParameter[][] cpm;
-	public ICommand com, com_rec;
+	public ICommand com, comFind;
+	private counter = 0;
 :};
 
 
@@ -255,20 +255,24 @@ LS_stmt		::= Com_Ls		{:
 					:}
 ;
 
-// ***************** comando Find
-comm_find	::= Com_Find param	{: 
-					Utility.mf("RM!");
-					parser.com = new FINDCommand("/home/jo/lt");
+// ***************** comando Find		DISTINGUERE tra parametro in pos 0 (estensioni) e 1 (percorsi)
+comm_find	::= Com_Find param:x	{: 
+					Utility.mf("_FIND_!");
+					parser.comFind = new FINDCommand("/home/jo/lt");
+					parser.cpm[0] = new CommandParameter[3];
+					parser.cpm[0][0] = x;
+					counter++;
 					:}
 		| Com_Find i_cc_conds
-		| comm_find param
+		| comm_find param:x	{:
+					parser.cpm[0][counter++] = x;
+					:}
 		| comm_find i_cc_conds
 		| comm_find Com_Ex comm_find_2 Pv
 ;
 
 comm_find_2	::= commands		{: 
-					Utility.mf("COMANDO RECURSIVO!");
-					parser.com_rec = new RMCommand("/home/robizz/lt");
+					Utility.mf("COMANDO RECURSIVO! rilevato: "+com.toString());
 					:}
 		| comm_find_2 Name param
 		| comm_find_2 Name
