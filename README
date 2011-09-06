@@ -24,4 +24,4 @@ B) per far funzionare il buildfile ant (la mia versione è 1.7.1) occorre:
 	3) pregare
 
 C) JFlex genera il file Lexer.java omettendo i qualificatori "public" prima del nome della classe e prima dei costruttori, comportando problemi di visibilità.
-Ogni volta quindi, occorre aggiungerli a manina nel file generato Lexer.java dove serve.
+Ogni volta quindi, nel file generato Lexer.java ant si occupa di fare le dovute sostituzioni.

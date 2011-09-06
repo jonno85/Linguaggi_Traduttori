@@ -32,8 +32,8 @@ import java.io.*;
 			/* Istanzio il parser */
 			parser p = new parser(l);
 			/* Avvio il parser */
-			//Object result = p.parse();
-			p.debug_parse();
+			Object result = p.parse();
+			//p.debug_parse();
 			Utility.mf("finito");
 			
 	    } catch (Exception e) {

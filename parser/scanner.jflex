@@ -179,7 +179,9 @@ str= '([^\n\r']+|\\)*'
 						calendar.setTime(date);
 						Utility.mf("Date: "+calendar.toString());
 						return symbol(sym.GMA,calendar);*/
-						return symbol(sym.Data, new String(yytext()));
+						String tdata = yytext().substring(0,2)+yytext().substring(3,5)+yytext().substring(6,10);
+						Utility.mf("Data trimmed: " +tdata);
+						return symbol(sym.Data, new String(tdata));
 					}
 //{month}					{return symbol(sym.Month);}
 //{giorn}					{return symbol(sym.Day);}
@@ -228,7 +230,7 @@ str= '([^\n\r']+|\\)*'
 {com_for}				{return symbol(sym.Com_For);}
 {com_for_e}				{return symbol(sym.Com_For_e);}
 {com_for_m}				{return symbol(sym.Com_For_m);}
-{minor}{minor}				{return symbol(sym.Minor);}
+{min}{min}				{return symbol(sym.Minor);}
 
 "$"{name}				{return symbol(sym.Name);}
 "$"{result}				{return symbol(sym.Result);}

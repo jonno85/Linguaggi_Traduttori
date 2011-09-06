@@ -27,7 +27,7 @@ parser code {:
 
 
 terminal String Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
-terminal String Ext, ID, File, Path, Order, Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Div, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times, Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, EL;
+terminal String Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, EL;
 terminal Integer Int;
 terminal Float Vint;
 terminal Calendar GMA;
@@ -40,10 +40,10 @@ non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
 non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find, comm_find_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
 non terminal myVar[] for_head;
-non terminal String i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf;
+non terminal String i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf,date_arg;
 non terminal String[] for_tail;
 non terminal Object[]  commands,sh_stmt, for_stmt, if_stmt,LS_stmt;
-non terminal Calendar date_arg;
+//non terminal Calendar date_arg;
 non terminal CommandParameter param;
 
 precedence left Minus, Plus, C_Or;
@@ -287,40 +287,79 @@ i_cc_conds	::= cc_conds
 ;
 		
 
-cc_conds	::=  
+cc_conds	::=  cc_permission_cond
+		| cc_date_cond
 
 ;
 
-//dimensione
+//dimensione, utilizzati solo in find
 cc_dimension_cond ::=
-		  _where Dimension_Criteria Min i_arg:a 	{: 
-									Utility.mf("Dimension Criteria raccolto");
-									parser.cp[1]=new CommandParameter(ParamType.BINARIO,a.toString(),null);					
-								:}
-		| _where Dimension_Criteria Magg i_arg
-		| _where Dimension_Criteria Minug i_arg
-		| _where Dimension_Criteria Maggug i_arg
-		| _where Dimension_Criteria Div i_arg
-		| _where Dimension_Criteria C_Ug i_arg
+		  _where Dimension_Criteria Min i_arg:a 	
+		| _where Dimension_Criteria Magg i_arg:a
+		| _where Dimension_Criteria Minug i_arg:a
+		| _where Dimension_Criteria Maggug i_arg:a
+		| _where Dimension_Criteria Diver i_arg:a
+		| _where Dimension_Criteria C_Ug i_arg:a
 ;
 			
 //permessi
 cc_permission_cond ::=
-		 _where Permission_Criteria Min i_arg 
-		| _where Permission_Criteria Magg i_arg
-		| _where Permission_Criteria Minug i_arg
-		| _where Permission_Criteria Maggug i_arg
-		| _where Permission_Criteria Div i_arg
-		| _where Permission_Criteria C_Ug i_arg
+		 _where Permission_Criteria Min i_arg:a 		{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.toString(),SignType.MIN);					
+								:}
+
+		| _where Permission_Criteria Magg i_arg:a		{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.toString(),SignType.MAG);					
+								:}
+
+		| _where Permission_Criteria Minug i_arg:a	{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.toString(),SignType.MINUG);					
+								:}
+
+		| _where Permission_Criteria Maggug i_arg:a	{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.toString(),SignType.MAGUG);					
+								:}
+
+		| _where Permission_Criteria Diver i_arg:a		{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.toString(),SignType.DIV);					
+								:}
+
+		| _where Permission_Criteria C_Ug i_arg:a		{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.toString(),SignType.UG);					
+								:}
 ;		
 //date
 cc_date_cond ::=
-		 _where Date_Criteria Min date_arg
-		| _where Date_Criteria Magg date_arg
-		| _where Date_Criteria Minug date_arg
-		| _where Date_Criteria Maggug date_arg
-		| _where Date_Criteria Div date_arg
-		| _where Criteria C_Ug date_arg
+		 _where Date_Criteria Min date_arg:a		{: 
+									Utility.mf("Date Criteria MIN raccolto");
+									parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MIN);					
+								:}
+		| _where Date_Criteria Magg date_arg:a		{: 
+									Utility.mf("Date Criteria MAG raccolto");
+									parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MAG);					
+								:}
+		| _where Date_Criteria Minug date_arg:a		{: 
+									Utility.mf("Date Criteria MINUG raccolto");
+									parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MINUG);					
+								:}
+		| _where Date_Criteria Maggug date_arg:a	{: 
+									Utility.mf("Date Criteria MAGUG raccolto");
+									parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MAGUG);					
+								:}
+		| _where Date_Criteria Diver date_arg:a		{: 
+									Utility.mf("Date Criteria DIV raccolto");
+									parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.DIV);					
+								:}
+		| _where Date_Criteria C_Ug date_arg:a			{: 
+									Utility.mf("Date Criteria UG raccolto");
+									parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.UG);					
+								:}
 ;
 
 
@@ -329,7 +368,7 @@ bool_op		::= C_And:x 	{: RESULT =x; :}
 ;
 
 // ***************** argomento data
-date_arg	::= GMA:x	{: RESULT = x;			:};
+date_arg	::= Data:x	{: RESULT = x;			:};
 // ***************** argomento generico
 
 	//GMA:x	{: RESULT = new myVar(myVar._string, x);			:}
@@ -349,7 +388,7 @@ cond_if		::= C_Orr
 		| C_Andd
 ;
 
-conf		::= arit_stmt Cond arit_stmt
+conf		::= arit_stmt cond arit_stmt
 /*		| arit_stmt cond_if arit_stmt*/
 ;
 
