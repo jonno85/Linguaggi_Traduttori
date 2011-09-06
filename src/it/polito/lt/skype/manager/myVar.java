@@ -51,7 +51,7 @@ public class myVar{
 		if(this.type==0)
 			valore = new String("notInit");
 		else
-			valore = " "+value;		
+			valore = ""+value;		
 		return valore;
 	}
 	public Object getValue(){
