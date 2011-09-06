@@ -14,7 +14,9 @@ import it.polito.lt.skype.bot.*;
 init with {:
 	vm = new VarManager();
 	cp = new CommandParameter[7];
-	com =null;
+	com = null;
+	com_rec = null;
+	cpm = new CommandParameter[7][];
 
 :}
 
@@ -22,7 +24,7 @@ parser code {:
 	public VarManager vm;
 	public CommandParameter[] cp, datap, permp, dimp ;
 	public CommandParameter[][] cpm;
-	public ICommand com;
+	public ICommand com, com_rec;
 :};
 
 
@@ -178,8 +180,8 @@ i_Op		::= bool_op:x	{: RESULT = x; :}
 
 // ***************** parametri per i comandi
 
-param		::= Path:x	{:  RESULT = new CommandParameter(ParamType.FILE,x,null); :}
-		| File:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+param		::= Path:x	{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+		| File:x	{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 		| Ext:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 ;
 
@@ -254,14 +256,20 @@ LS_stmt		::= Com_Ls		{:
 ;
 
 // ***************** comando Find
-comm_find	::= Com_Find param
+comm_find	::= Com_Find param	{: 
+					Utility.mf("RM!");
+					parser.com = new FINDCommand("/home/jo/lt");
+					:}
 		| Com_Find i_cc_conds
 		| comm_find param
 		| comm_find i_cc_conds
 		| comm_find Com_Ex comm_find_2 Pv
 ;
 
-comm_find_2	::= commands
+comm_find_2	::= commands		{: 
+					Utility.mf("COMANDO RECURSIVO!");
+					parser.com_rec = new RMCommand("/home/robizz/lt");
+					:}
 		| comm_find_2 Name param
 		| comm_find_2 Name
 ;
