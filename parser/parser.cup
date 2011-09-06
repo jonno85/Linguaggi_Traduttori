@@ -1,0 +1,384 @@
+package it.polito.lt.skype.generated.parser;
+
+import java_cup.runtime.*;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Calendar;
+import it.polito.lt.skype.manager.*;
+import it.polito.lt.skype.command.*;
+import it.polito.lt.skype.bot.*;
+
+
+init with {:
+	vm = new VarManager();
+	cp = new CommandParameter[6];
+	com =null;
+
+:}
+
+parser code {:
+public VarManager vm;
+public CommandParameter[] cp;
+public ICommand com;
+:};
+
+
+terminal String Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
+terminal String Ext, ID, File, Path, Order, Month, Day, Criteria, Obj, Where, Prep_supp, Cond, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times, Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, EL;
+terminal Integer Int;
+terminal Float Vint;
+terminal Calendar GMA;
+terminal Uminus;
+terminal Boolean Bool;
+
+
+non terminal S;
+non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
+non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find, comm_find_2, i_cc_conds, cc_conds, script;
+non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
+non terminal myVar[] for_head;
+non terminal String i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf;
+non terminal String[] for_tail;
+non terminal Object[]  commands,sh_stmt, for_stmt, if_stmt,LS_stmt;
+non terminal Calendar date_arg;
+non terminal CommandParameter param;
+
+precedence left Minus, Plus, C_Or;
+precedence left Div, Times, C_And;
+precedence left C_Not;
+
+start with S;
+
+// elemento radice
+
+S 		::= 	/* empty */
+		| i_stmt
+;
+
+// ********************* script
+
+script		::= start_s i_stmt End_S
+;
+
+// ********************* comandi di gestione script
+
+start_s		::= Start_S File
+;
+
+throw_s		::= Throw_S File
+;
+
+// ********************* insieme di statement
+
+i_stmt		::= stmt
+		| i_stmt stmt
+;
+
+// ********************* statemente generali
+
+stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}	
+		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); :}
+		| str_stmt EL
+		| sh_stmt:x EL		{:
+						System.out.println("raccolto sh stmt"); 
+						/*((ICommand)(((Object[])x)[0])).setCommandParamter(((CommandParameter)((Object[])x)[1]))); 
+						((ICommand)(((Object[])x)[0])).exec(); 
+						System.out.println(((ICommand)((Object[])x)[0])).getCommandStringResult()); */
+						Object[] o = (Object[])x;
+						
+						parser.com.setCommandParameter(parser.cp);
+						parser.com.exec();
+						Utility.mf(parser.com.getCommandStringResult());
+					:}
+		| comm_find EL
+		| start_s EL
+		| throw_s EL
+		| Com_P arit_stmt EL
+		| conf_exp EL /*********************************************/
+		| EL
+;
+
+// ********************* statement controllo di flusso
+
+str_stmt	::= if_stmt
+		| for_stmt
+		| str_stmt for_stmt
+		| str_stmt if_stmt
+;
+
+// ********************* statement di assegnazione valori
+
+assig_stmt	::= Var:x C_Ug arit_stmt:y	{: ((myVar)y).setName(x); RESULT = y; 	:}
+		| Var:x				{: RESULT = new myVar(x); 		:}
+;
+
+// ********************* statement di inizializzazione variabili
+
+init_stmt	::= Com_Str assig_stmt:x	{: parser.vm.add_var(((myVar)x)); 	:}	
+		| init_stmt assig_stmt:x	{: parser.vm.add_var(((myVar)x)); 	:}
+;
+
+// ********************* gestione operazioni algebriche - booleane - concatenazione
+
+arit_stmt	::= arit_stmt:x Times:s arit_stmt:y	
+		{:	System.out.println(s);
+			((myVar)x).printVar(); 
+			System.out.println("segno operazione: "+s); y.printVar(); 
+			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+		| arit_stmt:x Div:s arit_stmt:y	
+		{:	System.out.println(s);
+			((myVar)x).printVar(); 
+			System.out.println("segno operazione: "+s); y.printVar(); 
+			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+		| arit_stmt:x Plus:s arit_stmt:y	
+		{:	System.out.println(s);
+			((myVar)x).printVar(); 
+			System.out.println("segno operazione: "+s); y.printVar(); 
+			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+		| arit_stmt:x Minus:s arit_stmt:y	
+		{:	System.out.println(s);
+			((myVar)x).printVar(); 
+			System.out.println("segno operazione: "+s); y.printVar(); 
+			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+		| arit_stmt:x C_And:s arit_stmt:y	
+		{:	System.out.println(s);
+			((myVar)x).printVar(); 
+			System.out.println("segno operazione: "+s); y.printVar(); 
+			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+		| arit_stmt:x C_Or:s arit_stmt:y	
+		{:	System.out.println(s);
+			((myVar)x).printVar(); 
+			System.out.println("segno operazione: "+s); y.printVar(); 
+			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+		| Minus:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}%prec Minus
+		| arit_arg:x			{: RESULT = ((myVar)x); 		:}
+		| RO arit_stmt:x RC 		{: RESULT = ((myVar)x); 		:}
+		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}
+;
+
+// ***************** argomenti che subiscono un'operazione 
+// ***************** algebrica - booleana - concatenazione
+
+arit_arg	::= Var:x			{: RESULT = parser.vm.extractVar(x); 
+							System.out.println("Var: "+x); :}
+		| i_arg:x			{: RESULT = ((myVar)x); System.out.println("i_arg"); :}
+;
+ /*
+i_Op		::= bool_op:x	{: RESULT = x; :}
+		| C_Not:x	{: RESULT = x; :}
+;
+*/
+
+// ***************** parametri per i comandi
+
+param		::= Path:x	{:  RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+		| File:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+		| Ext:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+;
+
+// ***************** statement relativi ai comandi
+
+sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
+		| commands i_cc_conds
+		| sh_stmt param:p 	{: parser.cp[3]=p; :}
+		| sh_stmt i_cc_conds
+		//| commands_oa:x		{: RESULT = x; :}
+;
+
+// ***************** comandi con argomenti opzionali 
+/*commands_oa	::= Com_Cd
+		| Com_Cd Minor
+		| Com_Ls		{: 
+						Utility.mf("LS!");
+						RESULT = new Object[2];
+						RESULT[0] = new LSCommand("/home/robizz/lt");
+						RESULT[1] = new CommandParameter[5];			
+					:}
+		| Com_Ls Order:o		{: 
+						Utility.mf("LS Order!");
+						RESULT = new Object[2];
+						RESULT[0] = new LSCommand("/home/robizz/lt");
+						CommandParameter[] cp = new CommandParameter[5];
+						cp[0]=new CommandParameter(null,o,null);						
+						RESULT[1] = cp;
+									
+					:}
+;*/
+
+// ***************** comandi standard mv, rm, cp e aggiunti cd, ls
+commands	::= Com_Cd
+		| Com_Cd Minor
+		| Com_MKDir		{: 
+						Utility.mf("MKDIR!");
+						
+						parser.com = new MKDCommand("/home/robizz/lt");
+									
+					:}
+
+		
+
+		|Com_Mov		{: 
+						Utility.mf("MV!");
+						parser.com = new MVCommand("/home/robizz/lt");		
+					:}
+
+		| Com_Rm		{: 
+						Utility.mf("RM!");
+						
+						parser.com = new RMCommand("/home/robizz/lt");
+							
+					:}
+
+		| Com_Cp		{: 
+						Utility.mf("CP!");
+						
+						parser.com = new CPCommand("/home/robizz/lt");
+								
+					:}
+		| LS_stmt
+;
+
+LS_stmt		::= Com_Ls		{: 
+						Utility.mf("LS!");
+						
+						parser.com = new LSCommand("/home/robizz/lt");
+									
+					:}
+
+		| LS_stmt Order:o	{: 
+						Utility.mf("LS Order!");
+						parser.cp[0]=new CommandParameter(null,o,null);					
+									
+					:}
+		
+		| LS_stmt Obj:o	{: 
+						Utility.mf("LS obj!");
+						parser.cp[1]=new CommandParameter(null,o,null);					
+									
+					:}
+;
+
+// ***************** comando Find
+comm_find	::= Com_Find param
+		| Com_Find i_cc_conds
+		| comm_find param
+		| comm_find i_cc_conds
+		| comm_find Com_Ex comm_find_2 Pv
+;
+
+comm_find_2	::= commands
+		| comm_find_2 Name param
+		| comm_find_2 Name
+;
+// ***************** condizioni per i comandi
+_where		::= 
+		| Where
+;
+
+i_cc_conds	::= cc_conds
+		| i_cc_conds bool_op cc_conds
+;
+		
+
+cc_conds	::=  _where Criteria Cond:x i_arg
+		| _where Criteria C_Ug i_arg
+		|  _where Criteria Cond:x date_arg
+		| _where Criteria C_Ug date_arg
+;
+
+
+bool_op		::= C_And:x 	{: RESULT =x; :}
+		| C_Or:x 	{: RESULT =x; :}
+;
+
+// ***************** argomento data
+date_arg	::= GMA:x	{: RESULT = x;			:};
+// ***************** argomento generico
+
+	//GMA:x	{: RESULT = new myVar(myVar._string, x);			:}
+i_arg		::= Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
+		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 		:}
+		| Str:x		{: System.out.println("str: "+x); 
+					RESULT= new myVar(myVar._string, x); 			:}
+		| IUnit:x	{: RESULT= new myVar(myVar._string, x); 			:}//verificare la dimensione
+		| FUnit:x	{: RESULT= new myVar(myVar._string, x); 			:}
+		| Bool:x	{: RESULT= new myVar(myVar._bool, new Boolean(x)); 		:}
+;
+
+
+// ***************** espressione booleana
+
+cond_if		::= C_Orr
+		| C_Andd
+;
+
+conf		::= arit_stmt Cond arit_stmt
+/*		| arit_stmt cond_if arit_stmt*/
+;
+
+conf_exp	::= conf
+		| C_Not conf
+/*		| conf cond_if conf*/
+		| conf_exp cond_if conf
+		| conf_exp cond_if arit_stmt
+;
+
+/*
+not_exp		::= C_Not Var 
+		| C_Not i_arg
+;
+*/
+
+// **************** IF statement
+
+if_head		::= Com_If conf_exp Com_If_2 EL i_stmt
+;
+
+if_stmt		::= if_head Com_If_m EL i_stmt Com_If_e
+		| if_head Com_If_e
+;
+
+// **************** FOREACH statement
+
+for_arg		::= Var:x	{: RESULT = new myVar(x); 				:}
+		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 	:}
+		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 	:}
+		| ID:x		{: RESULT= new myVar(myVar._string, x); :}
+;
+
+for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
+		{: System.out.println("for_head variabili \n"+x.toString()+"\n"+y.toString()+"\n"+z.toString());
+		// passiamo un vettore contenente le tre variabili sulle quali controllare il ciclo for
+			RESULT= new myVar[3];
+			RESULT[0]= x;
+			RESULT[1]= y;
+			RESULT[2]= z;							:}	
+;
+
+i_Op_ps		::= Plus:x	{: RESULT = x; 						:}
+		| Minus:x	{: RESULT = x; 						:}
+;
+
+for_tail 	::= Com_For_e i_Op_ps:x for_arg:y 
+		{: 	//passiamo un vettore di 2 elementi stringe contenenti l'operatore e il fattore
+			System.out.println("dentro for tail");
+			RESULT= new String[2];
+			RESULT[0]= (String)x.toString();
+			RESULT[1]= ((myVar)y).getName();
+			System.out.println(" valore: "+y.toString());
+			System.out.println("operatore: "+x.toString()); 		:}
+;
+
+for_stmt	::= for_head:x i_stmt for_tail:y
+		{:	System.out.println("for cycle");
+			RESULT= new Object[5];
+			RESULT[0] = (myVar)x[0];
+			RESULT[1] = (myVar)x[1];
+			RESULT[2] = (myVar)x[2];			
+			RESULT[3] = parser.vm.extractVar(y[1].toString());  
+			RESULT[4] = (String)y[0];					:}
+;
+
+
