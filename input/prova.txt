@@ -1,1 +1,1 @@
-ls desc dir /home
+ls desc dir /home/robizz/lt

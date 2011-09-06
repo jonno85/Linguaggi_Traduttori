@@ -13,17 +13,17 @@ public class Test {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
                 CommandParameter[][] pm = null;
-                String current ="/home/jo/lt";
-            /* LSCommand
+                String current ="/";
+             
                 cmd = new LSCommand(current);
-                p = new CommandParameter[5];
+                p = new CommandParameter[6];
                 p[0] = new CommandParameter(ParamType.FILE, "desc", SignType.MAG);
-                p[1] = null;
-                p[2] = null;
+                p[1] = new CommandParameter(ParamType.FILE, "file", SignType.MAG);
+                p[2] = new CommandParameter(ParamType.FILE, "/home/robizz/lt", SignType.MAG);
                 p[3] = null;
                 p[4] = null;
              
-          
+          /*
              cmd = new RMCommand(current);
              p = new CommandParameter[1];
              p[0] = new CommandParameter(ParamType.FILE,"/home/robizz/prf/.git/",null);
@@ -72,10 +72,10 @@ public class Test {
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
         */
                 
-                cmd = new CPCommand(current);
+                /*cmd = new CPCommand(current);
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
-                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);
+                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);*/
                 try {
                     cmd.setCommandParameter(p);
                 } catch (ParserException ex) {

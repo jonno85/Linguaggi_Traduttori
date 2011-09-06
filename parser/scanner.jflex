@@ -210,10 +210,10 @@ str= '([^\n\r']+|\\)*'
 "$"{result}				{return symbol(sym.Result);}
 "$"{id}					{return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
-({sep_dir}?{key})+{sep_dir}?		{return symbol(sym.Path);}
+({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
 
-{id}"."{ext}|{times}"."{times}|{id}"."{times}	{return symbol(sym.File);}
+{id}"."{ext}|{times}"."{times}|{id}"."{times}	{return symbol(sym.File,new String(yytext()));}
 {int}" "?{unit}				{return symbol(sym.IUnit);}
 {float}" "?{unit}			{return symbol(sym.FUnit);}
 {int}					{return symbol(sym.Int, new Integer(yytext()));}

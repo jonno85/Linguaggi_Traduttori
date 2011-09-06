@@ -114,7 +114,7 @@ public class LSCommand implements ICommand {
 
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl) {
-
+			
             if (cpl.length == 6)
             {
                 params = cpl;
@@ -130,7 +130,7 @@ public class LSCommand implements ICommand {
                 
                 if(params[1] != null)
                 {//file o folders
-                    if(params[0].getValue().compareToIgnoreCase("d")==0)
+                    if(params[1].getValue().compareToIgnoreCase("dir")==0)
                         includeFolders = true;
                     else
                         includeFolders = false;
@@ -138,9 +138,13 @@ public class LSCommand implements ICommand {
                 
                 if(params[2] != null)
                 {//estrazione del path
-	            paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
-                    pattern = paramPath.getFileName().toString();
-	            position = paramPath.getParent();
+                	paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
+                    if(paramPath.getFileName()!=null)
+                    	pattern = paramPath.getFileName().toString();
+                    if(paramPath.getParent()!=null)
+                    	position = paramPath.getParent();
+                    else position=Paths.get("/");
+                    Utility.mf("ESTRATTI: "+pattern+" "+position.toString());
 	        }              
             }
             else
