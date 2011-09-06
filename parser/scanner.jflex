@@ -13,13 +13,21 @@ import it.polito.lt.skype.bot.*;
 	* e dato che l'ant-clean deve pulire anche i generati, 
 	* ricordarsi ad ogni generazione dello scanner di aggiungere public 
 	* al nome della classe Lexer ai costruttori!
+<<<<<<< HEAD
 	* NB2: risolto nel nome della classe NON RISOLTO nei costruttori!
+=======
+	* NB2: risolto con ant task da jonni
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 	* */
 
 
 
+<<<<<<< HEAD
 //rende la classe lexer pubblica, aggiunto a causa di problemi di visibilità
 public
+=======
+
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 %%
 %class Lexer
 %cup
@@ -108,10 +116,27 @@ prep_supporto = ("più"|piu|meno|to|for) //da rivedere
 
 c_ug = (uguale|equal|like|=)
 c_ugg = (==)
+<<<<<<< HEAD
 minor = <
 c_dis = (min|max|"?"|diverso|include|>|<=|>=|"!="|"<>"|{minor})
 c_quan = (all|only|just)
 
+=======
+
+c_dis = (min|max|"?"|diverso|include)
+
+min = ("<")
+magg = (">")
+minug = ("<=")
+maggug = (">=")
+diver = ("!="|"<>")
+
+
+c_quan = (all|only|just)
+
+
+
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 c_or = (or|"|")
 c_and = (and|"&")
 c_not = ("!")
@@ -122,7 +147,15 @@ bool = (true|false)
 
 
 obj = (file|cartella|cartelle|file|directory|directories|dir)
+<<<<<<< HEAD
 criteria = (((dat|or)(a|e))|((giorn|tip|modificat|permess)(o|i))|dimensione|type|modify|named|nome|((date|hour|dimension|permission|day)s?))
+=======
+
+date_criteria = (((dat|or)(a|e))|((giorn|tip|modificat)(o|i))|modify|((date|hour|day)s?))
+dimension_criteria = (dimension(o|i))|((dimension)s?)
+permission_criteria = (((permess)(o|i))|(permission)s?)
+
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 
 order = (asc|desc|cres|decr)
 unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
@@ -166,19 +199,41 @@ str= '([^\n\r']+|\\)*'
 						calendar.setTime(date);
 						Utility.mf("Date: "+calendar.toString());
 						return symbol(sym.GMA,calendar);*/
+<<<<<<< HEAD
+=======
+						return symbol(sym.Data, new String(yytext()));
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 					}
 //{month}					{return symbol(sym.Month);}
 //{giorn}					{return symbol(sym.Day);}
 
 {where}					{return symbol(sym.Where);}
 ({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
+<<<<<<< HEAD
 {criteria}				{return symbol(sym.Criteria,new String(yytext()));}
+=======
+
+{date_criteria}				{return symbol(sym.Date_Criteria);}
+{dimension_criteria}			{return symbol(sym.Dimension_Criteria);}
+{permission_criteria}			{return symbol(sym.Permission_Criteria);}
+
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 {obj}					{return symbol(sym.Obj,new String(yytext()));}
 
 {prep_supporto}				{return symbol(sym.Prep_supp);}
 
 {order}					{return symbol(sym.Order,new String(yytext()));}
+<<<<<<< HEAD
 {c_dis}|{c_quan}|{c_ugg}		{return symbol(sym.Cond);}
+=======
+
+{min}					{return symbol(sym.Min);}
+{magg}					{return symbol(sym.Magg);}
+{minug}					{return symbol(sym.Minug);}
+{maggug} 				{return symbol(sym.Maggug);}
+{diver} 				{return symbol(sym.Diver);}
+
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 {c_ug}					{return symbol(sym.C_Ug);}
 //{c_ugg}					{return symbol(sym.C_Ugg);}
 {c_or}					{return symbol(sym.C_Or,new String("|"));}
@@ -210,10 +265,17 @@ str= '([^\n\r']+|\\)*'
 "$"{result}				{return symbol(sym.Result);}
 "$"{id}					{return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
+<<<<<<< HEAD
 ({sep_dir}?{key})+{sep_dir}?		{return symbol(sym.Path);}
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
 
 {id}"."{ext}|{times}"."{times}|{id}"."{times}	{return symbol(sym.File);}
+=======
+({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
+{nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
+
+{id}"."{ext}|{times}"."{times}|{id}"."{times}	{return symbol(sym.File,new String(yytext()));}
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 {int}" "?{unit}				{return symbol(sym.IUnit);}
 {float}" "?{unit}			{return symbol(sym.FUnit);}
 {int}					{return symbol(sym.Int, new Integer(yytext()));}

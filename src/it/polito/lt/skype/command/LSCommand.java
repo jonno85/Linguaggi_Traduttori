@@ -46,8 +46,13 @@ public class LSCommand implements ICommand {
          *          1 = file|directory|tutto
          *          2 = path src | rm target | ls target
          *      	3 = path dst cp | mv
+<<<<<<< HEAD
          *      	4 =	permessi
          *          5 = data
+=======
+         *      	4 =	data ls
+         *          5 = permessi ls
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
          */
         
         
@@ -60,7 +65,11 @@ public class LSCommand implements ICommand {
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;
+<<<<<<< HEAD
                 params = new CommandParameter[5];
+=======
+                params = new CommandParameter[6];
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
                 
         }
         
@@ -105,7 +114,11 @@ public class LSCommand implements ICommand {
 	{
             PosixFileAttributes pathAttributes = Files.readAttributes(path, PosixFileAttributes.class);
             //Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
+<<<<<<< HEAD
             if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[3],pathAttributes.permissions()))
+=======
+            if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[5],pathAttributes.permissions()))
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
             {
                 pathResult.add(path);
                 string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
@@ -114,7 +127,11 @@ public class LSCommand implements ICommand {
 
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl) {
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
             if (cpl.length == 6)
             {
                 params = cpl;
@@ -130,7 +147,11 @@ public class LSCommand implements ICommand {
                 
                 if(params[1] != null)
                 {//file o folders
+<<<<<<< HEAD
                     if(params[0].getValue().compareToIgnoreCase("d")==0)
+=======
+                    if(params[1].getValue().compareToIgnoreCase("dir")==0)
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
                         includeFolders = true;
                     else
                         includeFolders = false;
@@ -138,9 +159,19 @@ public class LSCommand implements ICommand {
                 
                 if(params[2] != null)
                 {//estrazione del path
+<<<<<<< HEAD
 	            paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
                     pattern = paramPath.getFileName().toString();
 	            position = paramPath.getParent();
+=======
+                	paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
+                    if(paramPath.getFileName()!=null)
+                    	pattern = paramPath.getFileName().toString();
+                    if(paramPath.getParent()!=null)
+                    	position = paramPath.getParent();
+                    else position=Paths.get("/");
+                    Utility.mf("ESTRATTI: "+pattern+" "+position.toString());
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 	        }              
             }
             else

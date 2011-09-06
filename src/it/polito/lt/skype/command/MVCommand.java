@@ -19,6 +19,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
+<<<<<<< HEAD
+=======
+import java.util.Collection;
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;

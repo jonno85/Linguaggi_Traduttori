@@ -101,6 +101,12 @@
 		<touch file="${generated.dir}/.flagfile" />
 		<echo>Running REWRITE Lexer.java</echo>
 		<replaceregexp file="${generated.package}/Lexer.java" match="Lexer\(java." replace="public Lexer\(java." byline="true"/>
+<<<<<<< HEAD
+=======
+		<echo>...</echo>
+		<replaceregexp file="${generated.package}/Lexer.java" match="class Lexer " replace="public class Lexer "/>
+		<echo>REWRITE DONE!</echo>
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 	</target>
 		
 	<target name="build" depends="init, generate-parser-artifacts" description="Build the sources">
@@ -124,7 +130,11 @@
     </target>
 	
 	<target name="run.filearg" depends="build" description="launch parser with file input: /input/prova.txt">
+<<<<<<< HEAD
 	        <echo>Running COMMAND LINE...</echo>
+=======
+	        <echo>Running FILE ARGUMENT PROVA.TXT...</echo>
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 	        <java classname="it.polito.lt.skype.parser.ParserFileInputMain" failonerror="true" fork="yes">
 	               
 	                <classpath>
@@ -135,4 +145,18 @@
 	        </java>
 	    </target>
 	
+<<<<<<< HEAD
+=======
+	<target name="run.CommandTest" depends="build" description="launch command object">
+		        <echo>Running TEST OBJECT...</echo>
+		        <java classname="it.polito.lt.skype.command.Test" failonerror="true" fork="yes">
+		               
+		                <classpath>
+		                        <path refid="lib.dir.classpath" />
+		                        <pathelement path="${build.dir}" />
+		                </classpath>
+		        </java>
+		    </target>
+	
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 </project>

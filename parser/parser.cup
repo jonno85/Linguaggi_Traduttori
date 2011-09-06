@@ -19,14 +19,25 @@ init with {:
 :}
 
 parser code {:
+<<<<<<< HEAD
 public VarManager vm;
 public CommandParameter[] cp;
 public ICommand com;
+=======
+	public VarManager vm;
+	public CommandParameter[] cp, datap, permp, dimp ;
+	public CommandParameter[][] cpm;
+	public ICommand com;
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 :};
 
 
 terminal String Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
+<<<<<<< HEAD
 terminal String Ext, ID, File, Path, Order, Month, Day, Criteria, Obj, Where, Prep_supp, Cond, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times, Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, EL;
+=======
+terminal String Ext, ID, File, Path, Order, Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Div, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times, Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, EL;
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 terminal Integer Int;
 terminal Float Vint;
 terminal Calendar GMA;
@@ -85,9 +96,19 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 						System.out.println("raccolto sh stmt"); 
 						/*((ICommand)(((Object[])x)[0])).setCommandParamter(((CommandParameter)((Object[])x)[1]))); 
 						((ICommand)(((Object[])x)[0])).exec(); 
+<<<<<<< HEAD
 						System.out.println(((ICommand)((Object[])x)[0])).getCommandStringResult()); */
 						Object[] o = (Object[])x;
 						
+=======
+						System.out.println(((ICommand)((Object[])x)[0])).getCommandStringResult());
+						Object[] o = (Object[])x; */
+						for(int i=0; i<6; i++)
+							if(parser.cp[i]==null)
+								Utility.mf("niente\n");
+							else
+								Utility.mf("param["+i+"]: "+parser.cp[i].getValue()+"\n");
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 						parser.com.setCommandParameter(parser.cp);
 						parser.com.exec();
 						Utility.mf(parser.com.getCommandStringResult());
@@ -249,6 +270,7 @@ LS_stmt		::= Com_Ls		{:
 
 		| LS_stmt Order:o	{: 
 						Utility.mf("LS Order!");
+<<<<<<< HEAD
 						parser.cp[0]=new CommandParameter(null,o,null);					
 									
 					:}
@@ -256,6 +278,15 @@ LS_stmt		::= Com_Ls		{:
 		| LS_stmt Obj:o	{: 
 						Utility.mf("LS obj!");
 						parser.cp[1]=new CommandParameter(null,o,null);					
+=======
+						parser.cp[0]=new CommandParameter(ParamType.BINARIO,o,null);					
+									
+					:}
+		
+		| LS_stmt Obj:o		{: 
+						Utility.mf("LS obj!");
+						parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);					
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 									
 					:}
 ;
@@ -282,9 +313,43 @@ i_cc_conds	::= cc_conds
 ;
 		
 
+<<<<<<< HEAD
 cc_conds	::=  _where Criteria Cond:x i_arg
 		| _where Criteria C_Ug i_arg
 		|  _where Criteria Cond:x date_arg
+=======
+cc_conds	::=  
+
+;
+
+//dimensione
+cc_date_cond ::=
+		  _where Dimension_Criteria Min i_arg:a 	{: 
+									Utility.mf("Dimension Criteria raccolto");
+									parser.cp[1]=new CommandParameter(ParamType.BINARIO,a.toString(),null);					
+								:}
+		| _where Dimension_Criteria Magg i_arg
+		| _where Dimension_Criteria Minug i_arg
+		| _where Dimension_Criteria Maggug i_arg
+		| _where Dimension_Criteria Div i_arg
+		| _where Dimension_Criteria C_Ug i_arg
+;
+			
+//permessi
+cc_permission_cond ::=
+		| _where Permission_Criteria Min i_arg 
+		| _where Permission_Criteria Magg i_arg
+		| _where Permission_Criteria Minug i_arg
+		| _where Permission_Criteria Maggug i_arg
+		| _where Permission_Criteria Div i_arg
+		| _where Permission_Criteria C_Ug i_arg
+			//date
+		| _where Date_Criteria Min date_arg
+		| _where Date_Criteria Magg date_arg
+		| _where Date_Criteria Minug date_arg
+		| _where Date_Criteria Maggug date_arg
+		| _where Date_Criteria Div date_arg
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
 		| _where Criteria C_Ug date_arg
 ;
 

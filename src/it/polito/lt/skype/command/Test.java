@@ -13,6 +13,7 @@ public class Test {
                 ICommand cmd = null;
                 CommandParameter[] p = null;
                 CommandParameter[][] pm = null;
+<<<<<<< HEAD
                 String current ="/home/jo/lt";
             /* LSCommand
                 cmd = new LSCommand(current);
@@ -24,6 +25,19 @@ public class Test {
                 p[4] = null;
              
           
+=======
+                String current ="/";
+             
+                cmd = new LSCommand(current);
+                p = new CommandParameter[6];
+                p[0] = new CommandParameter(ParamType.FILE, "desc", SignType.MAG);
+                p[1] = new CommandParameter(ParamType.FILE, "file", SignType.MAG);
+                p[2] = new CommandParameter(ParamType.FILE, "/home/robizz/lt", SignType.MAG);
+                p[3] = null;
+                p[4] = null;
+             
+          /*
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
              cmd = new RMCommand(current);
              p = new CommandParameter[1];
              p[0] = new CommandParameter(ParamType.FILE,"/home/robizz/prf/.git/",null);
@@ -72,10 +86,17 @@ public class Test {
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
         */
                 
+<<<<<<< HEAD
                 cmd = new CPCommand(current);
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);
+=======
+                /*cmd = new CPCommand(current);
+                p = new CommandParameter[2];
+                p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
+                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);*/
+>>>>>>> ad0bc44052ea97271805660ad7af5b5744519661
                 try {
                     cmd.setCommandParameter(p);
                 } catch (ParserException ex) {
