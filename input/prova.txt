@@ -1,1 +1,1 @@
-ls desc file /home/robizz/lt WHERE data < 06-09-2011
+ls /home/robizz/lt WHERE data < 07 09 2011

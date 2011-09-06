@@ -12,6 +12,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -80,8 +81,8 @@ public class FileEngine {
 		GregorianCalendar paramDateGC;
 		FileTime paramLastModTime=FileTime.fromMillis(0);
 		try {
-			paramDateGC = convertDateString(param.getValue());
-			paramLastModTime=FileTime.fromMillis(paramDateGC.getTimeInMillis());
+			//paramDateGC = 
+			paramLastModTime=FileTime.fromMillis(convertDateString(param.getValue()));//FileTime.fromMillis(paramDateGC.getTimeInMillis());
 			Utility.mf("PARAM DATA: "+paramLastModTime.toString());
 			Utility.mf("ELEME DATA: "+pft.toString());
 		} catch (ParseException e) {
@@ -171,12 +172,11 @@ public class FileEngine {
 		
 	}//fine match
 	
-	public GregorianCalendar convertDateString(String dateString) throws ParseException {
+	public long convertDateString(String dateString) throws ParseException {
+		//Utility.mf("ds result: "+ dateString);
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-		java.util.Date date = sdf.parse(dateString);
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		return calendar;
+		java.util.Date date = sdf.parse(dateString);		
+		return date.getTime();
 		}
 	
 	/**
