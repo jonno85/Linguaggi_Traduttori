@@ -1,3 +1,6 @@
 /nbproject/private/
 /build/
 /dist/
+/${build.dir}/
+/${build.classes.dir}/
+/bin/
