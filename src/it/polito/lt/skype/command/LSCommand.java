@@ -46,8 +46,8 @@ public class LSCommand implements ICommand {
          *          1 = file|directory|tutto
          *          2 = path src | rm target | ls target
          *      	3 = path dst cp | mv
-         *      	4 =	permessi
-         *          5 = data
+         *      	4 =	data ls
+         *          5 = permessi ls
          */
         
         
@@ -60,7 +60,7 @@ public class LSCommand implements ICommand {
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;
-                params = new CommandParameter[5];
+                params = new CommandParameter[6];
                 
         }
         
@@ -105,7 +105,7 @@ public class LSCommand implements ICommand {
 	{
             PosixFileAttributes pathAttributes = Files.readAttributes(path, PosixFileAttributes.class);
             //Utility.mf("FILE: "+path.toString()+" DATA ULTIMA MODIFICA: "+pathAttributes.lastModifiedTime().toString());
-            if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[3],pathAttributes.permissions()))
+            if(eng.matchLastModDate(params[4],pathAttributes.lastModifiedTime()) && eng.matchPermissions(params[5],pathAttributes.permissions()))
             {
                 pathResult.add(path);
                 string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
