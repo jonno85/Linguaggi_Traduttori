@@ -99,6 +99,8 @@
 			package="${generated.pakage}"
 		/>
 		<touch file="${generated.dir}/.flagfile" />
+		<echo>Running REWRITE Lexer.java</echo>
+		<replaceregexp file="${generated.package}/Lexer.java" match="Lexer\(java." replace="public Lexer\(java." byline="true"/>
 	</target>
 		
 	<target name="build" depends="init, generate-parser-artifacts" description="Build the sources">
