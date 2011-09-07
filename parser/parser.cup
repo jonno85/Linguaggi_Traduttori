@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Calendar;
+import java.util.ArrayList;
 import it.polito.lt.skype.manager.*;
 import it.polito.lt.skype.command.*;
 import it.polito.lt.skype.parser.*;
@@ -18,26 +19,35 @@ init with {:
 	cpm = new CommandParameter[7][];
 	com = null;
 	comFind = null;
+
+	array_path = new ArrayList<CommandParameter>();
+	array_file = new ArrayList<CommandParameter>();
+
+	array_perm = new ArrayList<CommandParameter>();
+	array_data = new ArrayList<CommandParameter>();
+	array_dim = new ArrayList<CommandParameter>();
+
 :}
 
 parser code {:
+
 	public VarManager vm;
 	public CommandParameter[] cp, datap, permp, dimp ;
 	public CommandParameter[][] cpm;
 	public ICommand com, comFind;
 	public int counter_file = 0;
 	public int counter_path = 0;
+
+	public ArrayList<CommandParameter> array_path, array_file, array_dim, array_perm, array_data;
 	private String enviroment = "/home";
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
 		Utility.mf(x.getValue()+" tipo "+x.getParamType());
-		if(counter_path == 6 || counter_file == 6)
-			throw new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(),"Max 5 param");
 		if(x.getParamType()==ParamType.PATH)
-			cpm[1][counter_path++] = x;
+			array_path.add(x);
 		else
-			cpm[0][counter_file++] = x;
+			array_file.add(x);
 	}
 
 	public void setEnviroment(String path)
@@ -110,11 +120,12 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); :}
 		| str_stmt EL
 		| sh_stmt:x EL		{:
-					System.out.println("raccolto sh stmt"); 
-					/*((ICommand)(((Object[])x)[0])).setCommandParamter(((CommandParameter)((Object[])x)[1]))); 
-					((ICommand)(((Object[])x)[0])).exec(); 
-					System.out.println(((ICommand)((Object[])x)[0])).getCommandStringResult());
-					Object[] o = (Object[])x; */
+					System.out.println("raccolto sh stmt: parameter setting"); 
+					/*parser.cp[0] = parser.array_file.get(0);
+					parser.cp[1] = parser.array_path.get(0);
+					parser.cp[2] = parser.array_perm.get(0);
+					parser.cp[3] = parser.array_data.get(0);
+					parser.cp[4] = parser.array_dim.get(0);*/
 					for(int i=0; i<7; i++)
 						if(parser.cp[i]==null)
 							Utility.mf("niente\n");
@@ -126,24 +137,44 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					:}
 		| comm_find_stmt EL	{:
 					System.out.println("raccolto sh stmt = FIND");
-//					parser.cpm[6] = new CommandParameter[6];
+					parser.cpm[0] = new CommandParameter[parser.array_file.size()];
+					parser.cpm[1] = new CommandParameter[parser.array_path.size()];
+					parser.cpm[2] = new CommandParameter[parser.array_perm.size()];
+					parser.cpm[3] = new CommandParameter[parser.array_data.size()];
+					parser.cpm[4] = new CommandParameter[parser.array_dim.size()];
+
+					System.out.println("rdopo onit");
+					parser.cpm[0] = parser.array_file.toArray(parser.cpm[0]);
+					parser.cpm[1] = parser.array_path.toArray(parser.cpm[1]);
+					parser.cpm[2] = parser.array_perm.toArray(parser.cpm[2]);
+					parser.cpm[3] = parser.array_data.toArray(parser.cpm[3]);
+					parser.cpm[4] = parser.array_dim.toArray(parser.cpm[4]);
+
+					System.out.println("dopo init 2'");
 					parser.cpm[6] = parser.cp;
+/*
 					for(int i=0; i<7; i++){
 						if(parser.cpm[i]==null)
-							continue;						
+							continue;
 						int len = parser.cpm[i].length;
 						for(int j=0;j<len;j++){
 							if(parser.cpm[i][j]==null)
 								Utility.mf("param["+i+"]["+j+"]: niente");
 							else
 								Utility.mf("param["+i+"]["+j+"]: "+parser.cpm[i][j].getValue());
-						
 						}
-					}
-					Utility.mf("SETCOMMANDPARAMETER");					
+					}*/
+					Utility.mf("SETCOMMANDPARAMETER");
 					parser.comFind.setCommandParameter(parser.cpm);
-					Utility.mf("EXEC");					
+					Utility.mf("EXEC");
 					parser.comFind.exec();
+					parser.array_file.clear();
+					parser.array_path.clear();
+					parser.array_perm.clear();
+					parser.array_data.clear();
+					parser.array_dim.clear();
+					
+					Utility.mf(parser.comFind.getCommandStringResult());
 					:}
 		| start_s EL
 		| throw_s EL
@@ -291,12 +322,12 @@ LS_stmt		::= Com_Ls		{:
 
 		| LS_stmt Order:o	{: 
 					Utility.mf("LS Order!");
-					parser.cp[0]=new CommandParameter(ParamType.BINARIO,o,null);					
+					parser.cp[0]=new CommandParameter(ParamType.BINARIO,o,null);
 					:}
 		
 		| LS_stmt Obj:o		{: 
 					Utility.mf("LS obj!");
-					parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);					
+					parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);
 					:}
 ;
 
@@ -304,10 +335,13 @@ LS_stmt		::= Com_Ls		{:
 comm_find_stmt	::= Com_Find param:x	{: 
 					Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand(parser.getEnviroment());
-					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array					
-					parser.counter_path = 0;
-					parser.cpm[0] = new CommandParameter[5];
-					parser.cpm[1] = new CommandParameter[5];
+
+
+
+/*
+					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
+					parser.counter_path = 0;*/
+
 					parser.add_param(x);
 					:}
 		| Com_Find i_cc_conds
@@ -339,9 +373,16 @@ i_cc_conds	::= cc_conds
 ;
 		
 
-cc_conds	::=  cc_permission_cond
-		| cc_date_cond
-		| cc_dimension_cond
+cc_conds	::=  cc_permission_cond:x
+					{:
+					parser.array_perm.add(parser.cp[5]);
+					:}
+		| cc_date_cond:x	{:
+					parser.array_data.add(parser.cp[4]);
+					:}
+		| cc_dimension_cond:x	{:
+					parser.array_dim.add(parser.cp[6]);
+					:}
 
 ;
 
