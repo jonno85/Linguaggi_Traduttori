@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Calendar;
 import it.polito.lt.skype.manager.*;
 import it.polito.lt.skype.command.*;
+import it.polito.lt.skype.parser.*;
 import it.polito.lt.skype.bot.*;
 
 
@@ -24,7 +25,31 @@ parser code {:
 	public CommandParameter[] cp, datap, permp, dimp ;
 	public CommandParameter[][] cpm;
 	public ICommand com, comFind;
-	private int counter = 0;
+	public int counter_file = 0;
+	public int counter_path = 0;
+	private String enviroment = "/home";
+
+	public void add_param(CommandParameter x) throws ParserException
+	{
+		Utility.mf(x.getValue()+" tipo "+x.getParamType());
+		if(counter_path == 6 || counter_file == 6)
+			throw new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(),"Max 5 param");
+		if(x.getParamType()==ParamType.PATH)
+			cpm[1][counter_path++] = x;
+		else
+			cpm[0][counter_file++] = x;
+	}
+
+	public void setEnviroment(String path)
+	{
+		enviroment = path;
+	}
+
+	public String getEnviroment()
+	{
+		return enviroment;
+	}
+
 :};
 
 
@@ -85,21 +110,36 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); :}
 		| str_stmt EL
 		| sh_stmt:x EL		{:
-						System.out.println("raccolto sh stmt"); 
-						/*((ICommand)(((Object[])x)[0])).setCommandParamter(((CommandParameter)((Object[])x)[1]))); 
-						((ICommand)(((Object[])x)[0])).exec(); 
-						System.out.println(((ICommand)((Object[])x)[0])).getCommandStringResult());
-						Object[] o = (Object[])x; */
-						for(int i=0; i<7; i++)
-							if(parser.cp[i]==null)
-								Utility.mf("niente\n");
-							else
-								Utility.mf("param["+i+"]: "+parser.cp[i].getValue()+"\n");
-						parser.com.setCommandParameter(parser.cp);
-						parser.com.exec();
-						Utility.mf(parser.com.getCommandStringResult());
+					System.out.println("raccolto sh stmt"); 
+					/*((ICommand)(((Object[])x)[0])).setCommandParamter(((CommandParameter)((Object[])x)[1]))); 
+					((ICommand)(((Object[])x)[0])).exec(); 
+					System.out.println(((ICommand)((Object[])x)[0])).getCommandStringResult());
+					Object[] o = (Object[])x; */
+					for(int i=0; i<7; i++)
+						if(parser.cp[i]==null)
+							Utility.mf("niente\n");
+						else
+							Utility.mf("param["+i+"]: "+parser.cp[i].getValue()+"\n");
+					parser.com.setCommandParameter(parser.cp);
+					parser.com.exec();
+					Utility.mf(parser.com.getCommandStringResult());
 					:}
-		| comm_find_stmt EL
+		| comm_find_stmt EL	{:
+					System.out.println("raccolto sh stmt = FIND");
+//					parser.cpm[6] = new CommandParameter[6];
+					parser.cpm[6] = parser.cp;
+					for(int i=0; i<7; i++){
+						int len = parser.cpm[i].length;
+						for(int j=0;j<len;j++){
+							if(parser.cpm[i][j]==null)
+								Utility.mf("parametro "+i+" niente\n");
+							else
+								Utility.mf("param["+i+"]["+j+"]: "+parser.cpm[i][j].getValue()+"\n");
+						}
+					}
+					parser.comFind.setCommandParameter(parser.cpm);
+					parser.comFind.exec();
+					:}
 		| start_s EL
 		| throw_s EL
 		| Com_P arit_stmt EL
@@ -180,7 +220,7 @@ i_Op		::= bool_op:x	{: RESULT = x; :}
 
 // ***************** parametri per i comandi
 
-param		::= Path:x	{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 		| File:x	{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 		| Ext:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 ;
@@ -200,13 +240,13 @@ sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
 		| Com_Ls		{: 
 						Utility.mf("LS!");
 						RESULT = new Object[2];
-						RESULT[0] = new LSCommand("/home/robizz/lt");
+						RESULT[0] = new LSCommand(parser.getEnviroment());
 						RESULT[1] = new CommandParameter[5];			
 					:}
 		| Com_Ls Order:o		{: 
 						Utility.mf("LS Order!");
 						RESULT = new Object[2];
-						RESULT[0] = new LSCommand("/home/robizz/lt");
+						RESULT[0] = new LSCommand(parser.getEnviroment());
 						CommandParameter[] cp = new CommandParameter[5];
 						cp[0]=new CommandParameter(null,o,null);						
 						RESULT[1] = cp;
@@ -219,29 +259,29 @@ commands	::= Com_Cd
 		| Com_Cd Minor
 		| Com_MKDir		{: 
 					Utility.mf("MKDIR!");
-					parser.com = new MKDCommand("/home/robizz/lt");
+					parser.com = new MKDCommand(parser.getEnviroment());
 					:}
 
 		|Com_Mov		{: 
 					Utility.mf("MV!");
-					parser.com = new MVCommand("/home/robizz/lt");		
+					parser.com = new MVCommand(parser.getEnviroment());
 					:}
 
 		| Com_Rm		{: 
 					Utility.mf("RM!");
-					parser.com = new RMCommand("/home/robizz/lt");
+					parser.com = new RMCommand(parser.getEnviroment());
 					:}
 
 		| Com_Cp		{: 
 					Utility.mf("CP!");
-					parser.com = new CPCommand("/home/robizz/lt");
+					parser.com = new CPCommand(parser.getEnviroment());
 					:}
 		| LS_stmt
 ;
 
 LS_stmt		::= Com_Ls		{: 
 					Utility.mf("LS!");
-					parser.com = new LSCommand("/home/robizz/lt");
+					parser.com = new LSCommand(parser.getEnviroment());
 					:}
 
 		| LS_stmt Order:o	{: 
@@ -258,24 +298,28 @@ LS_stmt		::= Com_Ls		{:
 // ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
 comm_find_stmt	::= Com_Find param:x	{: 
 					Utility.mf("_FIND_!");
-					parser.comFind = new FINDCommand("/home/jo/lt");
-					parser.counter=0; //posso usare una arraylist e poi convertire in array					
+					parser.comFind = new FINDCommand(parser.getEnviroment());
+					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array					
+					parser.counter_path = 0;
 					parser.cpm[0] = new CommandParameter[5];
-					parser.cpm[0][0] = x;
-					parser.counter++;
+					parser.cpm[1] = new CommandParameter[5];
+					parser.add_param(x);
 					:}
 		| Com_Find i_cc_conds
 		
 		| comm_find_stmt param:x
 					{:
-					parser.cpm[0][parser.counter++] = x;
+					Utility.mf("passo dentro comm_find_stmt");
+					parser.add_param(x);
 					:}
 		| comm_find_stmt i_cc_conds
 		| comm_find_stmt Com_Ex comm_find_stmt_2 Pv
 ;
 
-comm_find_stmt_2	::= commands	{:
-					Utility.mf("COMANDO RECURSIVO! rilevato: "+com.toString());
+comm_find_stmt_2
+		::= commands		{:
+					Utility.mf("COMANDO RECURSIVO! rilevato: "+parser.com.toString());
+					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,parser.com.toString(),null)};
 					:}
 		| comm_find_stmt_2 Name param
 		| comm_find_stmt_2 Name

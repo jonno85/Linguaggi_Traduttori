@@ -6,6 +6,7 @@ public enum ParamType {
 	DATA,
 	PERMESSI,
 	FILE,
+        PATH,
 	DIMENSIONE,
         BINARIO;
 }

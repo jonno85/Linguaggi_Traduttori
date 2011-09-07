@@ -242,14 +242,14 @@ public class FINDCommand implements ICommand {
     	
         params=cpl;
     	if(params[0]!=null) {//occhio che se i vettori [1] e [2] sono nulli non fa 
-        	Utility.mf("params[0] NON vuoto");
+        	Utility.mf("params[0] NON vuoto \n"+params[0].toString());
         	n_file=params[0].length;
         }
         else
         	params[0]=new CommandParameter[]{new CommandParameter(null,pattern,null)};
         
         if(params[1]!=null){ 
-        	Utility.mf("params[1] NON vuoto");
+        	Utility.mf("params[1] NON vuoto\n"+params[1].toString());
         	n_dir=params[1].length;	
         }
         else

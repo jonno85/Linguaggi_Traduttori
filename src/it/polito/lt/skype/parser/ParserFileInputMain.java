@@ -28,13 +28,13 @@ import java.io.*;
             Utility.mf("LETTO: "+ reader.toString());
            
             
-			Lexer l = new Lexer(new FileReader(argv[0]));
-			/* Istanzio il parser */
-			parser p = new parser(l);
-			/* Avvio il parser */
-			//Object result = p.parse();
-			p.debug_parse();
-			Utility.mf("finito");
+                Lexer l = new Lexer(new FileReader(argv[0]));
+                /* Istanzio il parser */
+                parser p = new parser(l);
+                /* Avvio il parser */
+                //Object result = p.parse();
+                p.debug_parse();
+                Utility.mf("finito");
 			
 	    } catch (Exception e) {
 	      e.printStackTrace();
