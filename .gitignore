@@ -4,3 +4,4 @@
 /${build.dir}/
 /${build.classes.dir}/
 /bin/
+/generated/

@@ -30,7 +30,7 @@
 	<property name="lib.dir" location="${basedir}/lib" />
 	<property name="input.dir" location="${basedir}/input" />
 	<property name="generated.package" location="${generated.dir}/it/polito/lt/skype/generated/parser" />
-	
+	<property name="input.file" location="prova.txt" />
 	<property name="scanner.file" location="${parser.dir}/scanner.jflex" />
 	<property name="parser.file" location="${parser.dir}/parser.cup" />
 	
@@ -134,9 +134,10 @@
 	                        <path refid="lib.dir.classpath" />
 	                        <pathelement path="${build.dir}" />
 	                </classpath>
-	        	 <arg value="${input.dir}/prova.txt"/>
+	        	 <arg value="${input.dir}/${input.file}"/>
 	        </java>
 	    </target>
+
 	
 	<target name="run.CommandTest" depends="build" description="launch command object">
 		        <echo>Running TEST OBJECT...</echo>
