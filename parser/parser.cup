@@ -129,15 +129,20 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 //					parser.cpm[6] = new CommandParameter[6];
 					parser.cpm[6] = parser.cp;
 					for(int i=0; i<7; i++){
+						if(parser.cpm[i]==null)
+							continue;						
 						int len = parser.cpm[i].length;
 						for(int j=0;j<len;j++){
 							if(parser.cpm[i][j]==null)
-								Utility.mf("parametro "+i+" niente\n");
+								Utility.mf("param["+i+"]["+j+"]: niente");
 							else
-								Utility.mf("param["+i+"]["+j+"]: "+parser.cpm[i][j].getValue()+"\n");
+								Utility.mf("param["+i+"]["+j+"]: "+parser.cpm[i][j].getValue());
+						
 						}
 					}
+					Utility.mf("SETCOMMANDPARAMETER");					
 					parser.comFind.setCommandParameter(parser.cpm);
+					Utility.mf("EXEC");					
 					parser.comFind.exec();
 					:}
 		| start_s EL

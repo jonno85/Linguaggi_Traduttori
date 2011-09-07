@@ -120,7 +120,7 @@ public class FINDCommand implements ICommand {
 	@Override
 	public boolean exec() throws CommandException {
             try{
-
+            	//il problema è il vett di pattern e path deve essere sempre pieno e mai con posizioni a null
 
                 /*
                  *usando il walk tree occorre prima vedere se le directory passate sono contenute luna nell'altra ed eventualmente scartarle
@@ -242,14 +242,14 @@ public class FINDCommand implements ICommand {
     	
         params=cpl;
     	if(params[0]!=null) {//occhio che se i vettori [1] e [2] sono nulli non fa 
-        	Utility.mf("params[0] NON vuoto \n"+params[0].toString());
+        	Utility.mf("params[0] NON vuoto \n"+params[0][0].getValue());
         	n_file=params[0].length;
         }
         else
         	params[0]=new CommandParameter[]{new CommandParameter(null,pattern,null)};
         
         if(params[1]!=null){ 
-        	Utility.mf("params[1] NON vuoto\n"+params[1].toString());
+        	Utility.mf("params[1] NON vuoto\n"+params[1][0].getValue());
         	n_dir=params[1].length;	
         }
         else

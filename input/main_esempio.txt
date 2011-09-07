@@ -1,0 +1,99 @@
+/*FIND nn è prevista lo spostamento di variabili*/
+trova *.html esegui muovi $name /home ;
+find *.c /home esegui mv $name *.cpp ;
+seek ?word.c 
+trova S??nz.* /root permessi=131 esegui delete $name ;
+cerca  *.htm home/doc 
+seek  *.htm /home/root data < 12/12/2010 and dimensione < 1mb
+trova /home where dimension > 2 mb and dimension < 5mb
+
+/*LS*/
+mostra cartelle dove nome != *er*
+mostra file permessi = 777
+mostra cartelle permessi = 644
+mostra asc *.htm
+mostra
+mostra /tmp
+show file /home permessi < 777 & data > 25-02-2010 
+show file where data < 20 feb 2010
+
+/*RM*/
+elimina pippo.c
+delete *.conf
+cancel /opt/eclipse/*.conf
+rm /home/user/logs/
+
+/*CD*/
+vai /home
+cd 
+vai <<
+
+/*MV*/
+muovi casa.pdf edificio.pdf		/*rename*/
+mv /home/1.pdf /home/2.pdf		/*rename*/
+mv /home/user/ /home/utente/		/*rename*/
+mv *.pdf /tmp
+mv /tmp/ /home/user
+mv /home/*.conf /opt
+
+ /*CP*/
+cp *.* /home/user
+cp /tmp/*.conf /home/user
+cp /home/ciccio.txt /home 
+
+/**/
+create $a=2, $c, $d=3.2
+create $w=false
+create $mio = 'stringa'
+$a=3
+
+inizio scr1.ss
+
+create $a=2,$c=true,$d=5,$B,$w=true
+create $mio = 'cartella', $g
+if $a = 0 then $B=false endif
+if $c=true then $c=false else $a=0 endif
+
+if $d<4 then 
+        if $c=true then
+            $q=false
+        endif
+else
+        if $w=true then
+            stampa 'verificato'+$mio
+        endif
+    $g=0
+endif
+
+foreach $a 0 10 do
+    if $w>=10 then
+        stampa $a+'print'
+    endif
+next +1
+
+if $w=true then
+    foreach $a 10 $p do
+        foreach $c 5 2 do
+            stampa 'ciclo nidificato, elemento' + $a + '-' + $c
+        next +2
+    next -1
+endif
+
+foreach $a 0 $result do
+    mv $name[$a] $i + '.pdf'
+next +1
+
+create $p='pippo.pdf'
+find *.pdf /home
+foreach $a 0 $result do
+    if $name[$a] = $p then
+     mv $name[$i] 'trovato' + $i + '.pdf'
+else
+    mv $name[$a] $i + '.pdf'
+    print 'elemento n:' + $i ' \n'
+endif
+next +1
+
+fine scr1.ss
+lancia scr1.ss
+
