@@ -39,7 +39,7 @@ terminal Boolean Bool;
 
 non terminal S;
 non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
-non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find, comm_find_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
+non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
 non terminal myVar[] for_head;
 non terminal String i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf,date_arg;
@@ -99,7 +99,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 						parser.com.exec();
 						Utility.mf(parser.com.getCommandStringResult());
 					:}
-		| comm_find EL
+		| comm_find_stmt EL
 		| start_s EL
 		| throw_s EL
 		| Com_P arit_stmt EL
@@ -255,27 +255,29 @@ LS_stmt		::= Com_Ls		{:
 					:}
 ;
 
-// ***************** comando Find		DISTINGUERE tra parametro in pos 0 (estensioni) e 1 (percorsi)
-comm_find	::= Com_Find param:x	{: 
+// ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
+comm_find_stmt	::= Com_Find param:x	{: 
 					Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand("/home/jo/lt");
-					parser.cpm[0] = new CommandParameter[3];
+					counter=0; //posso usare una arraylist e poi convertire in array					
+					parser.cpm[0] = new CommandParameter[5];
 					parser.cpm[0][0] = x;
 					counter++;
 					:}
 		| Com_Find i_cc_conds
-		| comm_find param:x	{:
+		
+		| comm_find_stmt param:x	{:
 					parser.cpm[0][counter++] = x;
 					:}
-		| comm_find i_cc_conds
-		| comm_find Com_Ex comm_find_2 Pv
+		| comm_find_stmt i_cc_conds
+		| comm_find_stmt Com_Ex comm_find_stmt_2 Pv
 ;
 
-comm_find_2	::= commands		{: 
+comm_find_stmt_2	::= commands		{: 
 					Utility.mf("COMANDO RECURSIVO! rilevato: "+com.toString());
 					:}
-		| comm_find_2 Name param
-		| comm_find_2 Name
+		| comm_find_stmt_2 Name param
+		| comm_find_stmt_2 Name
 ;
 // ***************** condizioni per i comandi
 _where		::= 

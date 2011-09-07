@@ -16,7 +16,7 @@
 
 NOTE: 
 A) Cup è stato patchato e ricompilato con la patch trovata sul sito http://jflex.de/cup_patch.html e compresso in un jar (punto di accesso la classe AntTask)
-per consentire l'esecuzione di un ant task "cup". Purtroppo il settaggio della property "package" non funziona...
+per consentire l'esecuzione di un ant task "cup". Purtroppo il settaggio della property "package" non funziona.
 
 B) per far funzionare il buildfile ant (la mia versione è 1.7.1) occorre:
 	1) scaricare da dropbox cup.jar (patchato e jarrato da me) e jflex.jar
