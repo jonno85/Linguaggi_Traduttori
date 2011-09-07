@@ -24,7 +24,7 @@ parser code {:
 	public CommandParameter[] cp, datap, permp, dimp ;
 	public CommandParameter[][] cpm;
 	public ICommand com, comFind;
-	private counter = 0;
+	private int counter = 0;
 :};
 
 
@@ -259,21 +259,22 @@ LS_stmt		::= Com_Ls		{:
 comm_find_stmt	::= Com_Find param:x	{: 
 					Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand("/home/jo/lt");
-					counter=0; //posso usare una arraylist e poi convertire in array					
+					parser.counter=0; //posso usare una arraylist e poi convertire in array					
 					parser.cpm[0] = new CommandParameter[5];
 					parser.cpm[0][0] = x;
-					counter++;
+					parser.counter++;
 					:}
 		| Com_Find i_cc_conds
 		
-		| comm_find_stmt param:x	{:
-					parser.cpm[0][counter++] = x;
+		| comm_find_stmt param:x
+					{:
+					parser.cpm[0][parser.counter++] = x;
 					:}
 		| comm_find_stmt i_cc_conds
 		| comm_find_stmt Com_Ex comm_find_stmt_2 Pv
 ;
 
-comm_find_stmt_2	::= commands		{: 
+comm_find_stmt_2	::= commands	{:
 					Utility.mf("COMANDO RECURSIVO! rilevato: "+com.toString());
 					:}
 		| comm_find_stmt_2 Name param

@@ -148,10 +148,15 @@ int = {digit}+
 name = NAME
 result = RESULT
 
-id=[^0-9+.,;:"-"" "'|\\\"%?&/()#\[\]\{\}"\t""\n""\r""\r\n"=\<\>][^+.,;:" "'|\\\"%&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>?]*
+id=[^0-9+.,;:"-"" "'|\\\"%?&/()#\[\]\{\}"\t""\n""\r""\r\n"=\<\>\*][^+.,;:" "'|\\\"%?&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>?\*]*
 str= '([^\n\r']+|\\)*'
 //[0-9a-zA-Z+.,;:" "?|\\\"%&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>*]+
 
+sp_char = {times}|"?"
+
+//{id}"."{ext}|{times}"."{times}|{id}"."{times}
+
+file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 
 %%
 /*
@@ -239,7 +244,6 @@ str= '([^\n\r']+|\\)*'
 ({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
 
-{id}"."{ext}|{times}"."{times}|{id}"."{times}	{return symbol(sym.File,new String(yytext()));}
 {int}" "?{unit}				{return symbol(sym.IUnit);}
 {float}" "?{unit}			{return symbol(sym.FUnit);}
 {int}					{return symbol(sym.Int, new Integer(yytext()));}
@@ -259,8 +263,9 @@ str= '([^\n\r']+|\\)*'
 ","					{;}
 {str}					{String s = new String(yytext());
 					return symbol(sym.Str,s.substring(1, s.length()-1));}
-{id}					{return symbol(sym.ID,new String(yytext()));}
+//{id}					{return symbol(sym.ID,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}
+{file}					{return symbol(sym.File,new String(yytext()));}
 
 
 }
