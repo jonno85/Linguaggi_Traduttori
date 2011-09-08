@@ -1,8 +1,16 @@
+trova *.htm *.zip /home/jo/lt where dimensione <= 40 exec move $name /home/jo/b ;
+
+
+ls /home/jo/lt where dimensione < 4096 permessi = 124
+
+
+
 /*FIND nn è prevista lo spostamento di variabili*/
 cerca  *.htm home/robizz
+cerca *.htm /home/jo/lt where permesso = 124 and dimensione >= 32 and dimensione < 64000
 
 
-seek  *.htm /home/root where data < 12/12/2010 and dimensione < 1024
+seek  *.htm /home/jo where data < 12/12/2010 and dimensione < 1024
 /*
 trova *.html esegui muovi $name /home ;
 find *.c /home esegui mv $name *.cpp ;

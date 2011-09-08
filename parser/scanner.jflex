@@ -133,7 +133,7 @@ bool = (true|false)
 obj = (file|cartella|cartelle|file|directory|directories|dir)
 
 date_criteria = (((dat|or)(a|e))|((giorn|tip|modificat)(o|i))|modify|((date|hour|day)s?))
-dimension_criteria = (dimension(e|i))|((dimension)s?)
+dimension_criteria = (dimension(e|i|s)?)
 permission_criteria = (((permess)(o|i))|(permission)s?)
 
 
