@@ -1,5 +1,5 @@
 /*FIND nn è prevista lo spostamento di variabili*/
-trova *.html esegui muovi $name /home ;
+trova *.html esegui muovi $name /home ;  
 find *.c /home esegui mv $name *.cpp ;
 seek ?word.c 
 trova S??nz.* /root permessi=131 esegui delete $name ;
@@ -8,7 +8,7 @@ seek  *.htm /home/root data < 12/12/2010 and dimensione < 1mb
 trova /home where dimension > 2 mb and dimension < 5mb
 
 /*LS*/
-mostra cartelle dove nome != *er*
+mostra cartelle dove nome != *er*   <--?
 mostra file permessi = 777
 mostra cartelle permessi = 644
 mostra asc *.htm

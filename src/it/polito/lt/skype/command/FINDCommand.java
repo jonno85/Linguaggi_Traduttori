@@ -171,6 +171,7 @@ public class FINDCommand implements ICommand {
                 Utility.mf(ex);
             }
             return true;
+            
 	}
 	
 	

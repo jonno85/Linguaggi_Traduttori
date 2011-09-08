@@ -1,5 +1,5 @@
 /*FIND nn è prevista lo spostamento di variabili*/
-cerca  *.htm home/jo
+cerca  *.htm home/robizz
 
 
 seek  *.htm /home/root where data < 12/12/2010 and dimensione < 1024
