@@ -76,15 +76,23 @@ public class FINDCommand implements ICommand {
                  */
                 
                 rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),position);
+                Utility.mf("inside recursive_cmd");
                 
                 CommandParameter[] dyn_param = null;
+                
+                n_params=params[6].length;
+                Utility.mf("numero parametri ricevuti: "+n_params);
+                for(int k=0;k<n_params;k++)
+                    Utility.mf("parametri ricevuti: "+params[6][k].getValue());
+                /*
                 if(params[6]!=null){
+                    Utility.mf("tenemos parametros");
                     n_params=params[6].length;
                 
-                    /*  meglio una funzione proprietaria di classe per risistemare i parametri alla funzione ricorsiva
-                     *  caso ls 
+                    //  meglio una funzione proprietaria di classe per risistemare i parametri alla funzione ricorsiva
+                    //  caso ls 
                      
-                     */
+                    
                     
                     System.out.println("Numero parametri passati alla funzione interna: "+n_params);
                     dyn_param = new CommandParameter[n_params+1];
@@ -100,8 +108,8 @@ public class FINDCommand implements ICommand {
                     dyn_param = new CommandParameter[]{new CommandParameter(ParamType.NULL, ".", SignType.MAG)};
                     
                 }
-                
-                rec_cmd.setCommandParameter(dyn_param); 
+                */
+                rec_cmd.setCommandParameter((CommandParameter[])params[6]); 
                 try {
                     Utility.mf("ESECUZIONE RM SU: "+pathResult.toString());
                     rec_cmd.exec_from_prev_result(pathResult);
@@ -166,6 +174,7 @@ public class FINDCommand implements ICommand {
             //sorting risultati
             Collections.sort(string_result);
             try {
+                
                 recursive_cmd();
             } catch (ParserException ex) {
                 Utility.mf(ex);

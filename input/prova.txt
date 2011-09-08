@@ -1,4 +1,7 @@
-ls /home/jo/lt where dimensione < 4096
+trova *.htm *.zip /home/jo/lt where dimensione <= 40 exec move $name /home/jo/b ;
+
+
+ls /home/jo/lt where dimensione < 4096 permessi = 124
 
 
 

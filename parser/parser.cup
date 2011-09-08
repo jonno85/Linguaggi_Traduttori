@@ -110,7 +110,12 @@ throw_s		::= Throw_S File
 
 // ********************* insieme di statement
 
-i_stmt		::= stmt
+i_stmt		::= stmt		{://RE-Init
+					parser.cp = new CommandParameter[7];
+					parser.cpm = new CommandParameter[7][];
+					parser.com = null;
+					parser.comFind = null;
+					:}
 		| i_stmt stmt
 ;
 
@@ -134,6 +139,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					parser.com.setCommandParameter(parser.cp);
 					parser.com.exec();
 					Utility.mf(parser.com.getCommandStringResult());
+					
 					:}
 		| comm_find_stmt EL	{:
 					System.out.println("raccolto sh stmt = FIND");
@@ -151,7 +157,10 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					parser.cpm[4] = parser.array_dim.toArray(parser.cpm[4]);
 
 					System.out.println("dopo init 2'");
-					parser.cpm[6] = parser.cp;
+					
+					parser.cpm[6] = (CommandParameter[])parser.cp;
+					for(int i=0;i<7;i++)
+						Utility.mf("param[6]["+i+"]: "+parser.cpm[6][i].getValue());
 /*
 					for(int i=0; i<7; i++){
 						if(parser.cpm[i]==null)
@@ -335,9 +344,6 @@ LS_stmt		::= Com_Ls		{:
 comm_find_stmt	::= Com_Find param:x	{: 
 					Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand(parser.getEnviroment());
-
-
-
 /*
 					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
 					parser.counter_path = 0;*/
@@ -360,7 +366,8 @@ comm_find_stmt_2
 					Utility.mf("COMANDO RECURSIVO! rilevato: "+parser.com.toString());
 					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,parser.com.toString(),null)};
 					:}
-		| comm_find_stmt_2 Name param
+		| comm_find_stmt_2 Name param:p  
+					{: parser.cp[3]=p; :}	//il parametro 2(path src) è già passato dal comando find, in questa condizione è logico solo il param dst
 		| comm_find_stmt_2 Name
 ;
 // ***************** condizioni per i comandi

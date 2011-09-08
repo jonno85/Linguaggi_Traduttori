@@ -51,7 +51,17 @@ public class MVCommand implements ICommand{
          *          0 = file|directory|tutto src
          *          1 = file|directory|tutto dst
          */
-        
+   
+    /*
+         * vettore Params:                                          used:
+         *          0 = asc|desc
+         *          1 = file|directory|tutto                       
+         *          2 = path src | rm target | ls target            *
+         *          3 = path dst cp | mv                            *
+         *          4 =	data ls
+         *          5 = permessi ls
+         *          6 = dimensione
+         */
         
     public MVCommand(String current)
     {
@@ -81,9 +91,9 @@ public class MVCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        if(params[1]!=null)
-            target = Paths.get(params[1].getValue()).normalize();
-        paramPath_src = Paths.get(params[0].getValue()).normalize();
+        if(params[3]!=null)
+            target = Paths.get(params[3].getValue()).normalize();
+        paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();
         
@@ -94,7 +104,7 @@ public class MVCommand implements ICommand{
         FileEngine fe = new FileEngine();
         synchronized(this){
             try {
-                stream = fe.getStreamFromParameter(params[0]);
+                stream = fe.getStreamFromParameter(params[2]);
             } catch (IOException ex) {
                 Utility.mf(ex);
             }  
@@ -163,7 +173,7 @@ public class MVCommand implements ICommand{
 
     @Override
     public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
-        target = Paths.get(params[1].getValue()).normalize();                          
+        target = Paths.get(params[3].getValue()).normalize();                          
         for (Path file: stream) {
             synchronized(file){
                 PosixFileAttributes p_attr;
