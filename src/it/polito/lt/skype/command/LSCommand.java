@@ -197,4 +197,6 @@ public class LSCommand implements ICommand {
             Collections.reverse(string_result);
         return true;
     }
+
+   
 }

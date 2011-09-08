@@ -135,7 +135,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 						if(parser.cp[i]==null)
 							Utility.mf("niente\n");
 						else
-							Utility.mf("param["+i+"]: "+parser.cp[i].getValue()+"\n");
+							Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
 					parser.com.exec();
 					Utility.mf(parser.com.getCommandStringResult());
@@ -156,11 +156,23 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					parser.cpm[3] = parser.array_data.toArray(parser.cpm[3]);
 					parser.cpm[4] = parser.array_dim.toArray(parser.cpm[4]);
 
+					//parser.cpm[6]=new CommandParameter[7];
+
 					System.out.println("dopo init 2'");
-					
-					parser.cpm[6] = (CommandParameter[])parser.cp;
-					for(int i=0;i<7;i++)
-						Utility.mf("param[6]["+i+"]: "+parser.cpm[6][i].getValue());
+					for(int i=0; i<7; i++)
+						if(parser.cp[i]==null)
+							Utility.mf("cp niente:"+i);
+						else
+							Utility.mf("cp param["+i+"]: "+parser.cp[i].getValue());
+
+					parser.cpm[6] = parser.cp;
+
+					for(int i=0;i<7;i++){
+						if(parser.cp[i]==null)
+							Utility.mf("cpm niente:"+i);
+						else
+							Utility.mf("cpm param[6]["+i+"]: "+parser.cpm[6][i].getValue());
+					}
 /*
 					for(int i=0; i<7; i++){
 						if(parser.cpm[i]==null)
@@ -383,6 +395,7 @@ i_cc_conds	::= cc_conds
 cc_conds	::=  cc_permission_cond:x
 					{:
 					parser.array_perm.add(parser.cp[5]);
+//					parser.cp[5] = null;
 					:}
 		| cc_date_cond:x	{:
 					parser.array_data.add(parser.cp[4]);
