@@ -85,8 +85,8 @@ public class CPCommand implements ICommand{
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
         if(params[1]!=null)
-            target = Paths.get(params[1].getValue()).normalize();
-        paramPath_src = Paths.get(params[0].getValue()).normalize();
+            target = Paths.get(params[3].getValue()).normalize();
+        paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();
         
@@ -96,7 +96,7 @@ public class CPCommand implements ICommand{
         
         FileEngine fe = new FileEngine();
         try {
-            stream = fe.getStreamFromParameter(params[0]);
+            stream = fe.getStreamFromParameter(params[2]);
         } catch (IOException ex) {
             ex.printStackTrace();
         }  
@@ -137,7 +137,7 @@ public class CPCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-       if (cpl.length==2)
+       if (cpl.length==7)
        {
             params = cpl;
        }

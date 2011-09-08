@@ -77,9 +77,9 @@ non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
 non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
 non terminal myVar[] for_head;
-non terminal String i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf,date_arg;
+non terminal String commands,i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf,date_arg;
 non terminal String[] for_tail;
-non terminal Object[]  commands,sh_stmt, for_stmt, if_stmt,LS_stmt;
+non terminal Object[]  sh_stmt, for_stmt, if_stmt,LS_stmt;
 //non terminal Calendar date_arg;
 non terminal CommandParameter param;
 
@@ -316,24 +316,28 @@ commands	::= Com_Cd
 		| Com_Cd Minor
 		| Com_MKDir		{: 
 					Utility.mf("MKDIR!");
+					RESULT= "mkdir";
 					parser.com = new MKDCommand(parser.getEnviroment());
 					:}
 
 		|Com_Mov		{: 
 					Utility.mf("MV!");
+					RESULT= "mv";
 					parser.com = new MVCommand(parser.getEnviroment());
 					:}
 
 		| Com_Rm		{: 
 					Utility.mf("RM!");
+					RESULT= "rm";
 					parser.com = new RMCommand(parser.getEnviroment());
 					:}
 
 		| Com_Cp		{: 
 					Utility.mf("CP!");
+					RESULT= "cp";
 					parser.com = new CPCommand(parser.getEnviroment());
 					:}
-		| LS_stmt
+		| LS_stmt		{:RESULT= "ls";:}
 ;
 
 LS_stmt		::= Com_Ls		{: 
@@ -374,10 +378,9 @@ comm_find_stmt	::= Com_Find param:x	{:
 ;
 
 comm_find_stmt_2
-		::= commands		{:
-					Utility.mf("COMANDO RECURSIVO! rilevato: "+parser.com.toString());
-					//qui sotto inserisco mv, parser.com.tostring non va beneeeeeeeeeeeeee!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,"mv",null)};
+		::= commands:sc		{:
+					Utility.mf("COMANDO RECURSIVO! rilevato: "+sc);
+					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,sc,null)};
 					:}
 		| comm_find_stmt_2 Name param:p  
 					{: parser.cp[3]=p; :}	//il parametro 2(path src) è già passato dal comando find, in questa condizione è logico solo il param dst
