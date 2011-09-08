@@ -49,7 +49,17 @@ public class CPCommand implements ICommand{
          *          1 = file|directory|tutto dst
          */
         
-        
+    /*
+     * vettore Params: 
+     *          0 = asc|desc
+     *          1 = file|directory|tutto
+     *          2 = path src | rm target | ls target
+     *      	3 = path dst cp | mv
+     *      	4 =	data ls
+     *          5 = permessi ls
+     *          6 = dimensione
+     */
+    
     public CPCommand(String current)
     {
             result = new ArrayList<>();       
@@ -64,7 +74,7 @@ public class CPCommand implements ICommand{
     
     public static void copyFile(Path source, Path target)throws IOException, UnsupportedOperationException{
         //CopyOption[] options = new CopyOption[] {COPY_ATTRIBUTES};
-        Utility.mf("COMANDO CP: source"+source.toString()+" target"+target.toString());
+        Utility.mf("COMANDO CP: source "+source.toString()+" target "+target.toString());
         //target = Paths.get(target.toString()+"/"+source.getFileName().toString());
   
         //if(Files.notExists(target))
@@ -84,7 +94,7 @@ public class CPCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        if(params[1]!=null)
+        if(params[3]!=null)
             target = Paths.get(params[3].getValue()).normalize();
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
@@ -169,7 +179,7 @@ public class CPCommand implements ICommand{
 
     @Override
     public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
-        target = Paths.get(params[1].getValue()).normalize();   
+        target = Paths.get(params[3].getValue()).normalize();   
         for (Path file: stream) {
             PosixFileAttributes p_attr;
             try {

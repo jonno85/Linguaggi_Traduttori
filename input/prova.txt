@@ -1,4 +1,4 @@
-trova *.txt /home/robizz/lt where dimensione <= 40 exec cp $name /home/robizz/lt2;
+trova *.txt /home/robizz/lt2 where dimensione <= 40 exec rm $name 
 
 
 ls /home/robizz/lt where dimensione < 4096 permessi = 124

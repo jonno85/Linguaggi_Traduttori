@@ -383,8 +383,13 @@ comm_find_stmt_2
 					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,sc,null)};
 					:}
 		| comm_find_stmt_2 Name param:p  
-					{: parser.cp[3]=p; :}	//il parametro 2(path src) è già passato dal comando find, in questa condizione è logico solo il param dst
-		| comm_find_stmt_2 Name
+					{:
+					Utility.mf("COMANDO RECURSIVO! rilevato:  CON PARAM"); 
+					parser.cp[3]=p; 
+					:}	//il parametro 2(path src) è già passato dal comando find, in questa condizione è logico solo il param dst
+		| comm_find_stmt_2 Name {:
+					Utility.mf("COMANDO RECURSIVO! rilevato: SENZA PARAM!"); 
+					:}
 ;
 // ***************** condizioni per i comandi
 _where		::= 

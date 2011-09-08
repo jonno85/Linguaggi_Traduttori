@@ -42,6 +42,17 @@ public class RMCommand implements ICommand{
          * vettore Params: 
          *          0 = file|directory|tutto
          */
+    
+    /*
+     * vettore Params: 
+     *          0 = asc|desc
+     *          1 = file|directory|tutto
+     *          2 = path src | rm target | ls target
+     *      	3 = path dst cp | mv
+     *      	4 =	data ls
+     *          5 = permessi ls
+     *          6 = dimensione
+     */
         
         
     public RMCommand(String current)
@@ -67,7 +78,7 @@ public class RMCommand implements ICommand{
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
         
-        paramPath = ((Path)Paths.get(params[0].getValue()).normalize());
+        paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
         pattern = paramPath.getFileName().toString();
         position = paramPath.getParent();
         isRegFolder = false;
@@ -75,7 +86,7 @@ public class RMCommand implements ICommand{
         
         FileEngine fe = new FileEngine();
         try {
-            stream = fe.getStreamFromParameter(params[0]);
+            stream = fe.getStreamFromParameter(params[2]);
         } catch (IOException ex) {
             Utility.mf(ex);
         }
@@ -109,7 +120,7 @@ public class RMCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-       if (cpl.length==1)
+       if (cpl.length==7)
        {
             params = cpl;
        }

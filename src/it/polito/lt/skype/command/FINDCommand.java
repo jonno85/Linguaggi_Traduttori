@@ -75,8 +75,9 @@ public class FINDCommand implements ICommand {
         		ICommand rec_cmd=FileEngine.iCommandFromString(params[5][0].getValue(),position);
         		Utility.mf("--------------------"+params[5][0].getValue());
         		CommandParameter[] dyn_param = new CommandParameter[7];
+        		dyn_param=params[6].clone();
         		dyn_param[2]=new CommandParameter(ParamType.PATH, curr_path.toString(), null) ;
-        		dyn_param[3]=params[6][3];
+        		//dyn_param[3]=params[6][3];
         		rec_cmd.setCommandParameter(dyn_param);
         		rec_cmd.exec();
         		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
