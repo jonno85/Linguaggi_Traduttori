@@ -90,9 +90,9 @@ public class FINDCommand implements ICommand {
                 }
                 
                 Utility.mf("params 6: "+params[6]);
-                /*
+                
                 if(params[6]!=null){
-                    Utility.mf("tenemos parametros");
+                    Utility.mf("tenemos los parametros");
                     n_params=params[6].length;
                 
                     //  meglio una funzione proprietaria di classe per risistemare i parametri alla funzione ricorsiva
@@ -101,11 +101,10 @@ public class FINDCommand implements ICommand {
                     
                     
                     System.out.println("Numero parametri passati alla funzione interna: "+n_params);
-                    dyn_param = new CommandParameter[n_params+1];
-                    dyn_param[0] = null;
-                    while(n_params>=1)
+                    dyn_param = new CommandParameter[n_params];
+                    while(--n_params>=0)
                     {
-                        dyn_param[n_params] = params[6][n_params-1];
+                        dyn_param[n_params] = params[6][n_params];
                         n_params--;
                         System.out.println("passaggio");
                     }
@@ -114,10 +113,11 @@ public class FINDCommand implements ICommand {
                     dyn_param = new CommandParameter[]{new CommandParameter(ParamType.NULL, ".", SignType.MAG)};
                     
                 }
-                */
-                CommandParameter[] p = params[6];
-                Utility.mf("=>"+p.length);
-                rec_cmd.setCommandParameter(p); 
+                
+                
+                
+
+                rec_cmd.setCommandParameter(dyn_param); 
                 try {
                     Utility.mf("ESECUZIONE"+rec_cmd.toString()+"SU: "+pathResult.toString());
                     rec_cmd.exec_from_prev_result(pathResult);
