@@ -376,7 +376,8 @@ comm_find_stmt	::= Com_Find param:x	{:
 comm_find_stmt_2
 		::= commands		{:
 					Utility.mf("COMANDO RECURSIVO! rilevato: "+parser.com.toString());
-					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,parser.com.toString(),null)};
+					//qui sotto inserisco mv, parser.com.tostring non va beneeeeeeeeeeeeee!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,"mv",null)};
 					:}
 		| comm_find_stmt_2 Name param:p  
 					{: parser.cp[3]=p; :}	//il parametro 2(path src) è già passato dal comando find, in questa condizione è logico solo il param dst

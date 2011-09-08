@@ -33,16 +33,22 @@ public class FINDCommand implements ICommand {
         private List<String> string_result = null;
       
         
-        /*
-         * vettore Params: 
-         *          0 = [] file | reg exp
-         *          1 = [] directories
-         *          2 = [] permessi
-         *          3 = [] data
-         *          4 = [] dimensione
-         *          5 = [1] esegui = comando
-         *          6 = [] parametri (esegui)
-         */
+	        /*
+	         * vettore Params: 
+	         *          0 = [] file | reg exp
+	         *          1 = [] directories
+	         *          2 = [] permessi
+	         *          3 = [] data
+	         *          4 = [] dimensione
+	         *          5 = [1] esegui = comando
+	         *          6 = [] parametri (esegui)  	->	0 = asc|desc
+	        *          									1 = file|directory|tutto
+	        *          									2 = path src | rm target | ls target
+	        *      										3 = path dst cp | mv
+	        *      										4 =	data ls
+	        *          									5 = permessi ls
+	        *          									6 = dimensione ls
+	        */
         
         
         public FINDCommand(String current)
@@ -64,16 +70,28 @@ public class FINDCommand implements ICommand {
          */
         
         public void recursive_cmd() throws CommandException, ParserException{
-            if(params[5]!=null)
+        	int i=1;
+        	for(Path curr_path : pathResult){
+        		ICommand rec_cmd=FileEngine.iCommandFromString(params[5][0].getValue(),position);
+        		Utility.mf("--------------------"+params[5][0].getValue());
+        		CommandParameter[] dyn_param = new CommandParameter[7];
+        		dyn_param[2]=new CommandParameter(ParamType.PATH, curr_path.toString(), null) ;
+        		dyn_param[3]=params[6][3];
+        		rec_cmd.setCommandParameter(dyn_param);
+        		rec_cmd.exec();
+        		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
+        	}
+        	
+        	/*if(params[5]!=null)
             {
                 ICommand rec_cmd = null;
                 pathResult_rec = new ArrayList<>();    
                 //for(Path curr_path : pathResult){
                 int n_params = 0;
                 
-                /*nel caso di alcuni comandi esempio RM, puo non essere 
-                 * necessario scambio di parametri aggiuntivi
-                 */
+                //nel caso di alcuni comandi esempio RM, puo non essere 
+                 // necessario scambio di parametri aggiuntivi
+                 
                 
                 rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),position);
                 Utility.mf("inside recursive_cmd");
@@ -113,9 +131,6 @@ public class FINDCommand implements ICommand {
                     dyn_param = new CommandParameter[]{new CommandParameter(ParamType.NULL, ".", SignType.MAG)};
                     
                 }
-                
-                
-                
 
                 rec_cmd.setCommandParameter(dyn_param); 
                 try {
@@ -128,9 +143,9 @@ public class FINDCommand implements ICommand {
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
                 }
-                //}
 
-            }
+
+            }*/
         }
         
 	@Override

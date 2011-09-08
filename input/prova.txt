@@ -1,7 +1,7 @@
-trova *.htm *.zip /home/jo/lt where dimensione <= 40 exec ls $name ;
+trova *.txt /home/robizz/lt where dimensione <= 40 exec mv $name /home/robizz/lt2;
 
 
-ls /home/jo/lt where dimensione < 4096 permessi = 124
+ls /home/robizz/lt where dimensione < 4096 permessi = 124
 
 
 
