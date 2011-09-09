@@ -80,6 +80,7 @@ public class FINDCommand implements ICommand {
         		//dyn_param[3]=params[6][3];
         		rec_cmd.setCommandParameter(dyn_param);
         		rec_cmd.exec();
+        		//controllare la stampa
         		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
         	}
         	
@@ -164,8 +165,8 @@ public class FINDCommand implements ICommand {
                String b=null;
                for(int i =0; i<n_dir;i++){
                        acontb=0;
-                       for(int j=0;j<n_dir;j++){ //ou yea!
-                                a = Paths.get(params[1][i].getValue()).normalize().toString()+"/";//ou yea!
+                       for(int j=0;j<n_dir;j++){ 
+                                a = Paths.get(params[1][i].getValue()).normalize().toString()+"/";
                                 b = Paths.get(params[1][j].getValue()).normalize().toString()+"/";
                                if(a.contains(b)) 
                                        acontb++;

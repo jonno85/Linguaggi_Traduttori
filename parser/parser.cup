@@ -133,7 +133,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					parser.cp[4] = parser.array_dim.get(0);*/
 					for(int i=0; i<7; i++)
 						if(parser.cp[i]==null)
-							Utility.mf("niente\n");
+							Utility.mf("*niente*");
 						else
 							Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
@@ -149,7 +149,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					parser.cpm[3] = new CommandParameter[parser.array_data.size()];
 					parser.cpm[4] = new CommandParameter[parser.array_dim.size()];
 
-					System.out.println("rdopo onit");
+					System.out.println("dopo onit");
 					parser.cpm[0] = parser.array_file.toArray(parser.cpm[0]);
 					parser.cpm[1] = parser.array_path.toArray(parser.cpm[1]);
 					parser.cpm[2] = parser.array_perm.toArray(parser.cpm[2]);
@@ -312,7 +312,11 @@ sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
 ;*/
 
 // ***************** comandi standard mv, rm, cp e aggiunti cd, ls
-commands	::= Com_Cd
+commands	::= Com_Cd		{: 
+					Utility.mf("CD!");
+					RESULT= "cd";
+					parser.com = new CDCommand(parser.getEnviroment());
+					:}
 		| Com_Cd Minor
 		| Com_MKDir		{: 
 					Utility.mf("MKDIR!");
@@ -379,7 +383,7 @@ comm_find_stmt	::= Com_Find param:x	{:
 
 comm_find_stmt_2
 		::= commands:sc		{:
-					Utility.mf("COMANDO RECURSIVO! rilevato: "+sc);
+					Utility.mf("COMANDO RICORSIVO! rilevato: "+sc);
 					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,sc,null)};
 					:}
 		| comm_find_stmt_2 Name param:p  
