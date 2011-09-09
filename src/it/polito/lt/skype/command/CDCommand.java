@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.generated.parser.parser;
 import it.polito.lt.skype.parser.ParserException;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public class CDCommand implements ICommand {
 	private CommandParameter[] params = null;
     private int tot_elem = 0;
     
+    private parser p=null; 
     
     private Path current = null;
  
@@ -35,7 +37,7 @@ public class CDCommand implements ICommand {
     private String string_result = null;
 
     
-	 public CDCommand(String current)
+	 public CDCommand(String current, parser p)
 	    {
 	            result = new ArrayList<>();       
 	           /* position_src = Paths.get(".");
@@ -43,13 +45,14 @@ public class CDCommand implements ICommand {
 	            target = Paths.get(".");
 	            */
 	            this.current=Paths.get(current);
-	            
+	            this.p=p;
 	    }
 	
 	@Override
 	public boolean exec() throws CommandException {
 		target=current.resolve(target);
 		if(Files.exists(target)){
+			p.setEnviroment(target.toString());
 			return true;
 		}
 		else

@@ -315,9 +315,9 @@ sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
 commands	::= Com_Cd		{: 
 					Utility.mf("CD!");
 					RESULT= "cd";
-					parser.com = new CDCommand(parser.getEnviroment());
+					parser.com = new CDCommand(parser.getEnviroment(),parser);
 					:}
-		| Com_Cd Minor
+		//| Com_Cd Minor
 		| Com_MKDir		{: 
 					Utility.mf("MKDIR!");
 					RESULT= "mkdir";

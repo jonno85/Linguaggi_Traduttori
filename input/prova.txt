@@ -1,3 +1,6 @@
+cd /home/robizz/lt 
+
+/*
 mkdir cippa/CICCIONEONEONE
 trova *.txt /home/robizz/lt where dimensione <= 40 AND dimensione > 0 AND data > 08-09-2011 exec mv $name /home/robizz/lt2;
 
@@ -6,13 +9,13 @@ ls /home/robizz/lt where dimensione < 4096 permessi = 124
 
 
 
-/*FIND nn è prevista lo spostamento di variabili*/
+
 cerca  *.htm home/robizz
 cerca *.htm /home/jo/lt where permesso = 124 and dimensione >= 32 and dimensione < 64000
 
 
 seek  *.htm /home/jo where data < 12/12/2010 and dimensione < 1024
-/*
+
 trova *.html esegui muovi $name /home ;
 find *.c /home esegui mv $name *.cpp ;
 
