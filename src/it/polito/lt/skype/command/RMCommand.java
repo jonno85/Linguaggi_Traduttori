@@ -29,6 +29,7 @@ public class RMCommand implements ICommand{
     
     private CommandParameter[] params = null;
     private int tot_elem = 0;
+    private String current=null;
     private Path paramPath;
     private Path position = null;
     private boolean isRegFolder;
@@ -58,6 +59,7 @@ public class RMCommand implements ICommand{
     public RMCommand(String current)
     {
             result = new ArrayList<>();       
+            this.current =current;
             position = Paths.get(current);
             pattern = "";
     }
@@ -78,34 +80,53 @@ public class RMCommand implements ICommand{
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
         
-        paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
         pattern = paramPath.getFileName().toString();
         position = paramPath.getParent();
+        Utility.mf("PARAMPATH: "+paramPath.toString());
+        Utility.mf("PATTERN: "+pattern.toString());
+        Utility.mf("POSITION: "+position.toString());
+       
+        boolean finalDeleteDir=false;
+        
         isRegFolder = false;
         isFile = false;
         
+        finalDeleteDir=Files.isDirectory(paramPath); //se il parametro è una directory secca la cancello alla fine
+        	
+        
         FileEngine fe = new FileEngine();
         try {
-            stream = fe.getStreamFromParameter(params[2]);
+            stream = fe.getStreamFromString(paramPath.toString());
         } catch (IOException ex) {
-            Utility.mf(ex);
+        	Utility.mf(ex);
+        	return false;
         }
-                    
+        
+        
+  
+       
         for (Path file: stream) {
-            PosixFileAttributes attr;
+            
+        	Utility.mf("stream LISTA: "+file.toString());
+        	//Path listPosition =null;
+        	//listPosition=file.getParent();
+        	PosixFileAttributes attr;
             try {
                 attr = Files.readAttributes(file, PosixFileAttributes.class);
                 if(attr.isDirectory())
                     throw new DirectoryNotEmptyException(file.toString());
+                Utility.mf("ELIMINAZIONE FILE DALLA LISTA STREAM "+file.toString());
+                result.add(file);
                 removeFile(file);
                 tot_elem++;
+                
             } catch (NoSuchFileException x) {
                 Utility.mf(x);
             } catch (DirectoryNotEmptyException x) {
                 Utility.mf(x);
                 try {
                     Treefinder tf = new Treefinder(file,result,position);
-                    Files.walkFileTree(file.getParent(), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
+                    Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
                     tot_elem += tf.get_matches_dir()+tf.get_matches_file();
                 }catch(IOException ex){
                     Utility.mf(ex);
@@ -115,6 +136,14 @@ public class RMCommand implements ICommand{
                 throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
             }
         }
+        
+        if(finalDeleteDir)
+        {
+        	   result.add(paramPath);
+               removeFile(paramPath);
+               tot_elem++;
+        }
+        
         return true;
     }
 
@@ -123,6 +152,15 @@ public class RMCommand implements ICommand{
        if (cpl.length==7)
        {
             params = cpl;
+            //percorso
+            paramPath = (Paths.get(params[2].getValue()).normalize());
+            paramPath= Paths.get(current).resolve(paramPath);
+            //root
+            if(paramPath.getParent()==null)
+            {
+            	position=Paths.get("/");
+            	paramPath=Paths.get("/*");
+            }
        }
        else
            System.err.println("Numero parametri incorretto: "+cpl.length);
@@ -158,6 +196,7 @@ public class RMCommand implements ICommand{
                 attr = Files.readAttributes(file, PosixFileAttributes.class);
                 if(attr.isDirectory())
                     throw new DirectoryNotEmptyException(file.toString());
+                Utility.mf("ELIMINAZIONE FILE DALLA LISTA STREAM "+file.toString());
                 removeFile(file);
                 tot_elem++;
             } catch (NoSuchFileException x) {
@@ -199,7 +238,7 @@ public class RMCommand implements ICommand{
         }
         
         public Treefinder(Path file, List<Path> result, Path superRoot){
-        	root=superRoot;
+        	//root=superRoot;
             try {
                 my_perm = Files.readAttributes(file, PosixFileAttributes.class);
                 internal_result = result;
@@ -212,7 +251,7 @@ public class RMCommand implements ICommand{
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
             try{
                 folder_attr = Files.readAttributes(dir,PosixFileAttributes.class);
-                Utility.mf("directory "+dir.toString()+" attrb "+folder_attr.owner()+"->folder\n"+"directory "+dir.getParent().toString()+" attrb "+my_perm.owner()+"->parent folder");
+                //Utility.mf("directory "+dir.toString()+" attrb "+folder_attr.owner()+"->folder\n"+"directory "+dir.getParent().toString()+" attrb "+my_perm.owner()+"->parent folder");
             
                 /**
                  * Verifico che il propietario del percorso dal quale provengo sia lo stesso della cartella
@@ -242,7 +281,7 @@ public class RMCommand implements ICommand{
                 Utility.mf("file in esame "+file.toString());
                 if (my_perm.owner().equals(file_attr.owner()))
                 {
-                    Utility.mf("stessi attributi "+file.toString());
+                    Utility.mf("ELIMINAZIONE FILE DURANTE NAVIGAZIONE"+file.toString());
                     removeFile(file);
                     numMatches_file++;
                     internal_result.add(file);
@@ -271,8 +310,9 @@ public class RMCommand implements ICommand{
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
            System.err.format("%s dentro il postDirectory visit%n", dir);
-           if(dir.compareTo(root)!=0)
+          // if(dir.compareTo(root)!=0)
            {
+        	Utility.mf("ELIMINAZIONE DIR"+dir.toString());
             removeFile(dir);
             numMatches_dir++;
            }

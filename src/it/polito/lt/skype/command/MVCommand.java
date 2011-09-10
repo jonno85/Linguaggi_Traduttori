@@ -90,11 +90,11 @@ public class MVCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        if(params[3]!=null)
+       /* if(params[3]!=null)
             target = Paths.get(params[3].getValue()).normalize();
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();
+        position_src = paramPath_src.getParent();*/
         
         isRegFolder_src = false;
         isFile_src = false;
@@ -103,7 +103,7 @@ public class MVCommand implements ICommand{
         FileEngine fe = new FileEngine();
         synchronized(this){
             try {
-                stream = fe.getStreamFromParameter(params[2]);
+                stream = fe.getStreamFromString(paramPath_src.toString());
             } catch (IOException ex) {
                 Utility.mf(ex);
             }  
@@ -144,7 +144,18 @@ public class MVCommand implements ICommand{
        if (cpl.length==7)
        {
             params = cpl;
-       }
+            if(params[3]!=null)
+                target = Paths.get(params[3].getValue()).normalize();
+            target= currentPath.resolve(target);
+            
+            paramPath_src = Paths.get(params[2].getValue()).normalize();
+            paramPath_src= currentPath.resolve(paramPath_src);
+            pattern_src = paramPath_src.getFileName().toString();
+            position_src = paramPath_src.getParent();
+   
+    } 
+
+
        else
            Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception"));

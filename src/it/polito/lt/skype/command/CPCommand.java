@@ -94,11 +94,11 @@ public class CPCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        if(params[3]!=null)
+        /*if(params[3]!=null)
             target = Paths.get(params[3].getValue()).normalize();
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();
+        position_src = paramPath_src.getParent();*/
         
         isRegFolder_src = false;
         isFile_src = false;
@@ -106,7 +106,7 @@ public class CPCommand implements ICommand{
         
         FileEngine fe = new FileEngine();
         try {
-            stream = fe.getStreamFromParameter(params[2]);
+            stream = fe.getStreamFromString(paramPath_src.toString());
         } catch (IOException ex) {
             ex.printStackTrace();
         }  
@@ -147,13 +147,23 @@ public class CPCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-       if (cpl.length==7)
-       {
-            params = cpl;
-       }
-       else
-           System.err.println("Numero parametri incorretto: "+cpl.length);
-    } 
+    	 if (cpl.length==7)
+         {
+              params = cpl;
+              if(params[3]!=null)
+                  target = Paths.get(params[3].getValue()).normalize();
+              target= currentPath.resolve(target);
+              
+              paramPath_src = Paths.get(params[2].getValue()).normalize();
+              paramPath_src= currentPath.resolve(paramPath_src);
+              pattern_src = paramPath_src.getFileName().toString();
+              position_src = paramPath_src.getParent();
+         }
+         else
+             System.err.println("Numero parametri incorretto: "+cpl.length);
+      } 
+
+    
 
     @Override
     public List<Path> getCommandResult() {
@@ -244,7 +254,7 @@ public class CPCommand implements ICommand{
             Path dest = target.resolve(source.relativize(dir));
             
             try{
-                Files.copy(dir, dest,REPLACE_EXISTING,COPY_ATTRIBUTES,ATOMIC_MOVE);
+                Files.copy(dir, dest,REPLACE_EXISTING,COPY_ATTRIBUTES);//,ATOMIC_MOVE);
                 internal_result.add(dir);
                 num_dir++;
             }catch(FileAlreadyExistsException x){
