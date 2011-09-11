@@ -141,7 +141,7 @@ public class MVCommand implements ICommand{
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
        Utility.mf("dentro setcommandparameter" );
-       if (cpl.length==7)
+       if (cpl.length==7||params[2]!=null)
        {
             params = cpl;
             if(params[3]!=null)

@@ -30,12 +30,12 @@ public class Test {
              
               
             //CPCommand
-                */
-                cmd = new MVCommand(current);
-                p = new CommandParameter[7];
-                p[2] = new CommandParameter(ParamType.FILE, "g*", null);
-                p[3] = new CommandParameter(ParamType.FILE, "e", null);//(ParamType.NULL, null, SignType.MAG)//null;//new CommandParameter(ParamType.FILE, "/home/jo/lt/.", null);
                 
+                cmd = new CPCommand(current);
+                p = new CommandParameter[7];
+                p[2] = new CommandParameter(ParamType.FILE, "*", null);
+                p[3] = new CommandParameter(ParamType.FILE, "/home/robizz/lt2", null);//(ParamType.NULL, null, SignType.MAG)//null;//new CommandParameter(ParamType.FILE, "/home/jo/lt/.", null);
+                */
                 /*
                 //find command senza exec
                 
@@ -56,13 +56,13 @@ public class Test {
 	                p[2] = new CommandParameter(ParamType.FILE,"g",null);
 	                p[3] = new CommandParameter(ParamType.FILE,"e",null);
             */
-             /*
+             
                 cmd=new FINDCommand(current);
                 pm = new CommandParameter[7][];
                 
-                pm[0] =new CommandParameter[]{new CommandParameter(ParamType.FILE, "*.htm", null)};
+                pm[0] =new CommandParameter[]{new CommandParameter(ParamType.FILE, "n*", null)};
                 		//new CommandParameter(ParamType.FILE, "*", null)};
-                pm[1] = new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home", null)};
+                pm[1] =null;// new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home", null)};
                 		//,new CommandParameter(ParamType.FILE, "/home/robizz/prf/ci/", null)
                 		//,new CommandParameter(ParamType.FILE, "/home/jo/lt/ci", null)};
                 pm[2] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "001", SignType.MAGUG)};
@@ -71,13 +71,13 @@ public class Test {
                 pm[5] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "rm", SignType.MINUG)};
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
          
-                
+               /* 
                cmd = new CPCommand(current);
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);*/
                 try {
-                    cmd.setCommandParameter(p);
+                    cmd.setCommandParameter(pm);
                 } catch (ParserException ex) {
                     ex.printStackTrace();
                 }

@@ -25,6 +25,7 @@ public class FINDCommand implements ICommand {
         
         int n_file = 1;
         int n_dir=1;
+        private boolean doRecursive = false;
         private String position = null;
         private String pattern = null;
         private List<Path> pathList= null;
@@ -199,8 +200,8 @@ public class FINDCommand implements ICommand {
             //sorting risultati
             Collections.sort(string_result);
             try {
-                
-                recursive_cmd();
+                if(doRecursive)
+                	recursive_cmd();
             } catch (ParserException ex) {
                 Utility.mf(ex);
             }
@@ -276,7 +277,10 @@ public class FINDCommand implements ICommand {
     public void setCommandParameter(CommandParameter[][] cpl) {
     	
         params=cpl;
-    	if(params[0]!=null) {//occhio che se i vettori [1] e [2] sono nulli non fa 
+        if(params[5]!=null)
+        	doRecursive=true;
+        
+        if(params[0]!=null) {
         	Utility.mf("params[0] NON vuoto \n"+params[0][0].getValue());
         	n_file=params[0].length;
         }

@@ -4,6 +4,9 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.ParserErrorType;
+import it.polito.lt.skype.parser.ParserException;
+
 import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
 import java.io.IOException;
@@ -147,7 +150,7 @@ public class CPCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-    	 if (cpl.length==7)
+    	 if (cpl.length==7||params[2]!=null)
          {
               params = cpl;
               if(params[3]!=null)
@@ -160,7 +163,9 @@ public class CPCommand implements ICommand{
               position_src = paramPath_src.getParent();
          }
          else
-             System.err.println("Numero parametri incorretto: "+cpl.length);
+             
+    	 Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
+                 Thread.currentThread().getStackTrace()[2].getMethodName(), "CP Parameter Exception"));
       } 
 
     

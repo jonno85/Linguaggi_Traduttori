@@ -24,6 +24,8 @@ package it.polito.lt.skype.bot;
 
 
 
+import it.polito.lt.skype.command.Utility;
+
 import java.io.IOException;
 import java.lang.Runtime;
 import java.lang.Process;
@@ -40,30 +42,14 @@ public class SkyBot {
     public static void main(String[] args) throws Exception {
     	final Profile profilo = Skype.getProfile();
     	Skype.setDeamon(false); // to prevent exiting from this program
-        profilo.setMoodMessage("AUTOANSWER");
-        System.out.println("bot settato e pronto");
-       ChatMessageAdapter meslis= new ChatMessageAdapter() {
-            public void chatMessageReceived(ChatMessage received) throws SkypeException {
-            	System.out.println(received.getType()+"\n");
-            	if (received.getType().equals(ChatMessage.Type.SAID)) {
-                	String mes=received.getContent();
-                	System.out.println("messaggio ricevuto: "+mes);
-                	received.getSender().send("hai detto: "+mes);
-                	//received.getSender().send("Risposta Automatica: Non ci sono :P");
-                	
-                	//parsing comando
-                	
-                	//stampa risultato sull chat del client con                	
-                	received.getSender().send("risultati comando:\n");
-			     
-					
-					
-					
-                	
-                }
-            }
-        };//fine chatmessage adapter
+        profilo.setMoodMessage("SHELL MODE: ON");
+        Utility.mf("bot settato e pronto");
+       ChatMessageAdapter meslis= new ChatMessageAdapter() ;
         Skype.addChatMessageListener(meslis);
+        
+        //operazioni
+        
+        
         //Skype.removeChatMessageListener(meslis);
         //System.out.println("bot eliminato");
     }

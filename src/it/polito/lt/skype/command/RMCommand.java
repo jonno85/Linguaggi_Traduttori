@@ -102,9 +102,6 @@ public class RMCommand implements ICommand{
         	return false;
         }
         
-        
-  
-       
         for (Path file: stream) {
             
         	Utility.mf("stream LISTA: "+file.toString());
@@ -149,7 +146,7 @@ public class RMCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-       if (cpl.length==7)
+       if (params[2]!=null)
        {
             params = cpl;
             //percorso
@@ -163,7 +160,10 @@ public class RMCommand implements ICommand{
             }
        }
        else
-           System.err.println("Numero parametri incorretto: "+cpl.length);
+           System.err.println("Missing parameter");
+       Utility.mf(new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
+    		   Thread.currentThread().getStackTrace()[2].getMethodName(),
+    		   	"Missing parameter", null));
     } 
 
     @Override
