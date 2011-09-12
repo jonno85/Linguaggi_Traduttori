@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Iterator;
 import it.polito.lt.skype.manager.*;
 import it.polito.lt.skype.command.*;
 import it.polito.lt.skype.parser.*;
@@ -22,10 +24,14 @@ init with {:
 
 	array_path = new ArrayList<CommandParameter>();
 	array_file = new ArrayList<CommandParameter>();
-
 	array_perm = new ArrayList<CommandParameter>();
 	array_data = new ArrayList<CommandParameter>();
 	array_dim = new ArrayList<CommandParameter>();
+
+	list_script = null;
+	ifcc = null;
+
+	list_script = new LinkedList();
 
 :}
 
@@ -39,6 +45,11 @@ parser code {:
 	public int counter_path = 0;
 
 	public ArrayList<CommandParameter> array_path, array_file, array_dim, array_perm, array_data;
+
+	public LinkedList list_script;
+	public IFlowCommandControl ifcc;
+	public boolean if_control = false;
+
 	private String enviroment = "/home";
 
 	public void add_param(CommandParameter x) throws ParserException
@@ -60,11 +71,20 @@ parser code {:
 		return enviroment;
 	}
 
+	public void print_el(LinkedList ls)
+	{
+		LinkedList ll = ls;
+		Utility.mf("ITERATORE ");
+		Iterator s = ll.iterator();
+		while(s.hasNext())
+			((IFlowCommandControl)s.next()).print_parameters();
+	}
+
 :};
 
 
 terminal String Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
-terminal String Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, EL;
+terminal String Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
 terminal Integer Int;
 terminal Float Vint;
 terminal Calendar GMA;
@@ -73,15 +93,15 @@ terminal Boolean Bool;
 
 
 non terminal S;
-non terminal stmt,  init_stmt, str_stmt, assig_stmt, i_stmt;
+non terminal stmt, init_stmt, str_stmt, assig_stmt, i_stmt;
 non terminal i_conds, bool_exp, if_head, _where, cond, cond_if, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal myVar i_arg, arit_stmt, for_arg, arit_arg;
-non terminal myVar[] for_head;
-non terminal String commands,i_Op, i_Op_ps, start_s, throw_s, bool_op, conf_exp, conf,date_arg;
-non terminal String[] for_tail;
-non terminal Object[]  sh_stmt, for_stmt, if_stmt,LS_stmt;
+non terminal myVar i_arg, arit_stmt, for_arg, arit_arg, conf_exp,logic_stmt;
+//non terminal myVar[] 
+non terminal String commands,i_Op, i_Op_ps, start_s, throw_s, bool_op, /*conf_exp,*/ conf,date_arg, for_head;
+non terminal Object[]  sh_stmt, for_stmt, if_stmt, LS_stmt, for_tail;
 //non terminal Calendar date_arg;
 non terminal CommandParameter param;
+
 
 precedence left Minus, Plus, C_Or;
 precedence left Div, Times, C_And;
@@ -97,12 +117,17 @@ S 		::= 	/* empty */
 
 // ********************* script
 
-script		::= start_s i_stmt End_S
+script		::= start_s i_stmt End_S EL
 ;
 
 // ********************* comandi di gestione script
 
-start_s		::= Start_S File
+start_s			::= Start_S FileScript:s EL
+					{:
+					Utility.mf("INIZIO SCRIPT");
+					parser.list_script = new LinkedList();
+					parser.list_script.add(s);
+					:}
 ;
 
 throw_s		::= Throw_S File
@@ -117,13 +142,14 @@ i_stmt		::= stmt		{://RE-Init
 					parser.comFind = null;
 					:}
 		| i_stmt stmt
+		| script
 ;
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}	
+stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); :}
-		| str_stmt EL
+		| str_stmt EL		{: Utility.mf("risolto flow control statement"); :}
 		| sh_stmt:x EL		{:
 					System.out.println("raccolto sh stmt: parameter setting"); 
 					/*parser.cp[0] = parser.array_file.get(0);
@@ -197,7 +223,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 					
 					Utility.mf(parser.comFind.getCommandStringResult());
 					:}
-		| start_s EL
+//		| script EL
 		| throw_s EL
 		| Com_P arit_stmt EL
 		| conf_exp EL /*********************************************/
@@ -206,10 +232,10 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); 	:}
 
 // ********************* statement controllo di flusso
 
-str_stmt	::= if_stmt
-		| for_stmt
-		| str_stmt for_stmt
-		| str_stmt if_stmt
+str_stmt	::= if_stmt			{: Utility.mf("raccolto IF stmt"); :}
+		| for_stmt			{: Utility.mf("raccolto FOR stmt"); :}
+		| str_stmt for_stmt		{: Utility.mf("raccolto FOR stmt interno"); :}
+		| str_stmt if_stmt		{: Utility.mf("raccolto IF stmt interno"); :}
 ;
 
 // ********************* statement di assegnazione valori
@@ -260,6 +286,35 @@ arit_stmt	::= arit_stmt:x Times:s arit_stmt:y
 		| arit_arg:x			{: RESULT = ((myVar)x); 		:}
 		| RO arit_stmt:x RC 		{: RESULT = ((myVar)x); 		:}
 		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}
+;
+
+//check the possibility to extract each time the real value
+
+
+logic_stmt	::= arit_stmt:x Magg arit_stmt:y
+		{:
+			RESULT = new myVar(myVar._bool,parser.vm.makeLOMag(x,y));
+		:}
+		| arit_stmt:x Maggug arit_stmt:y
+		{:
+			RESULT = new myVar(myVar._bool,parser.vm.makeLOMaU(x,y));
+		:}
+		| arit_stmt:x Min arit_stmt:y
+		{:
+			RESULT = new myVar(myVar._bool,parser.vm.makeLOMin(x,y));
+		:}
+		| arit_stmt:x Minug arit_stmt:y
+		{:
+			RESULT = new myVar(myVar._bool,parser.vm.makeLOMiU(x,y));
+		:}
+		| arit_stmt:x C_Ugg arit_stmt:y
+		{:
+			RESULT = new myVar(myVar._bool,parser.vm.makeLOUg(x,y));
+		:}
+		| arit_stmt:x Diver arit_stmt:y
+		{:
+			RESULT = new myVar(myVar._bool,parser.vm.makeLODiv(x,y));
+		:}
 ;
 
 // ***************** argomenti che subiscono un'operazione 
@@ -513,11 +568,11 @@ bool_op		::= C_And:x 	{: RESULT =x; :}
 ;
 
 // ***************** argomento data
-date_arg	::= Data:x	{: RESULT = x;			:};
+date_arg	::= Data:x	{: RESULT = x;	:};
 // ***************** argomento generico
 
 	//GMA:x	{: RESULT = new myVar(myVar._string, x);			:}
-i_arg		::= Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
+i_arg		::= Int:x	{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
 		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 		:}
 		| Str:x		{: System.out.println("str: "+x); 
 					RESULT= new myVar(myVar._string, x); 			:}
@@ -529,19 +584,30 @@ i_arg		::= Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
 
 // ***************** espressione booleana
 
-cond_if		::= C_Orr
-		| C_Andd
+cond_if		::= C_Orr:s {: RESULT = s; :}
+		| C_Andd:s {: RESULT = s; :}
 ;
 
-conf		::= arit_stmt cond arit_stmt
+conf		::= arit_stmt cond arit_stmt 
+				{:
+				
+				:}
 /*		| arit_stmt cond_if arit_stmt*/
 ;
 
 conf_exp	::= conf
+		| logic_stmt:s	
+				{:
+				RESULT = s;
+				:}
 		| C_Not conf
 /*		| conf cond_if conf*/
 		| conf_exp cond_if conf
 		| conf_exp cond_if arit_stmt
+		| conf_exp:x cond_if:s logic_stmt:y
+				{:
+				RESULT = parser.vm.makeOper((myVar)x,(myVar)y,s);
+				:}
 ;
 
 /*
@@ -552,52 +618,120 @@ not_exp		::= C_Not Var
 
 // **************** IF statement
 
-if_head		::= Com_If conf_exp Com_If_2 EL i_stmt
+if_head		::= Com_If conf_exp:x Com_If_2 EL i_stmt
+				{:
+				Utility.mf("IF HEAD condizione: ");
+				
+				parser.list_script.add(new if_command(x));
+				:}
 ;
 
 if_stmt		::= if_head Com_If_m EL i_stmt Com_If_e
+				{:
+				boolean c = false;
+				Iterator it = it = parser.list_script.iterator();
+				c = i.hasNext();
+				Utility.mf("condition 1 "+c);
+				if(c)
+				{
+					parser.ifcc = (if_command)i.next();
+				Iterator it = it = parser.list_script.descendingIterator();
+				
+				:}
 		| if_head Com_If_e
 ;
 
 // **************** FOREACH statement
 
-for_arg		::= Var:x	{: RESULT = new myVar(x); 				:}
+for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x); 
+					System.out.println("Var: "+x); :}
 		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 	:}
 		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 	:}
 		| ID:x		{: RESULT= new myVar(myVar._string, x); :}
 ;
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
-		{: System.out.println("for_head variabili \n"+x.toString()+"\n"+y.toString()+"\n"+z.toString());
-		// passiamo un vettore contenente le tre variabili sulle quali controllare il ciclo for
-			RESULT= new myVar[3];
-			RESULT[0]= x;
-			RESULT[1]= y;
-			RESULT[2]= z;							:}	
+				{:
+				System.out.println("FOR HEAD variabili "+x.getValue()+"\t"+y.getValue()+"\t"+z.getValue());
+				parser.list_script.add(new for_command(x,y,z));
+				:}
 ;
 
 i_Op_ps		::= Plus:x	{: RESULT = x; 						:}
 		| Minus:x	{: RESULT = x; 						:}
 ;
 
-for_tail 	::= Com_For_e i_Op_ps:x for_arg:y 
-		{: 	//passiamo un vettore di 2 elementi stringe contenenti l'operatore e il fattore
+
+//check if minus is passed for value step
+for_tail 	::= Com_For_e i_Op_ps:s for_arg:y 
+		{: 	
+			boolean c = false;
+			Utility.mf("for_tail myVar tipo: "+y.getType());
+			//verifichiamo che sia l'ultimo dei comandi in un albero e cominciamo a chiuderli tornando indietro nella lista
+			parser.print_el(parser.list_script);
+			Iterator it = parser.list_script.iterator();
+			c = it.hasNext();
+//			c = parser.list_script.listIterator().hasNext();
+			Utility.mf("condition 1 "+c);
+			if(c)
+			{
+				//parser.ifcc = (IFlowCommandControl)parser.list_script.listIterator().next();
+				parser.ifcc = (IFlowCommandControl)it.next();
+				//chiude e verifica l'ultimo FOREACH
+				myVar step = parser.vm.Auto_Neg(y,s);
+				Utility.mf("step "+step.getStringValue());
+				Utility.mf("condition 2 "+c);
+				if(!parser.ifcc.isClose() & parser.ifcc.equals(for_command.class)){
+					Utility.mf("for non chiuso: CHIUDERE: "+parser.ifcc.close_command(step));
+				}
+				else{
+					it = parser.list_script.descendingIterator();
+					while(it.hasNext())
+					{
+						Utility.mf("condition 3 tenemos previous");
+						parser.ifcc = (IFlowCommandControl)it.next();//parser.list_script.listIterator().previous();//get(j-k);
+						if(parser.ifcc.equals(for_command.class))//si suppone che risalendo nessun comando sia già chiuso
+						{
+							c = parser.ifcc.close_command(parser.vm.Auto_Neg(y,s));
+							Utility.mf("condition 3 "+c);
+							if(c){
+								Utility.mf("lancio eccezione dall'else");
+								throw new ParserException(ParserErrorType.STATEMENT_ERROR, 
+									"sstaMMMinkia",
+									 "Chiusura Statement non valida ", null);
+							}
+							Utility.mf("CICLO FOR CHIUSO posizione lista: ");
+						}
+					}
+				}
+			Utility.mf("CICLO FOR CHIUSO");
+			}
+		:}
+/*
+			while(i.hasNext())
+			{
+				ifcc = (IFlowCommandControl)i.next();
+				if(ifcc)
+			}
 			System.out.println("dentro for tail");
 			RESULT= new String[2];
 			RESULT[0]= (String)x.toString();
 			RESULT[1]= ((myVar)y).getName();
 			System.out.println(" valore: "+y.toString());
 			System.out.println("operatore: "+x.toString()); 		:}
+*/
 ;
 
 for_stmt	::= for_head:x i_stmt for_tail:y
 		{:	System.out.println("for cycle");
+			/*
 			RESULT= new Object[5];
 			RESULT[0] = (myVar)x[0];
 			RESULT[1] = (myVar)x[1];
 			RESULT[2] = (myVar)x[2];			
 			RESULT[3] = parser.vm.extractVar(y[1].toString());  
-			RESULT[4] = (String)y[0];					:}
+			RESULT[4] = (String)y[0];					*/
+		:}
 ;
 
 

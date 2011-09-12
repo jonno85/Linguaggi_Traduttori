@@ -142,6 +142,8 @@ unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 
 ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
 
+script_ext = ".ss"
+
 digit=[0-9]
 float = {digit}+("."{digit}+)
 int = {digit}+ 
@@ -258,6 +260,8 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 {div}					{return symbol(sym.Div,new String(yytext()));}
 {pv}					{return symbol(sym.Pv);}
 
+
+{id}{script_ext}			{return symbol(sym.FileScript,new String(yytext()));}
 {tab}					{;}
 {sp}					{;}
 ","					{;}

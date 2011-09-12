@@ -127,5 +127,169 @@ public class VarManager{
 		
 		return null;
 	}
+        
+        public myVar Auto_Neg(myVar a,String segno){
+                int type = a.getType();
+                if(segno.equalsIgnoreCase("-"))
+                    return mkOper.Neg(a);
+                return a;
+        }
+        
+        /*
+         * Logic Operation >
+         */
+        public boolean makeLOMag(myVar x, myVar y)
+        {
+            boolean result = false;
+            if(x.getType()==y.getType())
+            {
+                switch(x.getType())
+                {
+                    case 1:
+                        if((Integer)x.getValue()>(Integer)y.getValue())
+                            result = true;
+                        break;
+                    case 2:
+                        if((Float)x.getValue()>(Float)y.getValue())
+                            result = true;
+                        break;
+                    case 3:
+                        if(x.getStringValue().length()>y.getStringValue().length())
+                            result = true;
+                        break;
+                }
+            }
+            return result;
+        }
+         /*
+         * Logic Operation >=
+         */
+        public boolean makeLOMaU(myVar x, myVar y)
+        {
+            boolean result = false;
+            if(x.getType()==y.getType())
+            {
+                switch(x.getType())
+                {
+                    case 1:
+                        if((Integer)x.getValue()>=(Integer)y.getValue())
+                            result = true;
+                        break;
+                    case 2:
+                        if((Float)x.getValue()>=(Float)y.getValue())
+                            result = true;
+                        break;
+                    case 3:
+                        if(x.getStringValue().length()>=y.getStringValue().length())
+                            result = true;
+                        break;
+                }
+            }
+            return result;
+        }
+         /*
+         * Logic Operation <
+         */
+        public boolean makeLOMin(myVar x, myVar y)
+        {
+            boolean result = false;
+            if(x.getType()==y.getType())
+            {
+                switch(x.getType())
+                {
+                    case 1:
+                        if((Integer)x.getValue()<(Integer)y.getValue())
+                            result = true;
+                        break;
+                    case 2:
+                        if((Float)x.getValue()<(Float)y.getValue())
+                            result = true;
+                        break;
+                    case 3:
+                        if(x.getStringValue().length()<y.getStringValue().length())
+                            result = true;
+                        break;
+                }
+            }
+            return result;
+        }
+         /*
+         * Logic Operation <=
+         */
+        public boolean makeLOMiU(myVar x, myVar y)
+        {
+            boolean result = false;
+            if(x.getType()==y.getType())
+            {
+                switch(x.getType())
+                {
+                    case 1:
+                        if((Integer)x.getValue()<=(Integer)y.getValue())
+                            result = true;
+                        break;
+                    case 2:
+                        if((Float)x.getValue()<=(Float)y.getValue())
+                            result = true;
+                        break;
+                    case 3:
+                        if(x.getStringValue().length()<=y.getStringValue().length())
+                            result = true;
+                        break;
+                }
+            }
+            return result;
+        }
+         /*
+         * Logic Operation ==
+         */
+        public boolean makeLOUg(myVar x, myVar y)
+        {
+            boolean result = false;
+            if(x.getType()==y.getType())
+            {
+                switch(x.getType())
+                {
+                    case 1:
+                        if((Integer)x.getValue()==(Integer)y.getValue())
+                            result = true;
+                        break;
+                    case 2:
+                        if((Float)x.getValue()==(Float)y.getValue())
+                            result = true;
+                        break;
+                    case 3:
+                        if(x.getStringValue().length()==y.getStringValue().length())
+                            result = true;
+                        break;
+                }
+            }
+            return result;
+        }
+         /*
+         * Logic Operation !=
+         */
+        public boolean makeLODiv(myVar x, myVar y)
+        {
+            boolean result = false;
+            if(x.getType()==y.getType())
+            {
+                switch(x.getType())
+                {
+                    case 1:
+                        if((Integer)x.getValue()!=(Integer)y.getValue())
+                            result = true;
+                        break;
+                    case 2:
+                        if((Float)x.getValue()!=(Float)y.getValue())
+                            result = true;
+                        break;
+                    case 3:
+                        if(x.getStringValue().length()!=y.getStringValue().length())
+                            result = true;
+                        break;
+                }
+            }
+            return result;
+        }
 	
 }

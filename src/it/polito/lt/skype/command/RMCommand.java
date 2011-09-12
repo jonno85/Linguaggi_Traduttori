@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.parser.IFlowCommandControl;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
@@ -19,6 +20,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -37,7 +39,7 @@ public class RMCommand implements ICommand{
     private String string_result = null;
     private Boolean dir = null;
     private String pattern = null;
-
+    
     /*
          * vettore Params: 
          *          0 = file|directory|tutto

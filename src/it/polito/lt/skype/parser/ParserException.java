@@ -18,7 +18,8 @@ public class ParserException extends Exception{
     private String separator = "\n"; // line separator
     
     public ParserException(ParserErrorType pe, String classname, String method, 
-	    String message) {
+	    String message) 
+    {
 	    this.pe        = pe;
 	    this.classname = classname;
 	    this.method    = method;
