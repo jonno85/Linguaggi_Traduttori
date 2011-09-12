@@ -67,18 +67,18 @@ public class LSCommand implements ICommand {
         
 	@Override
 	public boolean exec() throws CommandException {
-		
+			//paramPath=Paths.get(params[2].getValue());
+			//paramPath=currentPath.resolve(paramPath);
             DirectoryStream<Path> stream = null;
             Boolean isDir = false;
             synchronized(this){
                 try{
                     //System.out.printf("lunghezza vetto para "+params.length);
                     if(params[2]!=null){
-                        stream=eng.getStreamFromParameter(params[2]);
+                        stream=eng.getStreamFromString(paramPath.toString());
                     }else{
-                        stream = eng.getStreamFromParameter(new CommandParameter(ParamType.FILE, position.toString(), SignType.MAG));
+                        stream = eng.getStreamFromString(position.toString());
                     }
-
                     for (Path file: stream) {
                         PosixFileAttributes attr = Files.readAttributes(file, PosixFileAttributes.class);
                         isDir = attr.isDirectory();
@@ -140,14 +140,24 @@ public class LSCommand implements ICommand {
                 
                 if(params[2] != null)
                 {//estrazione del path
-                	paramPath = ((Path)Paths.get(params[2].getValue()).normalize());
-                    if(paramPath.getFileName()!=null)
-                    	pattern = paramPath.getFileName().toString();
-                    if(paramPath.getParent()!=null)
-                    	position = paramPath.getParent();
-                    else position=Paths.get("/");
-                    Utility.mf("ESTRATTI: "+pattern+" "+position.toString());
-	        }              
+                	Utility.mf("param[2]: "+params[2].getValue());
+                	paramPath = (Paths.get(params[2].getValue()).normalize());
+                }
+                else	
+                {
+                	paramPath=Paths.get("");
+                }
+                	paramPath=currentPath.resolve(paramPath);
+                    //if(paramPath.getFileName()!=null)
+                    	//pattern = paramPath.getFileName().toString();
+                    if(paramPath.getParent()==null)
+                    {	//position = paramPath.getParent();
+                    //else 
+                    	position=Paths.get("/");
+                    	paramPath=Paths.get("/*");
+                    }
+                   Utility.mf("ESTRATTI: "+pattern+" "+position.toString());
+                
             }
             else
                 Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),

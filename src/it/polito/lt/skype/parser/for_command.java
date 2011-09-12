@@ -1,21 +1,26 @@
 package it.polito.lt.skype.parser;
 
+import it.polito.lt.skype.command.CommandException;
+import it.polito.lt.skype.command.CommandParameter;
+import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.manager.myVar;
 
+import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author jo
  */
-public class for_command implements IFlowCommandControl{
+public class for_command implements ICommand, IFlowCommandControl{
     private myVar name = null;
     private myVar start = null;
     private myVar end = null;
     private myVar step = null;
     private boolean close = false;
-    private LinkedList inside_command;
+    private LinkedList<LinkedList<ICommand>> inside_command;
     private LinkedList PROVA;
     
     public for_command(myVar name, myVar start, myVar end)
@@ -71,6 +76,36 @@ public class for_command implements IFlowCommandControl{
     @Override
     public boolean exec() {
         return false;
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCommandParameter(CommandParameter[][] cpl) throws ParserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Path> getCommandResult() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getCommandStringResult() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void usage() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     

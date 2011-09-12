@@ -31,44 +31,86 @@ public class FileEngine {
 		return ret;
 	}
 	
-	public DirectoryStream<Path> getStreamFromParameter(CommandParameter param) throws IOException{
+	public DirectoryStream<Path> getStreamFromString(String param) throws IOException{
 		DirectoryStream<Path> stream = null;
-		Path paramPath = Paths.get("/");
+		DirectoryStream<Path> streamd = null;
+		DirectoryStream<Path> streamp = null;
+		//Path currentPath = Paths.get(current);
+		Path paramPath = (Paths.get(param).normalize());
+		//paramPath=currentPath.resolve(paramPath);
+		//Utility.mf("GETSTREAM RESOLVED: "+paramPath.toString());
 		Path position = Paths.get("/");
 		String pattern = "*";
-		paramPath = ((Path)Paths.get(param.getValue()).normalize());
+		
+		Utility.mf("GETSTREAM paramPath "+paramPath.toString());
     	pattern = paramPath.getFileName().toString();
+    	Utility.mf("GETSTREAM pattern "+pattern);
         position = paramPath.getParent();
+        Utility.mf("GETSTREAM position "+position.toString());
         BasicFileAttributes b_attr = null;
-        			//OCCHIO SE IL PARAMETRO é NULLO SIGNIFICA CHE CI VA LA CARTELLA CORENTE!
-        //QUINDI E DA SISTEMARE
+        			
                     if(param!=null) //presenza del nome del file
                     {
                          boolean isRegFolder = false;
                          boolean isFile = false;
                          try{
                         	 b_attr = Files.readAttributes(paramPath,BasicFileAttributes.class);
-                        	 isFile=b_attr.isRegularFile();
+                        	 isRegFolder=b_attr.isDirectory();
+                        	 if(!isRegFolder)
+                        		 isFile=true;
                          }
                          catch(NoSuchFileException nsfe)
                          {
-                        	 System.out.println("NoSuchFileException!");
-                        	 isRegFolder=true;
+                        	 Utility.mf("NoSuchFileException!");
+
                          }
-                         try {
-                        	 if(isRegFolder || isFile)
-                        		stream = Files.newDirectoryStream(position, pattern);
-                        	 else
-                                stream = Files.newDirectoryStream(paramPath);                             	
-                        	 }	
+                         try 
+                         {
+	                        	 if(isRegFolder || isFile){
+	                        		 Utility.mf("file o cartella secchi");
+	                        		 stream = Files.newDirectoryStream(paramPath);       
+	                        	 }
+	                        	 else{
+	                        		 Utility.mf("regexp");  
+	                        		 stream = Files.newDirectoryStream(position, pattern);
+	                        	 }	
+                         }
                              
                         catch (IOException ex) {
                         	System.out.println("il file non esiste!!");
                         	ex.printStackTrace();
                         }
+                   
+                        /* try {
+                        		 //streamd = Files.newDirectoryStream(paramPath);       
+                        		 streamp = Files.newDirectoryStream(position, pattern);
+                        		/* if(streamd!=null)
+                        		 {
+                                     Utility.mf("SENZA PATTERN");
+                        			 stream= streamd;
+                        		 }
+                        		 else{
+	                        		 if(streamp!=null)
+	                        		 {
+	                        			 
+	                        			 stream =  streamp;
+	                        			 Utility.mf("PATTERN"+ streamp.toString());
+	                        			 
+	                        			 for(Path p : stream)
+	                        				 Utility.mf("RISULTATI"+ p.toString());
+	                        			 
+	                        		 }
+                        		 }
+                        	 }	
+                             
+                        catch (IOException ex) {
+                        	System.out.println("il file non esiste!!");
+                        	ex.printStackTrace();
+                        }*/
+                         
+	
+                   
                     }
-                    Utility.mf("pos "+position.toString()+"\npattern "+pattern.toString());
-		
 
 		return stream;
 	}
