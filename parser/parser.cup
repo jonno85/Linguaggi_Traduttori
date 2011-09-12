@@ -64,6 +64,7 @@ parser code {:
 	public void setEnviroment(String path)
 	{
 		enviroment = path;
+		Utility.mf("CURRENT-PATH now is: " + enviroment);
 	}
 
 	public String getEnviroment()
