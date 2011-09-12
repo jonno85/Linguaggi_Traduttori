@@ -85,7 +85,6 @@
 	</target>
 	
 
-
 	<target name="generate-parser-artifacts" unless="generate-artifacts.notRequired" depends="init, chk-parser-artifacts" description="generate-parser-artifatcs">
 		
 		<jflex

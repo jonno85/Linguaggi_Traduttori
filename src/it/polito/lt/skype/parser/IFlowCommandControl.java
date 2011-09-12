@@ -4,14 +4,16 @@
  */
 package it.polito.lt.skype.parser;
 
+import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.manager.myVar;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 /**
  *
  * @author jo
  */
-public interface IFlowCommandControl { 
+public interface IFlowCommandControl extends ICommand{ 
     
     /**
      * Ogni comando dovrà avere una lista di comandi interni da eseguire
@@ -27,6 +29,8 @@ public interface IFlowCommandControl {
      * impostare per i comandi che lo prevedono un valore finale o incremento
      */
     public boolean close_command(myVar step);
+    
+    public boolean close_command();
     
     public boolean isClose();
     

@@ -33,8 +33,8 @@ import java.io.*;
                 parser p = new parser(l);
                 p.setEnviroment("/home/jo");
                 /* Avvio il parser */
-                //Object result = p.parse();
-                p.debug_parse();
+                Object result = p.parse();
+                //p.debug_parse();
                 Utility.mf("finito");
 
 			

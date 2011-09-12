@@ -213,7 +213,7 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 {diver} 				{return symbol(sym.Diver);}
 
 {c_ug}					{return symbol(sym.C_Ug);}
-//{c_ugg}					{return symbol(sym.C_Ugg);}
+{c_ugg}					{return symbol(sym.C_Ugg);}
 {c_or}					{return symbol(sym.C_Or,new String("|"));}
 {c_and}					{return symbol(sym.C_And,new String("&"));}
 {c_not}					{return symbol(sym.C_Not,new String("!"));}
