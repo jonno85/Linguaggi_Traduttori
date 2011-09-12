@@ -44,15 +44,40 @@ public class SkyBot {
     	Skype.setDeamon(false); // to prevent exiting from this program
         profilo.setMoodMessage("SHELL MODE: ON");
         Utility.mf("bot settato e pronto");
-       ChatMessageAdapter meslis= new ChatMessageAdapter() ;
+        ChatMessageAdapter meslis= new ChatMessageAdapter()  {
+    	  
+        	//ChatMessageAdapter class begin
+        	public void chatMessageReceived(ChatMessage received) throws SkypeException {
+				       
+				       	Utility.mf("\n"+received.getType());
+				       	if (received.getType().equals(ChatMessage.Type.SAID)) {
+				       		CommandMessage cm=new CommandMessage(received);
+				       		
+				       		String mes=received.getContent();
+				      		  Utility.mf("messaggio ricevuto: "+mes);
+				       		Utility.mf("messaggio ricevuto da"+cm.getChatMessage().getSenderId());
+				       		
+				       		/*String mes=received.getContent();
+				       		 *Utility.mf("messaggio ricevuto: "+mes);
+				       		 *received.getSender().send(">>>hai detto: "+mes);
+				       		 *received.getSender().send("risultati comando:\n");
+				       		 **/
+				      	     
+				           	
+				           	//parsing comando
+				           	
+				           	//stampa risultato sull chat del client con                	
+				           	//received.getSender().send("risultati comando:\n");
+				   	     
+				           }
+				       }
+				   };//fine chatmessage adapter;
+				   
+				   
         Skype.addChatMessageListener(meslis);
-        
-        //operazioni
-        
-        
         //Skype.removeChatMessageListener(meslis);
         //System.out.println("bot eliminato");
     }
 
-
 }
+
