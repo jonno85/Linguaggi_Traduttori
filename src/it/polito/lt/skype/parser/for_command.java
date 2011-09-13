@@ -98,7 +98,7 @@ public class for_command implements ICommand, IFlowCommandControl{
                 index = common_vm.makeOper(index, step,"+");
             }
         }
-        return false;
+        return true;
     }
 
     @Override
