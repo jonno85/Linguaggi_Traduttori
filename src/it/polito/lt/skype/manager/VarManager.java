@@ -58,6 +58,18 @@ public class VarManager{
 		return ((myVar)var_tb.get(name));
 	}
 
+        public boolean isPos(myVar a){
+                if(a.getType()==1){
+                    if((Integer)a.getValue()>=0)  
+                        return true;
+                }
+                if(a.getType()==2){
+                    if((Float)a.getValue()>=0.0)    
+                        return true;
+                }
+		return false;
+	}
+        
 	public boolean chkType(myVar a, myVar b){
 		if(a.getType()==b.getType())        
 			return true;
@@ -102,11 +114,8 @@ public class VarManager{
 			if(a.getType()!=3 & b.getType()==3 & segno.equalsIgnoreCase("+")){
 				a.setType(3);
 			}
-			
-			
-			System.out.println("dentro");
 			if(chkType(a,b)){
-				System.out.println("dentro2");
+				
 				switch(a.getType()){
 					case 1: {
 						System.out.println("intero");

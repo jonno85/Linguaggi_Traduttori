@@ -1,9 +1,11 @@
 package it.polito.lt.skype.parser;
 
+import it.polito.lt.skype.command.CommandErrorType;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 
 import java.nio.file.Path;
@@ -17,30 +19,23 @@ import java.util.TreeSet;
  * @author jo
  */
 public class for_command implements ICommand, IFlowCommandControl{
-    private myVar name = null;
+    private myVar index = null;
     private myVar start = null;
     private myVar end = null;
     private myVar step = null;
     private boolean close = false;
     private LinkedList<ICommand> inside_command;
+    private VarManager common_vm = null;
     
     
-    public for_command(myVar name, myVar start, myVar end)
+    public for_command(myVar index, myVar start, myVar end, VarManager vm)
     {
-        this.name = name;
+        this.index = index;
         this.start = start;
         this.end = end;
+        this.common_vm = vm;
         this.close = false;
-        /*
-        IFlowCommandControl fc = null;
-        
-        PROVA = new LinkedList();
-        
-        //PROVA.add(new for_command(new myVar(), new myVar(), new myVar()));
-        //Utility.mf("inserito primo elemento");
-        //PROVA.toString();
-        fc = ((IFlowCommandControl) PROVA.listIterator().next());
-        */
+
     }
     
     public boolean close_command(myVar step)
@@ -84,7 +79,25 @@ public class for_command implements ICommand, IFlowCommandControl{
     }
 
     @Override
-    public boolean exec() {
+    public boolean exec() throws CommandException {
+        //indice di partenza
+        if(common_vm.isPos(step)){
+            index = common_vm.extractVar(start.getName());
+            while(common_vm.makeLODiv(index, end))
+            {
+                for(ICommand c : inside_command){
+                    try {
+                        c.exec();
+                    } catch (CommandException ex) {
+                        throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                                Thread.currentThread().getStackTrace()[2].getMethodName(),
+                                "FOR recursive Exception: "+ex.getMessage(), null);
+                    }
+                }
+                //aggiornamento indice
+                index = common_vm.makeOper(index, step,"+");
+            }
+        }
         return false;
     }
 

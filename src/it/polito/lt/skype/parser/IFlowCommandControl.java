@@ -20,8 +20,6 @@ public interface IFlowCommandControl extends ICommand{
      * private LinkedList inside_command;
      */
     
-    public boolean exec();
-    
     public void set_list_command(LinkedList inside_command);
     
     /*

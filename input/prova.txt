@@ -1,19 +1,21 @@
-start pippo.ss
-create $a=2
-
 create $c, $b = 0, $a3 = 5, $d = 0
-
+if $b >=0 && $c == 'null' then
+		$a = 2
+endif
 foreach $a 0 10 do
-	$d = $d +$a
-next +1
-fine pippo.ss
-
+	create $s = 'ciao'
+next +$a
+create $a4=2
+start pippo.ss
+create $c, $b = 0, $a3 = 5, $d = 0
 if $a <3 || $a == 5 then
 	$a = 1
-	if $b >=0 && $c == 'null' then
-		$a = 2
-	endif
+	
 endif
+
+
+fine pippo.ss
+
 
 
 

@@ -27,6 +27,7 @@ import it.polito.lt.skype.bot.*;
 %caseless
 %unicode
 %xstate comment
+%xstate exclude_script_code
 %state script
 
 %{
@@ -161,22 +162,66 @@ sp_char = {times}|"?"
 file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 
 %%
-/*
-<script> {
-	{com_script_end}	{yybegin(YYINITIAL); return symbol(sym.End_S); }
-}
-*/
 
+<script> {
+	{id}{script_ext}			{Utility.mf("script name: "+yytext());
+						return symbol(sym.FileScript,new String(yytext()));} 
+	{SO}					{return symbol(sym.SO);}
+	{SC}					{return symbol(sym.SC);}
+	{com_if}				{return symbol(sym.Com_If);}
+	{com_if_2}				{return symbol(sym.Com_If_2);}
+	{com_if_m}				{return symbol(sym.Com_If_m);}
+	{com_if_e}				{return symbol(sym.Com_If_e);}
+	{com_for}				{return symbol(sym.Com_For);}
+	{com_for_e}				{return symbol(sym.Com_For_e);}
+	{com_for_m}				{return symbol(sym.Com_For_m);}
+	"$"{result}				{return symbol(sym.Result);}
+	{str}					{Utility.mf("str: "+yytext());String s = new String(yytext());}
+	"$"{id}					{Utility.mf("ID: "+yytext());
+						return symbol(sym.Script_Var,new String(yytext()));}
+	{com_script_end}			{yybegin(YYINITIAL);
+						Utility.mf("dentro script");
+						return symbol(sym.End_S); }
+}
+
+<exclude_script_code>{
+	{com_if_e}			{Utility.mf("dentro exclude script code da if");
+					yybegin(YYINITIAL);}
+
+	{com_for_e}.+{nl}
+					{Utility.mf("dentro exclude script code da for");
+					yybegin(YYINITIAL);}
+
+	.				{Utility.mf("posizione linea "+yyline+" colonna "+yycolumn);}
+	{nl}+				{Utility.mf("newline");}
+}
 <comment>{
 	{cc}				{yybegin(YYINITIAL);} 
 	.				{;}
 }
 
 <YYINITIAL>{
+//regole che saranno escluse se non nello stato script
+{SO}					{;}
+{SC}					{;}
+{com_if}				{yybegin(exclude_script_code);
+					Utility.mf("prima di lanciare script code da if");}
+
+{com_for}				{
+					yybegin(exclude_script_code);
+					Utility.mf("prima di lanciare script code da for");}
+
+"$"{result}				{;}
+
+
+
 {ac}					{yybegin(comment);} 
-{com_script_start}			{/*yybegin(script);*/ return symbol(sym.Start_S);} 
+{com_script_start}			{
+					yybegin(script); 
+					Utility.mf("dentro script");
+					return symbol(sym.Start_S);} 
 {com_script_throw}			{return symbol(sym.Throw_S);}
-{com_script_end}			{/*yybegin(YYINITIAL);*/ return symbol(sym.End_S); }
+//{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
 
 {data}					{
 						Utility.mf("Data raccolta: " +yytext());
@@ -230,17 +275,10 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 {com_mv}				{return symbol(sym.Com_Mov);}
 {com_mkdir}				{return symbol(sym.Com_MKDir);}
 {com_p}					{return symbol(sym.Com_P);}
-{com_if}				{return symbol(sym.Com_If);}
-{com_if_2}				{return symbol(sym.Com_If_2);}
-{com_if_m}				{return symbol(sym.Com_If_m);}
-{com_if_e}				{return symbol(sym.Com_If_e);}
-{com_for}				{return symbol(sym.Com_For);}
-{com_for_e}				{return symbol(sym.Com_For_e);}
-{com_for_m}				{return symbol(sym.Com_For_m);}
 {min}{min}				{return symbol(sym.Minor);}
 
 "$"{name}				{return symbol(sym.Name);}
-"$"{result}				{return symbol(sym.Result);}
+
 "$"{id}					{return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
 ({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
@@ -252,8 +290,6 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 {float}					{return symbol(sym.Vint, new Float(yytext()));}
 {RO}					{return symbol(sym.RO);}
 {RC}					{return symbol(sym.RC);}
-{SO}					{return symbol(sym.SO);}
-{SC}					{return symbol(sym.SC);}
 {minus}					{return symbol(sym.Minus,new String(yytext()));}
 {times}					{return symbol(sym.Times,new String(yytext()));}
 {plus}					{return symbol(sym.Plus,new String(yytext()));}
@@ -261,15 +297,17 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 {pv}					{return symbol(sym.Pv);}
 
 
-{id}{script_ext}			{return symbol(sym.FileScript,new String(yytext()));}
+
 {tab}					{;}
 {sp}					{;}
 ","					{;}
-{str}					{String s = new String(yytext());
+{str}					{Utility.mf("str: "+yytext());
+					String s = new String(yytext());
 					return symbol(sym.Str,s.substring(1, s.length()-1));}
-//{id}					{return symbol(sym.ID,new String(yytext()));}
-.					{System.out.println("errore: "+yytext());}
+//{id}					{Utility.mf("id value: "+yytext());}
 {file}					{return symbol(sym.File,new String(yytext()));}
+.					{System.out.println("errore: "+yytext());}
+
 
 
 }
