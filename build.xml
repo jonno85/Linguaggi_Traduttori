@@ -33,7 +33,8 @@
 	<property name="input.file" location="${input.dir}/prova.txt" />
 	<property name="scanner.file" location="${parser.dir}/scanner.jflex" />
 	<property name="parser.file" location="${parser.dir}/parser.cup" />
-	
+	<property name="tj" location="/home/jo/tooljava/" />
+	<property name="drawTree.dir" location="${basedir}/drawTree" />
 	
 
 	
@@ -92,7 +93,7 @@
 		    destdir="${generated.dir}"
 		/>
 		<!--non fa il settaggio della property package...agisco direttamente sulla dir di output-->
-		<cupdt 
+		<cup 
 			file="/${parser.file}" 
 			dir="${generated.package}"
 			package="${generated.pakage}"
@@ -105,16 +106,47 @@
 		<echo>REWRITE DONE!</echo>
 	</target>
 
-	
-	<target name="generate-treeCleanParser"  description="generate a clea parser for DrawTree">
+	<target name="fix-lexer" description="fix lexer.java public issues">
+		<echo>Running REWRITE Lexer.java</echo>
+			<replaceregexp file="${generated.package}/Lexer.java" match="Lexer\(java." replace="public Lexer\(java." byline="true"/>
+			<echo>...</echo>
+			<replaceregexp file="${generated.package}/Lexer.java" match="class Lexer " replace="public class Lexer "/>
+			<echo>REWRITE DONE!</echo>
+	</target>
+		<target name="generate-treeCleanParser" description="generate a cleaned parser for DrawTree">
 			
 			<echo>TREE CLEAN START</echo>
 			<copy file="${parser.dir}/parser.cup" tofile="${parser.dir}/parser_clean.cup" overwrite="true"/>
 			<echo>...</echo>		
 			<replaceregexp file="${parser.dir}/parser_clean.cup" match="\{:" replace="{:\/\*" byline="true"/>
 			<replaceregexp file="${parser.dir}/parser_clean.cup" match=":\}" replace="\*\/:\}" byline="true"/>
+			<replaceregexp file="${parser.dir}/parser_clean.cup" match="package" replace="\/\/package}" byline="true"/>
 		<echo>TREE CLEAN DONE!</echo>
 		</target>
+
+		<target name="generate-treeCleanScanner" description="generate a cleaned scanner for DrawTree">
+			
+			<echo>TREE CLEAN START</echo>
+			<copy file="${parser.dir}/scanner.jflex" tofile="${parser.dir}/scanner_clean.jflex" overwrite="true"/>
+			<echo>...</echo>		
+			<replaceregexp file="${parser.dir}/scanner_clean.jflex" match="Utility.mf" replace="System.out.println" byline="true"/>
+			<replaceregexp file="${parser.dir}/scanner_clean.jflex" match="package" replace="\/\/package}" byline="true"/>
+			
+		<echo>TREE CLEAN DONE!</echo>
+		</target>
+		
+	<target name="copy-drawTree" description="generate a clea parser for DrawTree">
+			
+			<echo>COPY</echo>
+			<copy file="${generated.package}/Lexer.java" tofile="${drawTree.dir}/Lexer.java" overwrite="true"/>
+			<copy file="${generated.package}/prova.txt" tofile="${drawTree.dir}/prova.txt" overwrite="true"/>
+			<copy file="${generated.package}/parser.java" tofile="${drawTree.dir}/parser.java" overwrite="true"/>
+			<copy file="${generated.package}/sym.java" tofile="${drawTree.dir}/sym.java" overwrite="true"/>
+			<echo>COPY DONE!</echo>
+		</target>
+			
+	
+
 		
 	<target name="build" depends="init, generate-parser-artifacts" description="Build the sources">
 		<javac debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" destdir="${bin.dir}">

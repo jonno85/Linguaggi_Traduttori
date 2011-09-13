@@ -143,7 +143,7 @@ unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 
 ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
 
-script_ext = ".ss"
+script_ext = "."(ss)
 
 digit=[0-9]
 float = {digit}+("."{digit}+)

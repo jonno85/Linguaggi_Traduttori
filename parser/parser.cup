@@ -1,6 +1,6 @@
 package it.polito.lt.skype.generated.parser;
 
-import draw.*;
+
 import java_cup.runtime.*;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -176,11 +176,11 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
 					:}
 		| sh_stmt:x EL		{:
 					System.out.println("raccolto sh stmt: parameter setting"); 
-					/*parser.cp[0] = parser.array_file.get(0);
+					parser.cp[0] = parser.array_file.get(0);
 					parser.cp[1] = parser.array_path.get(0);
 					parser.cp[2] = parser.array_perm.get(0);
 					parser.cp[3] = parser.array_data.get(0);
-					parser.cp[4] = parser.array_dim.get(0);*/
+					parser.cp[4] = parser.array_dim.get(0);
 					for(int i=0; i<7; i++)
 						if(parser.cp[i]==null)
 							Utility.mf("*niente*");
@@ -209,32 +209,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
 					//parser.cpm[6]=new CommandParameter[7];
 
 					System.out.println("dopo init 2'");
-					for(int i=0; i<7; i++)
-						if(parser.cp[i]==null)
-							Utility.mf("cp niente:"+i);
-						else
-							Utility.mf("cp param["+i+"]: "+parser.cp[i].getValue());
 
-					parser.cpm[6] = parser.cp;
-
-					for(int i=0;i<7;i++){
-						if(parser.cp[i]==null)
-							Utility.mf("cpm niente:"+i);
-						else
-							Utility.mf("cpm param[6]["+i+"]: "+parser.cpm[6][i].getValue());
-					}
-/*
-					for(int i=0; i<7; i++){
-						if(parser.cpm[i]==null)
-							continue;
-						int len = parser.cpm[i].length;
-						for(int j=0;j<len;j++){
-							if(parser.cpm[i][j]==null)
-								Utility.mf("param["+i+"]["+j+"]: niente");
-							else
-								Utility.mf("param["+i+"]["+j+"]: "+parser.cpm[i][j].getValue());
-						}
-					}*/
 					Utility.mf("SETCOMMANDPARAMETER");
 					parser.comFind.setCommandParameter(parser.cpm);
 					Utility.mf("EXEC");
@@ -353,11 +328,11 @@ arit_arg	::= Var:x			{: RESULT = parser.vm.extractVar(x);
 							System.out.println("Var: "+x); :}
 		| i_arg:x			{: RESULT = ((myVar)x); System.out.println("i_arg"); :}
 ;
- /*
-i_Op		::= bool_op:x	{: RESULT = x; :}
-		| C_Not:x	{: RESULT = x; :}
-;
-*/
+
+//i_Op		::= bool_op:x	{: RESULT = x; :}
+//		| C_Not:x	{: RESULT = x; :}
+//;
+
 
 // ***************** parametri per i comandi
 
@@ -374,26 +349,6 @@ sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
 		| sh_stmt i_cc_conds
 		//| commands_oa:x		{: RESULT = x; :}
 ;
-
-// ***************** comandi con argomenti opzionali 
-/*commands_oa	::= Com_Cd
-		| Com_Cd Minor
-		| Com_Ls		{: 
-						Utility.mf("LS!");
-						RESULT = new Object[2];
-						RESULT[0] = new LSCommand(parser.getEnviroment());
-						RESULT[1] = new CommandParameter[5];			
-					:}
-		| Com_Ls Order:o		{: 
-						Utility.mf("LS Order!");
-						RESULT = new Object[2];
-						RESULT[0] = new LSCommand(parser.getEnviroment());
-						CommandParameter[] cp = new CommandParameter[5];
-						cp[0]=new CommandParameter(null,o,null);						
-						RESULT[1] = cp;
-									
-					:}
-;*/
 
 // ***************** comandi standard mv, rm, cp e aggiunti cd, ls
 commands	::= Com_Cd		{: 
@@ -448,9 +403,9 @@ LS_stmt		::= Com_Ls		{:
 comm_find_stmt	::= Com_Find param:x	{: 
 					Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand(parser.getEnviroment());
-/*
-					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
-					parser.counter_path = 0;*/
+
+//					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
+//					parser.counter_path = 0;
 
 					parser.add_param(x);
 					:}
@@ -644,11 +599,11 @@ conf_exp	::= conf
 				:}
 ;
 
-/*
-not_exp		::= C_Not Var 
-		| C_Not i_arg
-;
-*/
+
+//not_exp		::= C_Not Var 
+//		| C_Not i_arg
+//;
+
 
 // **************** IF statement
 
@@ -710,19 +665,6 @@ for_tail 	::= Com_For_e i_Op_ps:s for_arg:y
 				Utility.mf("step: "+parser.vm.Auto_Neg(y,s));
 				RESULT = parser.vm.Auto_Neg(y,s);
 				:}
-/*
-			while(i.hasNext())
-			{
-				ifcc = (IFlowCommandControl)i.next();
-				if(ifcc)
-			}
-			System.out.println("dentro for tail");
-			RESULT= new String[2];
-			RESULT[0]= (String)x.toString();
-			RESULT[1]= ((myVar)y).getName();
-			System.out.println(" valore: "+y.toString());
-			System.out.println("operatore: "+x.toString()); 		:}
-*/
 ;
 
 for_stmt	::= for_head:x i_stmt:l for_tail:y
