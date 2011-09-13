@@ -21,7 +21,7 @@
 		<taskdef name="cup"
 		  classname="java_cup.AntTask"
 		/>
-	
+
 	
 	<property name="parser.dir" location="${basedir}/parser" />
 	<property name="src.dir" location="${basedir}/src" />
@@ -93,7 +93,7 @@
 		    destdir="${generated.dir}"
 		/>
 		<!--non fa il settaggio della property package...agisco direttamente sulla dir di output-->
-		<cup 
+		<cupdt 
 			file="/${parser.file}" 
 			dir="${generated.package}"
 			package="${generated.pakage}"
@@ -105,6 +105,16 @@
 		<replaceregexp file="${generated.package}/Lexer.java" match="class Lexer " replace="public class Lexer "/>
 		<echo>REWRITE DONE!</echo>
 	</target>
+	
+	<target name="generate-treeCleanParser"  description="generate a clea parser for DrawTree">
+			
+			<echo>TREE CLEAN START</echo>
+			<copy file="${parser.dir}/parser.cup" tofile="${parser.dir}/parser_clean.cup" overwrite="true"/>
+			<echo>...</echo>		
+			<replaceregexp file="${parser.dir}/parser_clean.cup" match="\{:" replace="{:\/\*" byline="true"/>
+			<replaceregexp file="${parser.dir}/parser_clean.cup" match=":\}" replace="\*\/:\}" byline="true"/>
+		<echo>TREE CLEAN DONE!</echo>
+		</target>
 		
 	<target name="build" depends="init, generate-parser-artifacts" description="Build the sources">
 		<javac debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" destdir="${bin.dir}">
