@@ -5,7 +5,8 @@ public enum ParserErrorType {
     COMMMAND_NOT_FOUND(0),
     INVALID_PARAMETER(1),
     INVALID_RANGE(2),
-    INVALID_NUMBER_PARAMETER(3);
+    INVALID_NUMBER_PARAMETER(3),
+    STATEMENT_ERROR(4);
     
     private int code;
     private ParserErrorType(int n)

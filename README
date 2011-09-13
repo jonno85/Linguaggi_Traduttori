@@ -25,3 +25,29 @@ B) per far funzionare il buildfile ant (la mia versione è 1.7.1) occorre:
 
 C) JFlex genera il file Lexer.java omettendo i qualificatori "public" prima del nome della classe e prima dei costruttori, comportando problemi di visibilità.
 Ogni volta quindi, nel file generato Lexer.java ant si occupa di fare le dovute sostituzioni.
+
+Per parsare le strutture dati nidificate e sequenziali utilizziamo una struttura misto albero lista:
+
+main
+|
+--for1
+    |
+    |--if1
+	|
+	|--if2
+	    |
+	    |--commands
+	|--if3
+	    |
+	    |--commands
+	else
+	|
+	|--commands
+    |
+    |--commands
+
+inserire il null nello scanner
+
+
+
+

@@ -52,7 +52,9 @@ public class MKDCommand implements ICommand {
                     Files.createDirectories(position.resolve(dir), attr);
                     pathResult.add(dir);
                 } catch (IOException ex) {
-                    throw new CommandException(CommandErrorType.MAKE_DIR_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
+                    throw new CommandException(CommandErrorType.MAKE_DIR_ERROR,this.getClass().getName(),
+                            Thread.currentThread().getStackTrace()[2].getMethodName(),
+                            "RM recursive Exception: "+ex.getMessage(), null);
                 }
             }
 

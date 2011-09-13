@@ -85,7 +85,6 @@
 	</target>
 	
 
-
 	<target name="generate-parser-artifacts" unless="generate-artifacts.notRequired" depends="init, chk-parser-artifacts" description="generate-parser-artifatcs">
 		
 		<jflex
@@ -105,6 +104,7 @@
 		<replaceregexp file="${generated.package}/Lexer.java" match="class Lexer " replace="public class Lexer "/>
 		<echo>REWRITE DONE!</echo>
 	</target>
+
 	
 	<target name="generate-treeCleanParser"  description="generate a clea parser for DrawTree">
 			
