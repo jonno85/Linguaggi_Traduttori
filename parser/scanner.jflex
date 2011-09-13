@@ -143,7 +143,7 @@ unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 
 ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
 
-script_ext = ".ss"
+script_ext = "."(ss)
 
 digit=[0-9]
 float = {digit}+("."{digit}+)
@@ -158,13 +158,13 @@ str= '([^\n\r']+|\\)*'
 sp_char = {times}|"?"
 
 //{id}"."{ext}|{times}"."{times}|{id}"."{times}
-
+filescript = {id}{script_ext}
 file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 
 %%
 
 <script> {
-	{id}{script_ext}			{Utility.mf("script name: "+yytext());
+	{filescript}			{Utility.mf("script name: "+yytext());
 						return symbol(sym.FileScript,new String(yytext()));} 
 	{SO}					{return symbol(sym.SO);}
 	{SC}					{return symbol(sym.SC);}
@@ -305,7 +305,8 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 					String s = new String(yytext());
 					return symbol(sym.Str,s.substring(1, s.length()-1));}
 //{id}					{Utility.mf("id value: "+yytext());}
-{file}					{return symbol(sym.File,new String(yytext()));}
+{file}					{Utility.mf("file: "+yytext());
+					return symbol(sym.File,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}
 
 
