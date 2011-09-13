@@ -1,5 +1,6 @@
 package it.polito.lt.skype.generated.parser;
 
+import draw.*;
 import java_cup.runtime.*;
 import java.io.InputStreamReader;
 import java.util.HashMap;
