@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/swt.jar"/>
 	<classpathentry kind="lib" path="lib/JFlex.jar"/>
 	<classpathentry kind="lib" path="lib/java-cup-10k.jar"/>
+	<classpathentry kind="lib" path="/home/robizz/tooljava/cupdt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
