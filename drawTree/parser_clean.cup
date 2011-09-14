@@ -79,7 +79,7 @@ parser code {:/*
 
 
 terminal  Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
-terminal  Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
+terminal  /*Ext,*/ ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, /*FileScript,*/ EL;
 terminal  Int;
 terminal  Vint;
 terminal  GMA;
@@ -125,7 +125,7 @@ script		::= start_s i_stmt:x end_s
 
 // ********************* comandi di gestione script
 
-start_s			::= Start_S FileScript:s EL
+start_s			::= Start_S File EL
 					{:/*
 					Utility.mf("INIZIO SCRIPT");
 					parser.list_script = new LinkedList<ICommand>();
@@ -133,10 +133,10 @@ start_s			::= Start_S FileScript:s EL
 					*/:}
 ;
 
-throw_s		::= Throw_S FileScript
+throw_s		::= Throw_S File
 ;
 
-end_s		::= End_S FileScript:s EL
+end_s		::= End_S File
 					{:/*
 					Utility.mf("FINE SCRIPT");
 					*/:}
@@ -152,7 +152,7 @@ i_stmt		::= stmt:s		{:/*//RE-Init
 					parser.comFind = null;
 					*/:}
 		| i_stmt stmt:s
-		| script
+
 ;
 
 // ********************* statemente generali
@@ -211,7 +211,7 @@ stmt 		::= init_stmt EL	{:/* parser.vm.getListVar(); Utility.mf("INIT STMT");	*/
 					
 					Utility.mf(parser.comFind.getCommandStringResult());
 					*/:}
-//		| script EL
+		| script EL
 		| throw_s EL
 		| Com_P arit_stmt EL
 		| conf_exp EL /*********************************************/
@@ -325,9 +325,12 @@ arit_arg	::= Var:x			{:/* RESULT = parser.vm.extractVar(x);
 
 // ***************** parametri per i comandi
 
+
+
 param		::= Path:x	{:/* RESULT = new CommandParameter(ParamType.PATH,x,null); */:}
 		| File:x	{:/* RESULT = new CommandParameter(ParamType.FILE,x,null); */:}
-		| Ext:x		{:/* RESULT = new CommandParameter(ParamType.FILE,x,null); */:}
+
+		//| Ext:x		{:/* RESULT = new CommandParameter(ParamType.FILE,x,null); */:}
 ;
 
 // ***************** statement relativi ai comandi

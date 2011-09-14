@@ -136,7 +136,7 @@ script		::= start_s i_stmt:x end_s
 
 // ********************* comandi di gestione script
 
-start_s			::= Start_S FileScript:s EL
+start_s			::= Start_S File:s EL
 					{:
 					Utility.mf("INIZIO SCRIPT");
 					parser.list_script = new LinkedList<ICommand>();
@@ -147,7 +147,7 @@ start_s			::= Start_S FileScript:s EL
 throw_s		::= Throw_S File
 ;
 
-end_s		::= End_S FileScript:s EL
+end_s		::= End_S File:s
 					{:
 					Utility.mf("FINE SCRIPT");
 					:}
@@ -163,7 +163,6 @@ i_stmt		::= stmt:s		{://RE-Init
 					parser.comFind = null;
 					:}
 		| i_stmt stmt:s
-		| script
 ;
 
 // ********************* statemente generali
@@ -222,7 +221,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
 					
 					Utility.mf(parser.comFind.getCommandStringResult());
 					:}
-//		| script EL
+		| script EL
 		| throw_s EL
 		| Com_P arit_stmt EL
 		| conf_exp EL /*********************************************/
