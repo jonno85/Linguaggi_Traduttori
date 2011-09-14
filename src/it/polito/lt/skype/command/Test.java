@@ -4,6 +4,7 @@ import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 public class Test {
 
 	/**
@@ -14,6 +15,10 @@ public class Test {
                 CommandParameter[] p = null;
                 CommandParameter[][] pm = null;
                 String current ="/home/robizz/lt2";
+                cmd = new PCommand();
+                p = new CommandParameter[7];
+                p[0]=new CommandParameter(ParamType.FILE, "ciao", SignType.MAG);
+                p[1]=new CommandParameter(ParamType.FILE, "#", SignType.MAG);
            /*
                 cmd = new LSCommand("/home/robizz/lt2");
                 p = new CommandParameter[7];
@@ -56,7 +61,7 @@ public class Test {
 	                p[2] = new CommandParameter(ParamType.FILE,"g",null);
 	                p[3] = new CommandParameter(ParamType.FILE,"e",null);
             */
-             
+             /*
                 cmd=new FINDCommand(current);
                 pm = new CommandParameter[7][];
                 
@@ -70,14 +75,14 @@ public class Test {
                 pm[4] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "35", SignType.MINUG)};
                 pm[5] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "rm", SignType.MINUG)};
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
-         
+         	*/
                /* 
                cmd = new CPCommand(current);
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
                 p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);*/
                 try {
-                    cmd.setCommandParameter(pm);
+                    cmd.setCommandParameter(p);
                 } catch (ParserException ex) {
                     ex.printStackTrace();
                 }

@@ -1,5 +1,6 @@
 package it.polito.lt.skype.parser;
 
+import it.polito.lt.skype.command.CommandErrorType;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
@@ -20,9 +21,9 @@ public class if_command implements ICommand, IFlowCommandControl{
     private myVar name = null;
     private boolean close = false;
     private myVar condition = null;
-    private LinkedList<LinkedList<ICommand>> inside_command;
-    private LinkedList<LinkedList<ICommand>> inside_command_else;
-    private TreeSet inside_tree_command;
+    private LinkedList<ICommand> inside_command;
+    private LinkedList<ICommand> inside_command_else;
+
     
     
     public if_command(myVar condition)
@@ -37,8 +38,16 @@ public class if_command implements ICommand, IFlowCommandControl{
         return false;
     }
     
-    public void exec_alter_flow_command(){
-    
+    public void exec_alter_flow_command() throws CommandException{
+    	for(ICommand c : inside_command_else){
+            try {
+                c.exec();
+            } catch (CommandException ex) {
+                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+                        "FOR recursive Exception: "+ex.getMessage(), null);
+            }
+        }
     }
 
     @Override
@@ -69,8 +78,50 @@ public class if_command implements ICommand, IFlowCommandControl{
     }
 
     @Override
-    public boolean exec() {
-        return false;
+    public boolean exec() throws CommandException {
+    	if(condition.getType()==1){
+    		if((Integer)condition.getValue()==0){
+    			for(ICommand c : inside_command){
+    	            try {
+    	                c.exec();
+    	            } catch (CommandException ex) {
+    	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+    	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+    	                        "FOR recursive Exception: "+ex.getMessage(), null);
+    	            }
+    	        }
+    		}else
+    			exec_alter_flow_command();
+    	}
+    	if(condition.getType()==2){
+    		if((Float)condition.getValue()==0.0){
+    			for(ICommand c : inside_command){
+    	            try {
+    	                c.exec();
+    	            } catch (CommandException ex) {
+    	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+    	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+    	                        "FOR recursive Exception: "+ex.getMessage(), null);
+    	            }
+    	        }
+    		}else
+    			exec_alter_flow_command();
+    	}
+    	if(condition.getType()==5){
+    		if((Boolean)condition.getValue()){
+    			for(ICommand c : inside_command){
+    	            try {
+    	                c.exec();
+    	            } catch (CommandException ex) {
+    	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+    	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+    	                        "FOR recursive Exception: "+ex.getMessage(), null);
+    	            }
+    	        }
+    		}else
+    			exec_alter_flow_command();
+    	}
+    	return true;
     }
 
     @Override
