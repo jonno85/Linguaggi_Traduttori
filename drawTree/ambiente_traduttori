@@ -1,0 +1,4 @@
+#!/bin/tcsh -f
+set path =($path . /usr/bin/jvm/jdk1.7.0/bin /home/jo/POLITO/Linguaggi_Traduttori/drawTree/cup/java_cup/ )
+setenv CLASSPATH .:/home/jo/POLITO/Linguaggi_Traduttori/drawTree/cup
+

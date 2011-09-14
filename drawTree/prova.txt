@@ -1,0 +1,94 @@
+
+inizio (ddd.ss)
+create $b=4
+if $a <3 || $a == 5 then
+	$a = 1
+	
+endif
+
+
+fine pippo.ss
+
+
+
+
+
+
+
+
+
+
+$c=false
+
+$c=false
+
+
+
+
+
+$a=false
+
+
+
+
+
+
+create $a=2,$c=true,$d=5,$B,$w=true
+create $mio = 'cartella', $g
+if $a = 0 then $B=false endif
+if $c=true then $c=false else $a=0 endif
+
+if $d<4 then 
+        if $c=true then
+            $q=false
+        endif
+else
+        if $w=true then
+            stampa 'verificato'+$mio
+        endif
+    $g=0
+endif
+
+foreach $a 0 10 do
+    if $w>=10 then
+        stampa $a+'print'
+    endif
+next +1
+
+if $w=true then
+    foreach $a 10 $p do
+        foreach $c 5 2 do
+            stampa 'ciclo nidificato, elemento' + $a + '-' + $c
+        next +2
+    next -1
+endif
+
+foreach $a 0 $result do
+    mv $name[$a] $i + '.pdf'
+next +1
+
+create $p='pippo.pdf'
+find *.pdf /home
+foreach $a 0 $result do
+    if $name[$a] = $p then
+     mv $name[$i] 'trovato' + $i + '.pdf'
+else
+    mv $name[$a] $i + '.pdf'
+    print 'elemento n:' + $i ' \n'
+endif
+next +1
+
+fine scr1.ss
+lancia scr1.ss
+
+
+
+cd /home/robizz/lt 
+=======
+cd /home/robizz/lt2/lt
+>>>>>>> b980cab456f0dd02139a530f5fa9944538f7d6e3
+
+
+rm C*
+
+
