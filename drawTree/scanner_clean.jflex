@@ -237,7 +237,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //{giorn}					{return symbol(sym.Day);}
 
 {where}					{return symbol(sym.Where);}
-({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
+//({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
 
 {date_criteria}				{return symbol(sym.Date_Criteria);}
 {dimension_criteria}			{return symbol(sym.Dimension_Criteria);}

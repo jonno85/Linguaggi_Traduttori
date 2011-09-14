@@ -3,4 +3,4 @@
 jflex scanner_clean.jflex;
 java java_cup/MainDrawTree parser_clean.cup;
 javac *.java;
-java Main prova.txt;
+java Main ../input/prova.txt;

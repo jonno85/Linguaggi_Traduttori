@@ -1,5 +1,5 @@
 
-start s.ss
+start jonny.ss
 create $c, $b = 0, $a3 = 5, $d = 0
 if $a <3 || $a == 5 then
 	$a = 1

@@ -76,11 +76,11 @@ public class Test {
                 pm[5] = null;//new CommandParameter[]{new CommandParameter(ParamType.FILE, "rm", SignType.MINUG)};
                 pm[6] = null;//new CommandParameter[]{new CommandParameter(ParamType.NULL, "asc", SignType.MAG),null,null,null,null};//new CommandParameter[]{new CommandParameter(ParamType.FILE, "/home/jo/lt/h", SignType.MINUG)};
          	*/
-               /* 
-               cmd = new CPCommand(current);
+               
+               cmd = new PCommand();
                 p = new CommandParameter[2];
                 p[0] = new CommandParameter(ParamType.FILE,"/home/jo/lt/e/er33",null);
-                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);*/
+                p[1] = new CommandParameter(ParamType.FILE,"/home/jo/lt/h12",null);
                 try {
                     cmd.setCommandParameter(p);
                 } catch (ParserException ex) {
@@ -93,7 +93,7 @@ public class Test {
                     System.err.println(ce.getCause());
                 }
                 
-                System.out.println(cmd.getCommandStringResult());
+                //System.out.println(cmd.getCommandStringResult());
 
 	}
 
