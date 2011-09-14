@@ -122,9 +122,9 @@
 			<replaceregexp file="${drawTree.dir}/parser_clean.cup" match=":\}" replace="\*\/:\}" byline="true"/>
 			<replaceregexp file="${drawTree.dir}/parser_clean.cup" match="package" replace="\/\/package" byline="true"/>
                         <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="import" replace="\/\/import" byline="true"/>
-                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="\/\/import java_cup" replace="import java_cup"/>
-                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="terminal (String|Integer|Float|Calendar|Boolean) " replace="terminal " byline="true"/>
-                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="non terminal (String|Integer|Float|Calendar|Boolean) " replace="non terminal " byline="true"/>
+               			<replaceregexp file="${drawTree.dir}/parser_clean.cup" match="\/\/import java_cup" replace="import java_cup"/>
+                    	<replaceregexp file="${drawTree.dir}/parser_clean.cup" match="terminal (.+)[\t]+" replace="terminal " byline="true"/>
+                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="non terminal (.+)[\t]" replace="non terminal " byline="true"/>
 		<echo>TREE CLEAN DONE!</echo>
 		</target>
 
@@ -147,7 +147,7 @@
 			<echo>Launch DrawTree</echo>
 			<echo>...</echo>		
 			<exec executable="/bin/tcsh">
-                            <arg value="${drawTree.dir}/cmd.sh"/>
+                            <arg line="source ~/gitRepo/Linguaggi_Traduttori\ fork\ da\ jo/${drawTree.dir}/ambiente_traduttori_rob; cmd.sh"/>
                         </exec>
 			
 		<echo>DrawTree Finish!</echo>

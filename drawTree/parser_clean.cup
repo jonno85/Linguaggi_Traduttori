@@ -99,18 +99,18 @@ terminal Bool;
 
 
 non terminal S;
-non terminal assig_stmt;
-non terminal i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal myVar i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
+non terminal			assig_stmt;
+non terminal			i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
+non terminal i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
 //non terminal myVar[] 
 non terminal commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
-non terminal Object[] sh_stmt, LS_stmt;
-//non terminal date_arg;
-non terminal CommandParameter param;
-non terminal for_command for_stmt, for_head;
-non terminal if_command if_stmt, if_head;
-non terminal LinkedList i_stmt;
-non terminal ICommand init_stmt, stmt, str_stmt;
+non terminal sh_stmt, LS_stmt;
+//non terminal Calendar date_arg;
+non terminal CommandParameter   param;
+non terminal for_stmt, for_head;
+non terminal if_stmt, if_head;
+non terminal i_stmt;
+non terminal init_stmt, stmt, str_stmt;
 
 
 precedence left Minus, Plus, C_Or;
