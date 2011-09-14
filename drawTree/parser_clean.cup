@@ -1,8 +1,19 @@
-//package} it.polito.lt.skype.generated.parser;
+//package it.polito.lt.skype.generated.parser;
 
 
 import java_cup.runtime.*;
-
+//import java.io.InputStreamReader;
+//import java.util.HashMap;
+//import java.util.Collection;
+//import java.util.Iterator;
+//import java.util.Calendar;
+//import java.util.ArrayList;
+//import java.util.LinkedList;
+//import java.util.Iterator;
+//import it.polito.lt.skype.manager.*;
+//import it.polito.lt.skype.command.*;
+//import it.polito.lt.skype.parser.*;
+//import it.polito.lt.skype.bot.*;
 
 
 init with {:/*
@@ -78,28 +89,28 @@ parser code {:/*
 ;
 
 
-terminal  Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
-terminal  Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
-terminal  Int;
-terminal  Vint;
-terminal  GMA;
+terminal Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
+terminal Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
+terminal Int;
+terminal Vint;
+terminal GMA;
 terminal Uminus;
-terminal  Bool;
+terminal Bool;
 
 
 non terminal S;
-non terminal assig_stmt;/*init_stmt, i_stmt, stmt, str_stmt;*/
+non terminal assig_stmt;
 non terminal i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal  i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
+non terminal myVar i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
 //non terminal myVar[] 
-non terminal  commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
-non terminal   sh_stmt, /*for_stmt, if_stmt,*/ LS_stmt;
-//non terminal Calendar date_arg;
-non terminal  param;
-non terminal  for_stmt, for_head;
-non terminal if_stmt, if_head;
-non terminal  i_stmt;
-non terminal  init_stmt, stmt, str_stmt;
+non terminal commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
+non terminal Object[] sh_stmt, LS_stmt;
+//non terminal date_arg;
+non terminal CommandParameter param;
+non terminal for_command for_stmt, for_head;
+non terminal if_command if_stmt, if_head;
+non terminal LinkedList i_stmt;
+non terminal ICommand init_stmt, stmt, str_stmt;
 
 
 precedence left Minus, Plus, C_Or;
@@ -125,7 +136,7 @@ script		::= start_s i_stmt:x end_s
 
 // ********************* comandi di gestione script
 
-start_s			::= Start_S FileScript:s EL
+start_s			::= Start_S File:s EL
 					{:/*
 					Utility.mf("INIZIO SCRIPT");
 					parser.list_script = new LinkedList<ICommand>();
@@ -133,10 +144,10 @@ start_s			::= Start_S FileScript:s EL
 					*/:}
 ;
 
-throw_s		::= Throw_S FileScript
+throw_s		::= Throw_S File
 ;
 
-end_s		::= End_S FileScript:s EL
+end_s		::= End_S File:s
 					{:/*
 					Utility.mf("FINE SCRIPT");
 					*/:}
@@ -152,7 +163,6 @@ i_stmt		::= stmt:s		{:/*//RE-Init
 					parser.comFind = null;
 					*/:}
 		| i_stmt stmt:s
-		| script
 ;
 
 // ********************* statemente generali
@@ -211,7 +221,7 @@ stmt 		::= init_stmt EL	{:/* parser.vm.getListVar(); Utility.mf("INIT STMT");	*/
 					
 					Utility.mf(parser.comFind.getCommandStringResult());
 					*/:}
-//		| script EL
+		| script EL
 		| throw_s EL
 		| Com_P arit_stmt EL
 		| conf_exp EL /*********************************************/

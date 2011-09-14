@@ -1,7 +1,12 @@
-//package} it.polito.lt.skype.generated.parser;
+//package it.polito.lt.skype.generated.parser;
 
 import java_cup.runtime.*;
-
+//import it.polito.lt.skype.generated.parser.sym;
+//import java.util.*;
+//import java.text.*;
+//import it.polito.lt.skype.manager.*;
+//import it.polito.lt.skype.command.*;
+//import it.polito.lt.skype.bot.*;
 
 
  	/* NB: dato che JFlex genera la classe e i costruttori omettendo "public" 
@@ -79,7 +84,7 @@ conf = (i|a|e)
 com_ex = (esegui|exec)
 com_script_start = (start|inizio)
 com_script_end = (end|fine)
-com_script_throw = (launch|lancia)
+com_script_throw = (launch|lancia|throw)
 com_mkdir = (mkdir)
 com_cp = (copia|cp|copy)
 com_mv = (muovi|mv|move)
@@ -136,7 +141,9 @@ permission_criteria = (((permess)(o|i))|(permission)s?)
 order = (asc|desc|cres|decr)
 unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 
-ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
+//ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
+
+//script_ext = "."(ss)
 
 digit=[0-9]
 float = {digit}+("."{digit}+)
@@ -144,15 +151,14 @@ int = {digit}+
 name = NAME
 result = RESULT
 
-id=[^0-9+.,;:"-"" "'|\\\"%?&/()#\[\]\{\}"\t""\n""\r""\r\n"=\<\>\*][^+.,;:" "'|\\\"%?&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>?\*]*
+id=[^0-9\$+.,;:"-"" "'|\\\"%?&/()#\[\]\{\}"\t""\n""\r""\r\n"=\<\>\*][^\$+.,;:" "'|\\\"%?&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>?\*]*
 str= '([^\n\r']+|\\)*'
 //[0-9a-zA-Z+.,;:" "?|\\\"%&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>*]+
 
 sp_char = {times}|"?"
 
 //{id}"."{ext}|{times}"."{times}|{id}"."{times}
-//filescript = {id}"."ss
-file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
+file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 %%
 
@@ -205,8 +211,7 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 
 "$"{result}				{;}
 
-({file})			{System.out.println("script name: "+yytext());
-						return symbol(sym.FileScript,new String(yytext()));} 
+
 
 {ac}					{yybegin(comment);} 
 {com_script_start}			{
@@ -274,7 +279,6 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 
 "$"{id}					{return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
-({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
 
 {int}" "?{unit}				{return symbol(sym.IUnit);}
@@ -300,6 +304,7 @@ file = ({sp_char}*|{id}*)+"."({sp_char}*|{id}*)+
 //{id}					{System.out.println("id value: "+yytext());}
 {file}					{System.out.println("file: "+yytext());
 					return symbol(sym.File,new String(yytext()));}
+({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}
 
 

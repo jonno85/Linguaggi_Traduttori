@@ -1,7 +1,8 @@
+throw ffff
 
-inizio (ddd.ss)
+inizio ciccio.ss
 create $b=4
-if $a <3 || $a == 5 then
+if $a <3 then
 	$a = 1
 	
 endif
