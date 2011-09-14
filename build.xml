@@ -116,23 +116,41 @@
 		<target name="generate-treeCleanParser" description="generate a cleaned parser for DrawTree">
 			
 			<echo>TREE CLEAN START</echo>
-			<copy file="${parser.dir}/parser.cup" tofile="${parser.dir}/parser_clean.cup" overwrite="true"/>
+			<copy file="${parser.dir}/parser.cup" tofile="${drawTree.dir}/parser_clean.cup" overwrite="true"/>
 			<echo>...</echo>		
-			<replaceregexp file="${parser.dir}/parser_clean.cup" match="\{:" replace="{:\/\*" byline="true"/>
-			<replaceregexp file="${parser.dir}/parser_clean.cup" match=":\}" replace="\*\/:\}" byline="true"/>
-			<replaceregexp file="${parser.dir}/parser_clean.cup" match="package" replace="\/\/package}" byline="true"/>
+			<replaceregexp file="${drawTree.dir}/parser_clean.cup" match="\{:" replace="{:\/\*" byline="true"/>
+			<replaceregexp file="${drawTree.dir}/parser_clean.cup" match=":\}" replace="\*\/:\}" byline="true"/>
+			<replaceregexp file="${drawTree.dir}/parser_clean.cup" match="package" replace="\/\/package" byline="true"/>
+                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="import" replace="\/\/import" byline="true"/>
+                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="\/\/import java_cup" replace="import java_cup"/>
+                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="terminal (String|Integer|Float|Calendar|Boolean) " replace="terminal " byline="true"/>
+                        <replaceregexp file="${drawTree.dir}/parser_clean.cup" match="non terminal (String|Integer|Float|Calendar|Boolean) " replace="non terminal " byline="true"/>
 		<echo>TREE CLEAN DONE!</echo>
 		</target>
 
 		<target name="generate-treeCleanScanner" description="generate a cleaned scanner for DrawTree">
 			
 			<echo>TREE CLEAN START</echo>
-			<copy file="${parser.dir}/scanner.jflex" tofile="${parser.dir}/scanner_clean.jflex" overwrite="true"/>
+			<copy file="${parser.dir}/scanner.jflex" tofile="${drawTree.dir}/scanner_clean.jflex" overwrite="true"/>
 			<echo>...</echo>		
-			<replaceregexp file="${parser.dir}/scanner_clean.jflex" match="Utility.mf" replace="System.out.println" byline="true"/>
-			<replaceregexp file="${parser.dir}/scanner_clean.jflex" match="package" replace="\/\/package}" byline="true"/>
+			<replaceregexp file="${drawTree.dir}/scanner_clean.jflex" match="Utility.mf" replace="System.out.println" byline="true"/>
+			<replaceregexp file="${drawTree.dir}/scanner_clean.jflex" match="package" replace="\/\/package" byline="true"/>
+                        <replaceregexp file="${drawTree.dir}/scanner_clean.jflex" match="import" replace="\/\/import" byline="true"/>
+                        <replaceregexp file="${drawTree.dir}/scanner_clean.jflex" match="\/\/import java_cup" replace="import java_cup" />
+                        <replaceregexp file="${drawTree.dir}/scanner_clean.jflex" match="terminal .+ " replace="terminal " byline="true"/>
 			
 		<echo>TREE CLEAN DONE!</echo>
+		</target>
+                
+                <target name="launch-drawTree" depends="generate-treeCleanParser, generate-treeCleanScanner" description="generate a cleaned scanner for DrawTree">
+			
+			<echo>Launch DrawTree</echo>
+			<echo>...</echo>		
+			<exec executable="/bin/tcsh">
+                            <arg value="${drawTree.dir}/cmd.sh"/>
+                        </exec>
+			
+		<echo>DrawTree Finish!</echo>
 		</target>
 		
 	<target name="copy-drawTree" description="generate a clea parser for DrawTree">

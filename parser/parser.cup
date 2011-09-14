@@ -99,12 +99,12 @@ terminal Boolean Bool;
 
 
 non terminal S;
-non terminal assig_stmt;/*init_stmt, i_stmt, stmt, str_stmt;*/
+non terminal assig_stmt;
 non terminal i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
 //non terminal myVar[] 
 non terminal String commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
-non terminal Object[]  sh_stmt, /*for_stmt, if_stmt,*/ LS_stmt;
+non terminal Object[] sh_stmt, LS_stmt;
 //non terminal Calendar date_arg;
 non terminal CommandParameter param;
 non terminal for_command for_stmt, for_head;
