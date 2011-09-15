@@ -1,0 +1,81 @@
+1c1
+< //package} it.polito.lt.skype.generated.parser;
+---
+> //package it.polito.lt.skype.generated.parser;
+5c5,16
+< 
+---
+> //import java.io.InputStreamReader;
+> //import java.util.HashMap;
+> //import java.util.Collection;
+> //import java.util.Iterator;
+> //import java.util.Calendar;
+> //import java.util.ArrayList;
+> //import java.util.LinkedList;
+> //import java.util.Iterator;
+> //import it.polito.lt.skype.manager.*;
+> //import it.polito.lt.skype.command.*;
+> //import it.polito.lt.skype.parser.*;
+> //import it.polito.lt.skype.bot.*;
+81,85c92,96
+< terminal  Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
+< terminal  /*Ext,*/ ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, /*FileScript,*/ EL;
+< terminal  Int;
+< terminal  Vint;
+< terminal  GMA;
+---
+> terminal Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
+> terminal Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
+> terminal Int;
+> terminal Vint;
+> terminal GMA;
+87c98
+< terminal  Bool;
+---
+> terminal Bool;
+90,93c101,104
+< non terminal S;
+< non terminal assig_stmt;/*init_stmt, i_stmt, stmt, str_stmt;*/
+< non terminal i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
+< non terminal  i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
+---
+> non terminal		S;
+> non terminal		assig_stmt;
+> non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
+> non terminal i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
+95,99c106,110
+< non terminal  commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
+< non terminal   sh_stmt, /*for_stmt, if_stmt,*/ LS_stmt;
+< //non terminal Calendar date_arg;
+< non terminal  param;
+< non terminal  for_stmt, for_head;
+---
+> non terminal commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
+> non terminal sh_stmt, LS_stmt;
+> //non terminal date_arg;
+> non terminal param;
+> non terminal for_stmt, for_head;
+101,102c112,113
+< non terminal  i_stmt;
+< non terminal  init_stmt, stmt, str_stmt;
+---
+> non terminal i_stmt;
+> non terminal init_stmt, stmt, str_stmt;
+128c139
+< start_s			::= Start_S File EL
+---
+> start_s			::= Start_S File:s EL
+139c150
+< end_s		::= End_S File
+---
+> end_s		::= End_S File:s
+155d165
+< 
+328,329d337
+< 
+< 
+332,333c340
+< 
+< 		//| Ext:x		{:/* RESULT = new CommandParameter(ParamType.FILE,x,null); */:}
+---
+> 		| Ext:x		{:/* RESULT = new CommandParameter(ParamType.FILE,x,null); */:}
