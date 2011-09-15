@@ -1,12 +1,9 @@
 
-start jonny.ss
+start fichero.ss
 create $c, $b = 0, $a3 = 5, $d = 0
 if $a <3 || $a == 5 then
 	$a = 1
-	
 endif
-
-
 fine pippo.ss
 
 
