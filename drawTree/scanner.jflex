@@ -28,7 +28,7 @@ import java_cup.runtime.*;
 %{
 	/* Per disattivare il debugging, quindi la stampa dei simboli riconosciuti
 	da parte dello scanner impostare la costante _DEBUG a false */
-	private static final boolean _DEBUG = false;
+	private static final boolean _DEBUG = true;
 	private Symbol symbol(int type) {
 		if (_DEBUG) System.out.print("# "+type+" "+yytext()+"\n");	
 		return new Symbol(type, yyline, yycolumn);
@@ -38,6 +38,10 @@ import java_cup.runtime.*;
 		return new Symbol(type, yyline, yycolumn, value);
 	}
 	private int lines=0;	
+	
+	//variabile per l'attivazione dello stato esclusivo di non riconoscimento degli statement di controllo di flusso
+	public boolean exclude_fs = true;
+
 %}
 
 
@@ -162,7 +166,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 	{SO}					{return symbol(sym.SO);}
 	{SC}					{return symbol(sym.SC);}
-	{com_if}				{return symbol(sym.Com_If);}
+	{com_if}				{System.out.println("if dento script");return symbol(sym.Com_If);}
 	{com_if_2}				{return symbol(sym.Com_If_2);}
 	{com_if_m}				{return symbol(sym.Com_If_m);}
 	{com_if_e}				{return symbol(sym.Com_If_e);}
@@ -198,12 +202,19 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //regole che saranno escluse se non nello stato script
 {SO}					{;}
 {SC}					{;}
-{com_if}				{yybegin(exclude_script_code);
-					System.out.println("prima di lanciare script code da if");}
+{com_if}				{//System.out.println("prima di lanciare script code da if");
+					if(exclude_fs){ System.out.println("xdbxdbxdfbxdfbxbxdfbxdfbprima di lanciare script code da if");
+						yybegin(exclude_script_code);
+						System.out.println("attivato stato");
+					}
+					}
 
-{com_for}				{
-					yybegin(exclude_script_code);
-					System.out.println("prima di lanciare script code da for");}
+{com_for}				{System.out.println("prima di lanciare script code da for");
+					if(exclude_fs) {
+						yybegin(exclude_script_code);
+						System.out.println("attivato stato");
+					}
+					}
 
 "$"{result}				{;}
 
@@ -211,11 +222,13 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 {ac}					{yybegin(comment);} 
 {com_script_start}			{
-					//yybegin(script); 
+					exclude_fs=false; 
 					System.out.println("dentro script");
+					yybegin(script);
+					
 					return symbol(sym.Start_S);} 
 {com_script_throw}			{return symbol(sym.Throw_S);}
-{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
+{com_script_end}			{exclude_fs=true; yybegin(YYINITIAL); return symbol(sym.End_S); }
 
 {data}					{
 						System.out.println("Data raccolta: " +yytext());

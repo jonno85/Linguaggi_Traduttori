@@ -147,7 +147,7 @@
 			<echo>Launch DrawTree</echo>
 			<echo>...</echo>		
 			<exec executable="/bin/tcsh">
-                            <arg line="source ~/gitRepo/Linguaggi_Traduttori\ fork\ da\ jo/${drawTree.dir}/ambiente_traduttori_rob; cmd.sh"/>
+                            <arg value="${drawTree.dir}/cmd.sh"/>
                         </exec>
 			
 		<echo>DrawTree Finish!</echo>
@@ -181,7 +181,7 @@
                
                 <classpath>
                         <path refid="lib.dir.classpath" />
-                        <pathelement path="${build.dir}" />
+                        <pathelement path="${bin.dir}" />
                 </classpath>
         </java>
     </target>
@@ -192,7 +192,7 @@
 	               
 	                <classpath>
 	                        <path refid="lib.dir.classpath" />
-	                        <pathelement path="${build.dir}" />
+	                        <pathelement path="${bin.dir}" />
 	                </classpath>
 	        	 <arg value="/${input.file}"/>
 	        </java>
@@ -205,7 +205,7 @@
 		               
 		                <classpath>
 		                        <path refid="lib.dir.classpath" />
-		                        <pathelement path="${build.dir}" />
+		                        <pathelement path="${bin.dir}" />
 		                </classpath>
 		        </java>
 		    </target>
@@ -216,7 +216,7 @@
 			               
 			                <classpath>
 			                        <path refid="lib.dir.classpath" />
-			                        <pathelement path="${build.dir}" />
+			                        <pathelement path="${bin.dir}" />
 			                </classpath>
 			        </java>
 			    </target>

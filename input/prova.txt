@@ -1,15 +1,12 @@
-
-start s.ss
-create $c, $b = 0, $a3 = 5, $d = 0
-if $a <3 || $a == 5 then
+start saaa.ss
+create $a= 5
+if $a <3 then
 	$a = 1
 	
 endif
-
-
 fine pippo.ss
 
-
+/*
 
 
 
