@@ -89,61 +89,20 @@ parser code {:
 ;
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-terminal Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
-terminal Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
-terminal Int;
-terminal Vint;
-terminal GMA;
-terminal Uminus;
-terminal Bool;
-
-
-non terminal S;
-non terminal assig_stmt;
-non terminal i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
-//non terminal myVar[] 
-non terminal commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
-non terminal sh_stmt, LS_stmt;
-//non terminal Calendar date_arg;
-non terminal param;
-non terminal for_stmt, for_head;
-non terminal if_stmt, if_head;
-non terminal i_stmt;
-non terminal init_stmt, stmt, str_stmt;
-=======
-terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
-terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
+terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
+terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
 terminal Integer	Int;
 terminal Float		Vint;
 terminal Calendar	GMA;
 terminal 		Uminus;
 terminal Boolean	Bool;
+terminal myVar		Var, Script_Var;
 
 
 non terminal		S;
-non terminal		assig_stmt;
+
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar	i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
-//non terminal myVar[] 
-=======
-terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Script_Var;
-terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, Var, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
-terminal Integer	Int;
-terminal Float		Vint;
-terminal Calendar	GMA;
-terminal 		Uminus;
-terminal Boolean	Bool;
-
-
-non terminal		S;
-non terminal		assig_stmt;
-non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal myVar	i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
-//non terminal myVar[] 
->>>>>>> 5d92e7635efda2bb40eb59fe2db1a09fc93d44ee
 non terminal String		commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
 non terminal Object[]		sh_stmt, LS_stmt;
 //non terminal Calendar		date_arg;
@@ -151,11 +110,8 @@ non terminal CommandParameter	param;
 non terminal for_command	for_stmt, for_head;
 non terminal if_command		if_stmt, if_head;
 non terminal LinkedList		i_stmt;
-non terminal ICommand		init_stmt, stmt, str_stmt;
-<<<<<<< HEAD
->>>>>>> 5d92e7635efda2bb40eb59fe2db1a09fc93d44ee
-=======
->>>>>>> 5d92e7635efda2bb40eb59fe2db1a09fc93d44ee
+non terminal ICommand		init_stmt, stmt, str_stmt, assig_stmt;
+
 
 
 precedence left Minus, Plus, C_Or;
@@ -202,6 +158,7 @@ end_s		::= End_S File:s
 
 i_stmt		::= stmt:s		{://RE-Init
 					parser.todo.add(s);
+                                        parser.print_el(parser.todo);
 					parser.cp = new CommandParameter[7];
 					parser.cpm = new CommandParameter[7][];
 					parser.com = null;
@@ -213,7 +170,7 @@ i_stmt		::= stmt:s		{://RE-Init
 // ********************* statemente generali
 
 stmt 		::= init_stmt EL	{: parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
-		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); Utility.mf("ASSIST STMT");:}
+		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); Utility.mf("ASSIST STMT"); RESULT = x; :}
 		| str_stmt:s EL		{:
 					parser.list_script.add(s);
 					Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
@@ -287,15 +244,31 @@ str_stmt	::= if_stmt:x			{:
 
 // ********************* statement di assegnazione valori
 
-assig_stmt	::= Var:x C_Ug arit_stmt:y	{: ((myVar)y).setName(x);
-						RESULT = y; 	:}
-		| Var:x				{: RESULT = new myVar(x); 		:}
+assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
+                                                //((myVar)y).setName(x);
+                                                x.setValue(y);
+                                                x.addTempRes(y);
+						RESULT = (ICommand)y;
+                                                :}
+                | Script_Var:x C_Ug arit_stmt:y	{:
+                                                //((myVar)y).setName(x);
+                                                x.setValue(y);
+                                                x.addTempRes(y);
+                                                System.out.println("aggiunta operazione in lista: "+y);
+						RESULT = (ICommand)y;
+                                                :}
+		| Var:x				{: RESULT = (ICommand)new myVar(x); 	:}
+                | Script_Var:x                  {: RESULT = (ICommand)new myVar(x);     :}
 ;
 
 // ********************* statement di inizializzazione variabili
 
-init_stmt	::= Com_Str assig_stmt:x	{: parser.vm.add_var(((myVar)x)); 	:}	
-		| init_stmt assig_stmt:x	{: parser.vm.add_var(((myVar)x)); 	:}
+init_stmt	::= Com_Str assig_stmt:x	{: parser.vm.add_var(((myVar)x)); 	
+                                                RESULT = x;
+                                                :}
+		| init_stmt assig_stmt:x	{: parser.vm.add_var(((myVar)x));
+                                                RESULT = x;
+                                                :}
 ;
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
@@ -304,7 +277,10 @@ arit_stmt	::= arit_stmt:x Times:s arit_stmt:y
 		{:	System.out.println(s);
 			((myVar)x).printVar(); 
 			System.out.println("segno operazione: "+s); y.printVar(); 
-			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+                        myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+                        temp.addTempRes(x);
+                        temp.addTempRes(y);
+			RESULT = temp; 		:}
 		| arit_stmt:x Div:s arit_stmt:y	
 		{:	System.out.println(s);
 			((myVar)x).printVar(); 

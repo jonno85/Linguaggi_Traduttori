@@ -1,10 +1,16 @@
 package it.polito.lt.skype.manager;
 
+import it.polito.lt.skype.command.CommandException;
+import it.polito.lt.skype.command.CommandParameter;
+import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.parser.ParserException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
-public class VarManager{
+public class VarManager implements ICommand{
 
 	private HashMap var_tb;
 	private myVar app = null;
@@ -117,18 +123,17 @@ public class VarManager{
 			if(chkType(a,b)){
 				
 				switch(a.getType()){
-					case 1: {
-						System.out.println("intero");
-						return ris_inter = mkOper.Ioper(a,b,segno);
-						}
-					case 2: return ris_inter = mkOper.Foper(a,b,segno);
+                                    case 1: {
+                                            System.out.println("intero");
+                                            return ris_inter = mkOper.Ioper(a,b,segno);
+                                            }
+                                    case 2: return ris_inter = mkOper.Foper(a,b,segno);
 
-					case 3: {
-						System.out.println("concatenazione stringa");
-						return ris_inter = mkOper.Soper(a,b,segno);
-					}
-
-					case 5: return ris_inter = mkOper.Boper(a,b,segno);		
+                                    case 3: {
+                                            System.out.println("concatenazione stringa");
+                                            return ris_inter = mkOper.Soper(a,b,segno);
+                                            }
+                                    case 5: return ris_inter = mkOper.Boper(a,b,segno);		
 				}
 			}
 		}
@@ -300,5 +305,40 @@ public class VarManager{
             }
             return result;
         }
+
+    @Override
+    public boolean exec() throws CommandException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCommandParameter(CommandParameter[][] cpl) throws ParserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Path> getCommandResult() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getCommandStringResult() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void usage() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 	
 }

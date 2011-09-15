@@ -162,64 +162,34 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 %%
 
-<script> {
-
-	{SO}					{return symbol(sym.SO);}
-	{SC}					{return symbol(sym.SC);}
-	{com_if}				{return symbol(sym.Com_If);}
-	{com_if_2}				{return symbol(sym.Com_If_2);}
-	{com_if_m}				{return symbol(sym.Com_If_m);}
-	{com_if_e}				{return symbol(sym.Com_If_e);}
-	{com_for}				{return symbol(sym.Com_For);}
-	{com_for_e}				{return symbol(sym.Com_For_e);}
-	{com_for_m}				{return symbol(sym.Com_For_m);}
-	"$"{result}				{return symbol(sym.Result);}
-	{str}					{Utility.mf("str: "+yytext());String s = new String(yytext());}
-	"$"{id}					{Utility.mf("ID: "+yytext());
-						return symbol(sym.Script_Var,new String(yytext()));}
-	{com_script_end}			{yybegin(YYINITIAL);
-						Utility.mf("dentro script");
-						return symbol(sym.End_S); }
-}
-
-<exclude_script_code>{
-	{com_if_e}			{Utility.mf("dentro exclude script code da if");
-					yybegin(YYINITIAL);}
-
-	{com_for_e}.+{nl}
-					{Utility.mf("dentro exclude script code da for");
-					yybegin(YYINITIAL);}
-
-	.				{Utility.mf("posizione linea "+yyline+" colonna "+yycolumn);}
-	{nl}+				{Utility.mf("newline");}
-}
-<comment>{
-	{cc}				{yybegin(YYINITIAL);} 
-	.				{;}
-}
 
 <YYINITIAL>{
 //regole che saranno escluse se non nello stato script
-{SO}					{;}
-{SC}					{;}
-{com_if}				{yybegin(exclude_script_code);
-					Utility.mf("prima di lanciare script code da if");}
-
-{com_for}				{
-					yybegin(exclude_script_code);
-					Utility.mf("prima di lanciare script code da for");}
 
 "$"{result}				{;}
 
 
 
 {ac}					{yybegin(comment);} 
-{com_script_start}			{
-					yybegin(script); 
+{com_script_start}			{ 
 					Utility.mf("dentro script");
 					return symbol(sym.Start_S);} 
 {com_script_throw}			{return symbol(sym.Throw_S);}
 //{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
+
+{SO}					{return symbol(sym.SO);}
+{SC}					{return symbol(sym.SC);}
+{com_if}				{return symbol(sym.Com_If);}
+{com_if_2}				{return symbol(sym.Com_If_2);}
+{com_if_m}				{return symbol(sym.Com_If_m);}
+{com_if_e}				{return symbol(sym.Com_If_e);}
+{com_for}				{return symbol(sym.Com_For);}
+{com_for_e}				{return symbol(sym.Com_For_e);}
+{com_for_m}				{return symbol(sym.Com_For_m);}
+
+{com_script_end}			{
+					Utility.mf("dentro script");
+					return symbol(sym.End_S); }
 
 {data}					{
 						Utility.mf("Data raccolta: " +yytext());

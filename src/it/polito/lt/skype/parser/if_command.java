@@ -95,15 +95,15 @@ public class if_command implements ICommand, IFlowCommandControl{
     	}
     	if(condition.getType()==2){
     		if((Float)condition.getValue()==0.0){
-    			for(ICommand c : inside_command){
-    	            try {
-    	                c.exec();
-    	            } catch (CommandException ex) {
-    	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-    	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-    	                        "FOR recursive Exception: "+ex.getMessage(), null);
-    	            }
-    	        }
+                    for(ICommand c : inside_command){
+                        try {
+                            c.exec();
+                        } catch (CommandException ex) {
+                            throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+                                    "FOR recursive Exception: "+ex.getMessage(), null);
+                        }
+                    }
     		}else
     			exec_alter_flow_command();
     	}
