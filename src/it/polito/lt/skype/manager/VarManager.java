@@ -1,16 +1,11 @@
 package it.polito.lt.skype.manager;
 
-import it.polito.lt.skype.command.CommandException;
-import it.polito.lt.skype.command.CommandParameter;
-import it.polito.lt.skype.command.ICommand;
-import it.polito.lt.skype.parser.ParserException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-public class VarManager implements ICommand{
+
+public class VarManager{
 
 	private HashMap var_tb;
 	private myVar app = null;
@@ -91,7 +86,7 @@ public class VarManager implements ICommand{
 	}
 
 	public myVar makeSOper(myVar a, String segno){
-		a.printVar();
+		a.toString();
 		if(chkVar(a)){
 			System.out.println("dentro");
 			switch(a.getType()){
@@ -110,8 +105,8 @@ public class VarManager implements ICommand{
 	}
 
 	public myVar makeOper(myVar a, myVar b, String segno){
-		a.printVar();
-		b.printVar();
+		a.toString();
+		b.toString();
 		if( chkVar(a)&&chkVar(b)){
 			
 			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
@@ -305,40 +300,5 @@ public class VarManager implements ICommand{
             }
             return result;
         }
-
-    @Override
-    public boolean exec() throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCommandParameter(CommandParameter[][] cpl) throws ParserException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Path> getCommandResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String getCommandStringResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void usage() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 	
 }

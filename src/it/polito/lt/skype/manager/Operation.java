@@ -15,11 +15,22 @@ public class Operation implements ICommand{
         private String sign = null;
         
         
+        public Operation(myVar a, myVar b, String segno)
+        {
+            op1 = a;
+            op2 = b;
+            sign = segno;
+        }
+        
         public void setArgument(myVar a, myVar b, String segno)
         {
             op1 = a;
             op2 = b;
             sign = segno;
+        }
+        
+        public String toString(){
+            return "\nop1: "+op1.toString()+" op2: "+op2.toString()+" sign: "+sign+"\n";
         }
         
 	public Operation(){

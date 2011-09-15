@@ -77,13 +77,12 @@ parser code {:
 		return enviroment;
 	}
 
-	public void print_el(LinkedList ls)
+	public void print_el(LinkedList<ICommand> ls)
 	{
-		LinkedList ll = ls;
-		Utility.mf("ITERATORE ");
-		Iterator s = ll.iterator();
-		while(s.hasNext())
-			((IFlowCommandControl)s.next()).print_parameters();
+		
+		Utility.mf("ITERATORE di una lista da: "+ls.size());
+		for(ICommand i: ls)
+			i.toString();
 	}
 :}
 ;
@@ -96,13 +95,13 @@ terminal Float		Vint;
 terminal Calendar	GMA;
 terminal 		Uminus;
 terminal Boolean	Bool;
-terminal myVar		Var, Script_Var;
+terminal String		Var;
 
 
 non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal myVar	i_arg, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
+non terminal myVar	i_arg, assig_stmt, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
 non terminal String		commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
 non terminal Object[]		sh_stmt, LS_stmt;
 //non terminal Calendar		date_arg;
@@ -110,7 +109,7 @@ non terminal CommandParameter	param;
 non terminal for_command	for_stmt, for_head;
 non terminal if_command		if_stmt, if_head;
 non terminal LinkedList		i_stmt;
-non terminal ICommand		init_stmt, stmt, str_stmt, assig_stmt;
+non terminal ICommand		init_stmt, stmt, str_stmt;
 
 
 
@@ -158,7 +157,7 @@ end_s		::= End_S File:s
 
 i_stmt		::= stmt:s		{://RE-Init
 					parser.todo.add(s);
-                                        parser.print_el(parser.todo);
+                                        
 					parser.cp = new CommandParameter[7];
 					parser.cpm = new CommandParameter[7][];
 					parser.com = null;
@@ -169,8 +168,8 @@ i_stmt		::= stmt:s		{://RE-Init
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt EL	{: parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
-		| assig_stmt:x EL	{: parser.vm.assig(((myVar)x)); Utility.mf("ASSIST STMT"); RESULT = x; :}
+stmt 		::= init_stmt:x EL	{:  parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
+		| assig_stmt:x EL	{: parser.list_script.add(x); parser.vm.assig(x); Utility.mf("ASSIST STMT"); RESULT = x; :}
 		| str_stmt:s EL		{:
 					parser.list_script.add(s);
 					Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
@@ -223,7 +222,7 @@ stmt 		::= init_stmt EL	{: parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
 					
 					Utility.mf(parser.comFind.getCommandStringResult());
 					:}
-		| script EL
+		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
 		| Com_P arit_stmt EL
 		| conf_exp EL /*********************************************/
@@ -246,69 +245,71 @@ str_stmt	::= if_stmt:x			{:
 
 assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
                                                 //((myVar)y).setName(x);
-                                                x.setValue(y);
-                                                x.addTempRes(y);
-						RESULT = (ICommand)y;
-                                                :}
-                | Script_Var:x C_Ug arit_stmt:y	{:
-                                                //((myVar)y).setName(x);
-                                                x.setValue(y);
-                                                x.addTempRes(y);
-                                                System.out.println("aggiunta operazione in lista: "+y);
-						RESULT = (ICommand)y;
-                                                :}
-		| Var:x				{: RESULT = (ICommand)new myVar(x); 	:}
-                | Script_Var:x                  {: RESULT = (ICommand)new myVar(x);     :}
+
+						Utility.mf("da arit_stmt a assig_stmt");
+						y.setName(x);
+						RESULT = y;
+						Utility.mf("fine da arit_stmt a assig_stmt");
+						:}
+		| Var:x				{:RESULT = new myVar(x);:}
 ;
 
 // ********************* statement di inizializzazione variabili
 
-init_stmt	::= Com_Str assig_stmt:x	{: parser.vm.add_var(((myVar)x)); 	
-                                                RESULT = x;
-                                                :}
-		| init_stmt assig_stmt:x	{: parser.vm.add_var(((myVar)x));
-                                                RESULT = x;
-                                                :}
+init_stmt	::=  Com_Str assig_stmt:x		{: parser.vm.add_var(x);Utility.mf(" create assig_stmt");	:}
+		| init_stmt assig_stmt:x	{: parser.vm.add_var(x);	Utility.mf(" lista+stmt");:}
 ;
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
 
 arit_stmt	::= arit_stmt:x Times:s arit_stmt:y	
 		{:	System.out.println(s);
-			((myVar)x).printVar(); 
-			System.out.println("segno operazione: "+s); y.printVar(); 
-                        myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-                        temp.addTempRes(x);
-                        temp.addTempRes(y);
-			RESULT = temp; 		:}
+			x.toString(); 
+			System.out.println("segno operazione: "+s); y.toString(); 
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			temp.setOperation(new Operation(x,y,s));
+			RESULT = temp; 							:}
 		| arit_stmt:x Div:s arit_stmt:y	
 		{:	System.out.println(s);
-			((myVar)x).printVar(); 
-			System.out.println("segno operazione: "+s); y.printVar(); 
-			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+			x.toString(); 
+			System.out.println("segno operazione: "+s); y.toString(); 
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			temp.setOperation(new Operation(x,y,s));
+			RESULT = temp; 							:}
 		| arit_stmt:x Plus:s arit_stmt:y	
 		{:	System.out.println(s);
-			((myVar)x).printVar(); 
-			System.out.println("segno operazione: "+s); y.printVar(); 
-			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+			x.toString(); 
+			System.out.println("segno operazione: "+s); y.toString(); 
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			temp.setOperation(new Operation(x,y,s));
+			RESULT = temp; 							:}
 		| arit_stmt:x Minus:s arit_stmt:y	
 		{:	System.out.println(s);
-			((myVar)x).printVar(); 
-			System.out.println("segno operazione: "+s); y.printVar(); 
-			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+			x.toString(); 
+			System.out.println("segno operazione: "+s); y.toString(); 
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			temp.setOperation(new Operation(x,y,s));
+			RESULT = temp; 							:}
 		| arit_stmt:x C_And:s arit_stmt:y	
 		{:	System.out.println(s);
-			((myVar)x).printVar(); 
-			System.out.println("segno operazione: "+s); y.printVar(); 
-			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+			x.toString(); 
+			System.out.println("segno operazione: "+s); y.toString(); 
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			temp.setOperation(new Operation(x,y,s));
+			RESULT = temp; 							:}
 		| arit_stmt:x C_Or:s arit_stmt:y	
 		{:	System.out.println(s);
-			((myVar)x).printVar(); 
-			System.out.println("segno operazione: "+s); y.printVar(); 
-			RESULT = parser.vm.makeOper(((myVar)x),((myVar)y),s); 		:}
+			x.toString(); 
+			System.out.println("segno operazione: "+s); y.toString(); 
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			temp.setOperation(new Operation(x,y,s));
+			RESULT = temp; 							:}
 		| Minus:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}%prec Minus
-		| arit_arg:x			{: RESULT = ((myVar)x); 		:}
-		| RO arit_stmt:x RC 		{: RESULT = ((myVar)x); 		:}
+		| arit_arg:x			{: RESULT = x; 
+						System.out.println("da arit_arg a arit_stmt");
+						x.setOperation(null);
+						:}
+		| RO arit_stmt:x RC 		{: RESULT = x; 		:}
 		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}
 ;
 
@@ -346,7 +347,7 @@ logic_stmt	::= arit_stmt:x Magg arit_stmt:y
 
 arit_arg	::= Var:x			{: RESULT = parser.vm.extractVar(x); 
 							System.out.println("Var: "+x); :}
-		| i_arg:x			{: RESULT = ((myVar)x); System.out.println("i_arg"); :}
+		| i_arg:x			{: RESULT = x; System.out.println("i_arg--"); :}
 ;
 
 //i_Op		::= bool_op:x	{: RESULT = x; :}

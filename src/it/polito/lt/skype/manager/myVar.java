@@ -1,13 +1,18 @@
 package it.polito.lt.skype.manager;
 
-import java.util.ArrayList;
+import it.polito.lt.skype.command.CommandException;
+import it.polito.lt.skype.command.CommandParameter;
+import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.parser.ParserException;
+import java.nio.file.Path;
 import java.util.List;
 
-public class myVar{
+
+public class myVar implements ICommand{
 private String name;
 private int type;
 private Object value;
-private List<myVar> pre_op = null;
+private Operation pre_op = null;
 public static final int _notInit = 0;
 public static final int _int = 1;
 public static final int _float = 2;
@@ -16,22 +21,20 @@ public static final int _data = 4;
 public static final int _bool = 5;
 
 	public myVar(){
-            pre_op = new ArrayList<>();
         }
 
-	public myVar(String name, int type, Object value, myVar temp_res){
+	public myVar(String name, int type, Object value, Operation temp_op){
 		this.name = name;
 		this.type = type;
 		this.value = value;
-                pre_op = new ArrayList<>();
-                pre_op.add(temp_res);
+
+                pre_op = temp_op;
         }
         
         public myVar(String name, int type, Object value){
 		this.name = name;
 		this.type = type;
 		this.value = value;
-                pre_op = new ArrayList<>();
         }
         
         /**
@@ -43,7 +46,6 @@ public static final int _bool = 5;
 		this.name = name;
 		this.type = 1;
 		this.value = value;
-                pre_op = new ArrayList<>();
         }
         
 
@@ -51,22 +53,23 @@ public static final int _bool = 5;
 		this.name = "";
 		this.type = type;
 		this.value = value;
-                pre_op = new ArrayList<>();
 	}
 
 	public myVar(String name){
 		this.name = name;
 		this.type = _notInit;
 		this.value = null;
-                pre_op = new ArrayList<>();
 	}
         
 	public void setName(String name){	
 		this.name = name;
 	}
         
-	public void printVar(){
-		System.out.println("\n name: "+name+"\ntype: "+type+"\nvalue: "+value);	
+	public String toString(){
+		String pre_op_s="NO_OPERATION";
+                if(pre_op!=null)
+                    pre_op_s=pre_op.toString();
+                return "\t name: "+name+" type: "+type+" value: "+value+"\n\tref pre operation: "+pre_op_s;	
 	}
         
 	public String getName(){
@@ -106,8 +109,52 @@ public static final int _bool = 5;
          * dell'operazione intermedia
          * @param op 
          */
-        public void addTempRes(myVar temp_res){
-            pre_op.add(temp_res);
+        public void setOperation(Operation temp_op){
+            pre_op = temp_op;
         }
+        
+        /**
+         * restituisce la operazione dalla quale deriva la myVar
+         * @return 
+         */
+        
+        public Operation getOperation(){
+            return pre_op;
+        }
+
+    @Override
+    public boolean exec() throws CommandException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setCommandParameter(CommandParameter[][] cpl) throws ParserException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Path> getCommandResult() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getCommandStringResult() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void usage() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }
