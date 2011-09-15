@@ -1,12 +1,7 @@
-//package it.polito.lt.skype.generated.parser;
+//package} it.polito.lt.skype.generated.parser;
 
 import java_cup.runtime.*;
-//import it.polito.lt.skype.generated.parser.sym;
-//import java.util.*;
-//import java.text.*;
-//import it.polito.lt.skype.manager.*;
-//import it.polito.lt.skype.command.*;
-//import it.polito.lt.skype.bot.*;
+
 
 
  	/* NB: dato che JFlex genera la classe e i costruttori omettendo "public" 
@@ -141,9 +136,8 @@ permission_criteria = (((permess)(o|i))|(permission)s?)
 order = (asc|desc|cres|decr)
 unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 
-//ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
 
-//script_ext = "."(ss)
+//ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp)
 
 digit=[0-9]
 float = {digit}+("."{digit}+)
@@ -158,6 +152,8 @@ str= '([^\n\r']+|\\)*'
 sp_char = {times}|"?"
 
 //{id}"."{ext}|{times}"."{times}|{id}"."{times}
+//filescript = {id}"."ss
+
 file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 %%
@@ -211,15 +207,15 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 "$"{result}				{;}
 
-
+//({file})			{System.out.println("script name: "+yytext()); return symbol(sym.FileScript,new String(yytext()));} 
 
 {ac}					{yybegin(comment);} 
 {com_script_start}			{
-					yybegin(script); 
+					//yybegin(script); 
 					System.out.println("dentro script");
 					return symbol(sym.Start_S);} 
 {com_script_throw}			{return symbol(sym.Throw_S);}
-//{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
+{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
 
 {data}					{
 						System.out.println("Data raccolta: " +yytext());
@@ -237,6 +233,10 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //{giorn}					{return symbol(sym.Day);}
 
 {where}					{return symbol(sym.Where);}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 09c27d493026754743e3937dcb2b1a33114dc0e4
 //({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
 
 {date_criteria}				{return symbol(sym.Date_Criteria);}
@@ -279,6 +279,8 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 "$"{id}					{return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
+
+
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
 
 {int}" "?{unit}				{return symbol(sym.IUnit);}
@@ -304,6 +306,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //{id}					{System.out.println("id value: "+yytext());}
 {file}					{System.out.println("file: "+yytext());
 					return symbol(sym.File,new String(yytext()));}
+
 ({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}
 

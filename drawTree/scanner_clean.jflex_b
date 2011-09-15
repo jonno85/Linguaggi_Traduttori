@@ -1,12 +1,12 @@
-package it.polito.lt.skype.generated.parser;
+//package it.polito.lt.skype.generated.parser;
 
 import java_cup.runtime.*;
-import it.polito.lt.skype.generated.parser.sym;
-import java.util.*;
-import java.text.*;
-import it.polito.lt.skype.manager.*;
-import it.polito.lt.skype.command.*;
-import it.polito.lt.skype.bot.*;
+//import it.polito.lt.skype.generated.parser.sym;
+//import java.util.*;
+//import java.text.*;
+//import it.polito.lt.skype.manager.*;
+//import it.polito.lt.skype.command.*;
+//import it.polito.lt.skype.bot.*;
 
 
  	/* NB: dato che JFlex genera la classe e i costruttori omettendo "public" 
@@ -174,24 +174,24 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 	{com_for_e}				{return symbol(sym.Com_For_e);}
 	{com_for_m}				{return symbol(sym.Com_For_m);}
 	"$"{result}				{return symbol(sym.Result);}
-	{str}					{Utility.mf("str: "+yytext());String s = new String(yytext());}
-	"$"{id}					{Utility.mf("ID: "+yytext());
+	{str}					{System.out.println("str: "+yytext());String s = new String(yytext());}
+	"$"{id}					{System.out.println("ID: "+yytext());
 						return symbol(sym.Script_Var,new String(yytext()));}
 	{com_script_end}			{yybegin(YYINITIAL);
-						Utility.mf("dentro script");
+						System.out.println("dentro script");
 						return symbol(sym.End_S); }
 }
 
 <exclude_script_code>{
-	{com_if_e}			{Utility.mf("dentro exclude script code da if");
+	{com_if_e}			{System.out.println("dentro exclude script code da if");
 					yybegin(YYINITIAL);}
 
 	{com_for_e}.+{nl}
-					{Utility.mf("dentro exclude script code da for");
+					{System.out.println("dentro exclude script code da for");
 					yybegin(YYINITIAL);}
 
-	.				{Utility.mf("posizione linea "+yyline+" colonna "+yycolumn);}
-	{nl}+				{Utility.mf("newline");}
+	.				{System.out.println("posizione linea "+yyline+" colonna "+yycolumn);}
+	{nl}+				{System.out.println("newline");}
 }
 <comment>{
 	{cc}				{yybegin(YYINITIAL);} 
@@ -203,11 +203,11 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {SO}					{;}
 {SC}					{;}
 {com_if}				{yybegin(exclude_script_code);
-					Utility.mf("prima di lanciare script code da if");}
+					System.out.println("prima di lanciare script code da if");}
 
 {com_for}				{
 					yybegin(exclude_script_code);
-					Utility.mf("prima di lanciare script code da for");}
+					System.out.println("prima di lanciare script code da for");}
 
 "$"{result}				{;}
 
@@ -216,21 +216,21 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {ac}					{yybegin(comment);} 
 {com_script_start}			{
 					yybegin(script); 
-					Utility.mf("dentro script");
+					System.out.println("dentro script");
 					return symbol(sym.Start_S);} 
 {com_script_throw}			{return symbol(sym.Throw_S);}
 //{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
 
 {data}					{
-						Utility.mf("Data raccolta: " +yytext());
+						System.out.println("Data raccolta: " +yytext());
 						/*SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 						Date date = sdf.parse(yytext());
 						GregorianCalendar calendar = new GregorianCalendar();
 						calendar.setTime(date);
-						Utility.mf("Date: "+calendar.toString());
+						System.out.println("Date: "+calendar.toString());
 						return symbol(sym.GMA,calendar);*/
 						String tdata = yytext().substring(0,2)+yytext().substring(3,5)+yytext().substring(6,10);
-						Utility.mf("Data trimmed: " +tdata);
+						System.out.println("Data trimmed: " +tdata);
 						return symbol(sym.Data, new String(tdata));
 					}
 //{month}					{return symbol(sym.Month);}
@@ -298,11 +298,11 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {tab}					{;}
 {sp}					{;}
 ","					{;}
-{str}					{Utility.mf("str: "+yytext());
+{str}					{System.out.println("str: "+yytext());
 					String s = new String(yytext());
 					return symbol(sym.Str,s.substring(1, s.length()-1));}
-//{id}					{Utility.mf("id value: "+yytext());}
-{file}					{Utility.mf("file: "+yytext());
+//{id}					{System.out.println("id value: "+yytext());}
+{file}					{System.out.println("file: "+yytext());
 					return symbol(sym.File,new String(yytext()));}
 ({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}

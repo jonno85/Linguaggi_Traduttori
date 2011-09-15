@@ -1,12 +1,18 @@
+<<<<<<< HEAD
 
 start fichero.ss
 create $c, $b = 0, $a3 = 5, $d = 0
 if $a <3 || $a == 5 then
+=======
+start saaa.ss
+create $a= 5
+if $a <3 then
+>>>>>>> 09c27d493026754743e3937dcb2b1a33114dc0e4
 	$a = 1
 endif
 fine pippo.ss
 
-
+/*
 
 
 

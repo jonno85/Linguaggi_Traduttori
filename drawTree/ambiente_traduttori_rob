@@ -1,0 +1,4 @@
+#!/bin/tcsh -f
+set path =($path . /usr/bin/jvm/jdk1.7.0/bin /home/robizz/tooljava/jflex-1.4.1/bin/ /home/robizz/gitRepo/Linguaggi_Traduttori\ fork\ da\ jo/drawTree/cup/java_cup/ )
+setenv CLASSPATH .:/home/robizz/gitRepo/Linguaggi_Traduttori\ fork\ da\ jo/drawTree/cup
+
