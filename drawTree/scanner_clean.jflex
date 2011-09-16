@@ -1,7 +1,12 @@
-//package} it.polito.lt.skype.generated.parser;
+//package it.polito.lt.skype.generated.parser;
 
 import java_cup.runtime.*;
-
+//import it.polito.lt.skype.generated.parser.sym;
+//import java.util.*;
+//import java.text.*;
+//import it.polito.lt.skype.manager.*;
+//import it.polito.lt.skype.command.*;
+//import it.polito.lt.skype.bot.*;
 
 
  	/* NB: dato che JFlex genera la classe e i costruttori omettendo "public" 
@@ -136,8 +141,9 @@ permission_criteria = (((permess)(o|i))|(permission)s?)
 order = (asc|desc|cres|decr)
 unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 
+//ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp|ss)
 
-//ext = (htm|html|php|zip|rar|tar|gzip|bz2|list|conf|sh|py|pdf|doc|c|h|txt|cpp)
+//script_ext = "."(ss)
 
 digit=[0-9]
 float = {digit}+("."{digit}+)
@@ -152,70 +158,38 @@ str= '([^\n\r']+|\\)*'
 sp_char = {times}|"?"
 
 //{id}"."{ext}|{times}"."{times}|{id}"."{times}
-//filescript = {id}"."ss
-
 file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 %%
 
-<script> {
-
-	{SO}					{return symbol(sym.SO);}
-	{SC}					{return symbol(sym.SC);}
-	{com_if}				{return symbol(sym.Com_If);}
-	{com_if_2}				{return symbol(sym.Com_If_2);}
-	{com_if_m}				{return symbol(sym.Com_If_m);}
-	{com_if_e}				{return symbol(sym.Com_If_e);}
-	{com_for}				{return symbol(sym.Com_For);}
-	{com_for_e}				{return symbol(sym.Com_For_e);}
-	{com_for_m}				{return symbol(sym.Com_For_m);}
-	"$"{result}				{return symbol(sym.Result);}
-	{str}					{System.out.println("str: "+yytext());String s = new String(yytext());}
-	"$"{id}					{System.out.println("ID: "+yytext());
-						return symbol(sym.Script_Var,new String(yytext()));}
-	{com_script_end}			{yybegin(YYINITIAL);
-						System.out.println("dentro script");
-						return symbol(sym.End_S); }
-}
-
-<exclude_script_code>{
-	{com_if_e}			{System.out.println("dentro exclude script code da if");
-					yybegin(YYINITIAL);}
-
-	{com_for_e}.+{nl}
-					{System.out.println("dentro exclude script code da for");
-					yybegin(YYINITIAL);}
-
-	.				{System.out.println("posizione linea "+yyline+" colonna "+yycolumn);}
-	{nl}+				{System.out.println("newline");}
-}
-<comment>{
-	{cc}				{yybegin(YYINITIAL);} 
-	.				{;}
-}
 
 <YYINITIAL>{
 //regole che saranno escluse se non nello stato script
-{SO}					{;}
-{SC}					{;}
-{com_if}				{yybegin(exclude_script_code);
-					System.out.println("prima di lanciare script code da if");}
-
-{com_for}				{
-					yybegin(exclude_script_code);
-					System.out.println("prima di lanciare script code da for");}
 
 "$"{result}				{;}
 
-//({file})			{System.out.println("script name: "+yytext()); return symbol(sym.FileScript,new String(yytext()));} 
+
 
 {ac}					{yybegin(comment);} 
-{com_script_start}			{
-					//yybegin(script); 
+{com_script_start}			{ 
 					System.out.println("dentro script");
 					return symbol(sym.Start_S);} 
 {com_script_throw}			{return symbol(sym.Throw_S);}
-{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
+//{com_script_end}			{yybegin(YYINITIAL); return symbol(sym.End_S); }
+
+{SO}					{return symbol(sym.SO);}
+{SC}					{return symbol(sym.SC);}
+{com_if}				{return symbol(sym.Com_If);}
+{com_if_2}				{return symbol(sym.Com_If_2);}
+{com_if_m}				{return symbol(sym.Com_If_m);}
+{com_if_e}				{return symbol(sym.Com_If_e);}
+{com_for}				{return symbol(sym.Com_For);}
+{com_for_e}				{return symbol(sym.Com_For_e);}
+{com_for_m}				{return symbol(sym.Com_For_m);}
+
+{com_script_end}			{
+					System.out.println("dentro script");
+					return symbol(sym.End_S); }
 
 {data}					{
 						System.out.println("Data raccolta: " +yytext());
@@ -233,10 +207,6 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //{giorn}					{return symbol(sym.Day);}
 
 {where}					{return symbol(sym.Where);}
-<<<<<<< HEAD
-=======
-
->>>>>>> 09c27d493026754743e3937dcb2b1a33114dc0e4
 //({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
 
 {date_criteria}				{return symbol(sym.Date_Criteria);}
@@ -277,10 +247,10 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 "$"{name}				{return symbol(sym.Name);}
 
-"$"{id}					{return symbol(sym.Var,new String(yytext()));}
+"$"{id}					{
+					//System.out.println("invio una myVar");
+					return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
-
-
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
 
 {int}" "?{unit}				{return symbol(sym.IUnit);}
@@ -306,7 +276,6 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //{id}					{System.out.println("id value: "+yytext());}
 {file}					{System.out.println("file: "+yytext());
 					return symbol(sym.File,new String(yytext()));}
-
 ({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}
 

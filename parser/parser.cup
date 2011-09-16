@@ -95,7 +95,7 @@ terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Perm
 terminal Integer	Int;
 terminal Float		Vint;
 terminal Calendar	GMA;
-terminal 		Uminus;
+terminal 		UMINUS;
 terminal Boolean	Bool;
 terminal String		Var;
 
@@ -118,6 +118,7 @@ non terminal ICommand		init_stmt, stmt, str_stmt;
 precedence left Minus, Plus, C_Or;
 precedence left Div, Times, C_And;
 precedence left C_Not;
+precedence left UMINUS;
 
 start with S;
 
@@ -172,8 +173,11 @@ i_stmt		::= stmt:s		{://RE-Init
 
 stmt 		::= init_stmt:x EL	{:  Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.getListVar();
 		| assig_stmt:x EL	{:
-					parser.list_script.add(x);
-					parser.vm.assig(x);
+					if(parser.vm.extractVar(x.getName())!=null){
+						parser.vm.assig(x);
+						Utility.mf(x.toString());
+					}
+					else Utility.mf("VARIABILE INESISTENTE");
 					Utility.mf("ASSIG STMT RACCOLTO");
 					RESULT = (ICommand)x; :}
 		| str_stmt:s EL		{:
@@ -271,82 +275,77 @@ init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x); Utility.mf("DICHIAR
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
 
-arit_stmt	::= arit_stmt:x Times:s arit_stmt:y	
-		{:	System.out.println(s);
+arit_stmt	::=	Minus:s arit_stmt:x		{: RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1)),"*"); :}%prec UMINUS
+		| arit_stmt:x Times:s arit_stmt:y	
+		{:	//System.out.println(s);
 			//x.toString(); 
 			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s)); //set operatione si può mettere all'interno di make operation?
 			RESULT = temp; 							:}
 		| arit_stmt:x Div:s arit_stmt:y	
-		{:	System.out.println(s);
+		{:	//System.out.println(s);
 			//x.toString(); 
 			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x Plus:s arit_stmt:y	
-		{:	System.out.println(s);
+		{:	//System.out.println(s);
 			//x.toString(); 
 			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x Minus:s arit_stmt:y	
-		{:	System.out.println(s);
+		{:	//System.out.println(s);
 			//x.toString(); 
 			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x C_And:s arit_stmt:y	
-		{:	System.out.println(s);
-			x.toString(); 
+		{:	//System.out.println(s);
+			//x.toString(); 
 			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x C_Or:s arit_stmt:y	
-		{:	System.out.println(s);
-			x.toString(); 
+		{:	//System.out.println(s);
+			//x.toString(); 
 			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
-		| Minus:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}%prec Minus
+
 		| arit_arg:x			{: RESULT = x; 
 							//System.out.println("da arit_arg a arit_stmt");			
 						:}
 		| RO arit_stmt:x RC 		{: RESULT = x; 		:}
-		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}
+		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(x,s); :}
 ;
 
 //check the possibility to extract each time the real value
 
 
-logic_stmt	::= arit_stmt:x Magg arit_stmt:y
+logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 		{:
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMag(x,y));
+			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
-		| arit_stmt:x Maggug arit_stmt:y
+		| arit_stmt:x Maggug:s arit_stmt:y
 		{:
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMaU(x,y));
+			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
-		| arit_stmt:x Min arit_stmt:y
+		| arit_stmt:x Min:s arit_stmt:y
 		{:
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMin(x,y));
+			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
-		| arit_stmt:x Minug arit_stmt:y
+		| arit_stmt:x Minug:s arit_stmt:y
 		{:
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMiU(x,y));
+			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
-		| arit_stmt:x C_Ugg arit_stmt:y
+		| arit_stmt:x C_Ugg:s arit_stmt:y
 		{:
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOUg(x,y));
+			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
-		| arit_stmt:x Diver arit_stmt:y
+		| arit_stmt:x Diver:s arit_stmt:y
 		{:
-			RESULT = new myVar(myVar._bool,parser.vm.makeLODiv(x,y));
+			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
 ;
 

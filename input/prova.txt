@@ -1,7 +1,8 @@
 start fichero.ss
-create $a=2,$d=5,$B,$E=0
-$B = $a*$d*5
-$E=$B+3
+create $a=true,$d=false,$B,$E=false
+$B = $a | $d & true
+$E=$B |false
+
 
 fine pippo.ss
 

@@ -17,6 +17,7 @@ public class VarManager{
 	private String unknowVarName = null;
 	public static Collection c;
         private int tmp_name = 1;
+		private myVar bool_ris_inter;
 	
 	public VarManager(){
 		var_tb = new HashMap();
@@ -128,25 +129,28 @@ public class VarManager{
 		if(chkVar(a)){
 			System.out.println("dentro");
 			switch(a.getType()){
-				case 1: {
+				//case 1: {
 					//System.out.println("intero");
-					return ris_inter = mkOper.Neg(a);
-					}
-				case 2: return ris_inter = mkOper.Neg(a);
-
-				case 5: {//System.out.println("booleano");
-					return ris_inter = mkOper.BNoper(a,segno);}		
+					//return ris_inter = mkOper.Neg(a);
+					//}
+				//case 2: return ris_inter = mkOper.Neg(a);
+				 case 5: {
+					 System.out.println("booleano");
+					 ris_inter = mkOper.BNoper(a,segno);
+					 break;
+                 }
+				 default: return null;
 			}
+			ris_inter.setOperation(new Operation(a,null,segno));
 		}
-		System.out.println("VALORE VARIABILE INVALIDO");
-		return null;
+		//System.out.println("VALORE VARIABILE INVALIDO");
+		return ris_inter;
 	}
 
 	public myVar makeOper(myVar a, myVar b, String segno){
 		a.toString();
 		b.toString();
 		if( chkVar(a)&&chkVar(b)){
-			
 			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
 				b.setType(3);
 			}
@@ -154,24 +158,34 @@ public class VarManager{
 				a.setType(3);
 			}
 			if(chkType(a,b)){
-				
 				switch(a.getType()){
                                     case 1: {
-                                            System.out.println("intero");
-                                            return ris_inter = mkOper.Ioper(a,b,segno);
+                                            //System.out.println("intero");
+                                             ris_inter = mkOper.Ioper(a,b,segno);
+                                             break;
                                             }
-                                    case 2: return ris_inter = mkOper.Foper(a,b,segno);
-
+                                    case 2:  {
+                                    			ris_inter = mkOper.Foper(a,b,segno);
+                                    			break;
+                                    		}
+                                    		
                                     case 3: {
-                                            System.out.println("concatenazione stringa");
-                                            return ris_inter = mkOper.Soper(a,b,segno);
+                                            //System.out.println("concatenazione stringa");
+                                            ris_inter = mkOper.Soper(a,b,segno);
+                                            break;
                                             }
-                                    case 5: return ris_inter = mkOper.Boper(a,b,segno);		
+                                    case 5:{
+                                    	ris_inter = mkOper.Boper(a,b,segno);	
+                                    	break;
+                                    }
+                                    default: return null;
 				}
+				ris_inter.setOperation(new Operation(a,b,segno));
+				
+				
 			}
 		}
-		System.out.println("VALORE VARIABILE INVALIDO");
-		
+		//System.out.println("VALORE VARIABILE INVALIDO");
 		return null;
 	}
         
@@ -185,158 +199,48 @@ public class VarManager{
         /*
          * Logic Operation >
          */
-        public boolean makeLOMag(myVar x, myVar y)
-        {
-            boolean result = false;
-            if(x.getType()==y.getType())
-            {
-                switch(x.getType())
-                {
-                    case 1:
-                        if((Integer)x.getValue()>(Integer)y.getValue())
-                            result = true;
-                        break;
-                    case 2:
-                        if((Float)x.getValue()>(Float)y.getValue())
-                            result = true;
-                        break;
-                    case 3:
-                        if(x.getStringValue().length()>y.getStringValue().length())
-                            result = true;
-                        break;
-                }
-            }
-            return result;
-        }
-         /*
-         * Logic Operation >=
-         */
-        public boolean makeLOMaU(myVar x, myVar y)
-        {
-            boolean result = false;
-            if(x.getType()==y.getType())
-            {
-                switch(x.getType())
-                {
-                    case 1:
-                        if((Integer)x.getValue()>=(Integer)y.getValue())
-                            result = true;
-                        break;
-                    case 2:
-                        if((Float)x.getValue()>=(Float)y.getValue())
-                            result = true;
-                        break;
-                    case 3:
-                        if(x.getStringValue().length()>=y.getStringValue().length())
-                            result = true;
-                        break;
-                }
-            }
-            return result;
-        }
-         /*
-         * Logic Operation <
-         */
-        public boolean makeLOMin(myVar x, myVar y)
-        {
-            boolean result = false;
-            if(x.getType()==y.getType())
-            {
-                switch(x.getType())
-                {
-                    case 1:
-                        if((Integer)x.getValue()<(Integer)y.getValue())
-                            result = true;
-                        break;
-                    case 2:
-                        if((Float)x.getValue()<(Float)y.getValue())
-                            result = true;
-                        break;
-                    case 3:
-                        if(x.getStringValue().length()<y.getStringValue().length())
-                            result = true;
-                        break;
-                }
-            }
-            return result;
-        }
-         /*
-         * Logic Operation <=
-         */
-        public boolean makeLOMiU(myVar x, myVar y)
-        {
-            boolean result = false;
-            if(x.getType()==y.getType())
-            {
-                switch(x.getType())
-                {
-                    case 1:
-                        if((Integer)x.getValue()<=(Integer)y.getValue())
-                            result = true;
-                        break;
-                    case 2:
-                        if((Float)x.getValue()<=(Float)y.getValue())
-                            result = true;
-                        break;
-                    case 3:
-                        if(x.getStringValue().length()<=y.getStringValue().length())
-                            result = true;
-                        break;
-                }
-            }
-            return result;
-        }
-         /*
-         * Logic Operation ==
-         */
-        public boolean makeLOUg(myVar x, myVar y)
-        {
-            boolean result = false;
-            if(x.getType()==y.getType())
-            {
-                switch(x.getType())
-                {
-                    case 1:
-                        if((Integer)x.getValue()==(Integer)y.getValue())
-                            result = true;
-                        break;
-                    case 2:
-                        if((Float)x.getValue()==(Float)y.getValue())
-                            result = true;
-                        break;
-                    case 3:
-                        if(x.getStringValue().length()==y.getStringValue().length())
-                            result = true;
-                        break;
-                }
-            }
-            return result;
-        }
-         /*
-         * Logic Operation !=
-         */
-        public boolean makeLODiv(myVar x, myVar y)
-        {
-            boolean result = false;
-            if(x.getType()==y.getType())
-            {
-                switch(x.getType())
-                {
-                    case 1:
-                        if((Integer)x.getValue()!=(Integer)y.getValue())
-                            result = true;
-                        break;
-                    case 2:
-                        if((Float)x.getValue()!=(Float)y.getValue())
-                            result = true;
-                        break;
-                    case 3:
-                        if(x.getStringValue().length()!=y.getStringValue().length())
-                            result = true;
-                        break;
-                }
-            }
-            return result;
-        }
+        
+    	public myVar makeLogicOper(myVar a, myVar b, String segno){
+    		a.toString();
+    		b.toString();
+    		if( chkVar(a)&&chkVar(b)){
+    			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
+    				b.setType(3);
+    			}
+    			if(a.getType()!=3 & b.getType()==3 & segno.equalsIgnoreCase("+")){
+    				a.setType(3);
+    			}
+    			if(chkType(a,b)){
+    				switch(a.getType()){
+                                        case 1: {
+                                        		bool_ris_inter = mkOper.LogicIoper(a,b,segno);
+                                        			break;
+                                        		}
+                                        case 2:  {
+                                        		bool_ris_inter = mkOper.LogicFoper(a,b,segno);
+                                        			break;
+                                        		}
+                                        		
+                                        case 3: {
+                                                System.out.println("confronto stringa");
+                                                bool_ris_inter = mkOper.LogicSoper(a,b,segno);
+                                                break;
+                                                }
+                                        case 5:{
+                                        	bool_ris_inter = mkOper.LogicBoper(a,b,segno);	
+                                        	break;
+                                        }
+                                        default: return null;
+    				}
+    				bool_ris_inter.setOperation(new Operation(a,b,segno));
+    				
+    				
+    			}
+    		}
+    		//System.out.println("VALORE VARIABILE INVALIDO");
+    		return null;
+    	}
+        
+       
 	
 }
