@@ -1,13 +1,35 @@
+<<<<<<< HEAD
 
 inizio $a
 create $a= 5
 if $a <3 then
+=======
+if $a <3 || $d==1 then
+>>>>>>> refs/remotes/origin/ant_branch
 	$a = 1
-	
+endif
+
+start fichero.ss
+create $c, $b = 0, $a3 = 5, $d = 0
+foreach $a 0 10 do
+    if $w>=10 then
+        stampa $b
+    endif
+next +1
+if $a <3 || $d==1 then
+	$a = 1
 endif
 fine pippo.ss
 
+
+
+
 /*
+start saaa.ss
+
+fine pippo.ss
+
+
 
 
 
