@@ -1,5 +1,7 @@
 package it.polito.lt.skype.manager;
 
+import it.polito.lt.skype.command.Utility;
+
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,8 +38,9 @@ public class VarManager{
 
         
 	public void add_var(myVar var){
-           var_tb.put(var.getName(),var);	
-            System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
+		  
+		var_tb.put(var.getName(),var);	
+            //System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
             //if(var.getName().equals(""));
             	//var.setName("_tmp_"+tmp_name++);
             //var_tb.put(var.getName(),var);	
@@ -58,7 +61,7 @@ public class VarManager{
                     }
                 }
             //***************************************************/
-		
+                Utility.mf(var.getName()+" stored"); 
 	}
         
 	public void getListVar(){
@@ -126,12 +129,12 @@ public class VarManager{
 			System.out.println("dentro");
 			switch(a.getType()){
 				case 1: {
-					System.out.println("intero");
+					//System.out.println("intero");
 					return ris_inter = mkOper.Neg(a);
 					}
 				case 2: return ris_inter = mkOper.Neg(a);
 
-				case 5: {System.out.println("booleano");
+				case 5: {//System.out.println("booleano");
 					return ris_inter = mkOper.BNoper(a,segno);}		
 			}
 		}

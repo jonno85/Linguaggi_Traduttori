@@ -170,11 +170,11 @@ i_stmt		::= stmt:s		{://RE-Init
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt:x EL	{:  parser.vm.getListVar(); Utility.mf("INIT STMT");	:}
+stmt 		::= init_stmt:x EL	{:  Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.getListVar();
 		| assig_stmt:x EL	{:
 					parser.list_script.add(x);
 					parser.vm.assig(x);
-					Utility.mf("ASSISG STMT");
+					Utility.mf("ASSIG STMT RACCOLTO");
 					RESULT = (ICommand)x; :}
 		| str_stmt:s EL		{:
 					parser.list_script.add(s);
@@ -249,31 +249,24 @@ str_stmt	::= if_stmt:x			{:
 
 // ********************* statement di assegnazione valori
 
-assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
-                                                //((myVar)y).setName(x);
-
-						//y.setName(x);
-						
-						Utility.mf("####################################");
-						myVar vy = parser.vm.extractVar(y.getName());
-						myVar vx = parser.vm.extractVar(x);
-						if(vx==null) Utility.mf("VX INESISTENTE");
-						else 
-						vx.set(vy);						
-						if(vy!=null) Utility.mf("vy.toString() "+vy.toString());					
-						Utility.mf("####################################");
-						RESULT = y;
+assig_stmt	::= Var:x C_Ug arit_stmt:y	{:                                              
+						myVar vx = new myVar();
+						vx.set(y);
+						vx.setName(x); 											
+						RESULT = vx;
 						//Utility.mf("fine da arit_stmt a assig_stmt");
 						:}
-		| Var:x				{:RESULT = new myVar(x);:}
+//		| Var:x				{:RESULT = new myVar(x);:}
 ;
 
 // ********************* statement di inizializzazione variabili
 
-init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x);
-						//Utility.mf(" create assig_stmt");	:}
-		| init_stmt assig_stmt:x	{: parser.vm.add_var(x);
-						//Utility.mf(" lista+stmt");:}
+init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x); Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); :}
+					
+		| Com_Str Var:x			{: parser.vm.add_var(new myVar(x)); Utility.mf("DICHIARAZIONI\nvar: "+x.toString());:}
+		| init_stmt assig_stmt:x	{: parser.vm.add_var(x);Utility.mf("assegnazione: "+x.toString());:}
+						
+		| init_stmt Var:x		{: parser.vm.add_var(new myVar(x)); Utility.mf("var: "+x.toString());:}
 ;
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
@@ -281,48 +274,48 @@ init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x);
 arit_stmt	::= arit_stmt:x Times:s arit_stmt:y	
 		{:	System.out.println(s);
 			//x.toString(); 
-			System.out.println("segno operazione: "+s); //y.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			temp.setOperation(new Operation(x,y,s));
+			temp.setOperation(new Operation(x,y,s)); //set operatione si può mettere all'interno di make operation?
 			RESULT = temp; 							:}
 		| arit_stmt:x Div:s arit_stmt:y	
 		{:	System.out.println(s);
 			//x.toString(); 
-			System.out.println("segno operazione: "+s); //y.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
 			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x Plus:s arit_stmt:y	
 		{:	System.out.println(s);
 			//x.toString(); 
-			System.out.println("segno operazione: "+s); //y.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
 			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x Minus:s arit_stmt:y	
 		{:	System.out.println(s);
 			//x.toString(); 
-			System.out.println("segno operazione: "+s); //y.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
 			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x C_And:s arit_stmt:y	
 		{:	System.out.println(s);
 			x.toString(); 
-			System.out.println("segno operazione: "+s); //y.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
 			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| arit_stmt:x C_Or:s arit_stmt:y	
 		{:	System.out.println(s);
 			x.toString(); 
-			System.out.println("segno operazione: "+s); //y.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
 			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
 			temp.setOperation(new Operation(x,y,s));
 			RESULT = temp; 							:}
 		| Minus:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}%prec Minus
 		| arit_arg:x			{: RESULT = x; 
-							System.out.println("da arit_arg a arit_stmt");			
+							//System.out.println("da arit_arg a arit_stmt");			
 						:}
 		| RO arit_stmt:x RC 		{: RESULT = x; 		:}
 		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(((myVar)x),s); :}
@@ -361,8 +354,10 @@ logic_stmt	::= arit_stmt:x Magg arit_stmt:y
 // ***************** algebrica - booleana - concatenazione
 
 arit_arg	::= Var:x			{: RESULT = parser.vm.extractVar(x); 
-							System.out.println("Var: "+x); :}
-		| i_arg:x			{: RESULT = x; System.out.println("i_arg");
+							//System.out.println("Var a arit_arg "+x); 
+						:}
+		| i_arg:x			{: RESULT = x; 
+							//System.out.println("i_arg a arit_arg: "+x.toString());
 							//parser.vm.add_tmp_var(x);
 						:}
 ;

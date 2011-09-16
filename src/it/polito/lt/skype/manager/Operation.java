@@ -30,7 +30,7 @@ public class Operation implements ICommand{
         }
         
         public String toString(){
-            return "\nop1: "+op1.toString()+" op2: "+op2.toString()+" sign: "+sign+"\n";
+            return "\n"+op1.toString()+sign+op2.toString();
         }
         
         //restituisce l'operando 1 o 2
@@ -51,10 +51,10 @@ public class Operation implements ICommand{
                 setArgument(a, b, segno);
 		//Integer op1 = (Integer)(a.getValue());
 		//Integer op2 = (Integer)(b.getValue());
-		System.out.println("valori "+op1+" "+op2);
+		//System.out.println("valori "+op1+" "+op2);
 		int type = a.getType(); 
 		if(segno.compareTo("+")==0){
-			System.out.println("operazione somma");
+			//System.out.println("operazione somma");
 			result = new myVar("",type,new Integer(((Integer)op1.getValue()).intValue()
                                                                     + ((Integer)op2.getValue()).intValue()));
 		}

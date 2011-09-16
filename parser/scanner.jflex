@@ -248,7 +248,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 "$"{name}				{return symbol(sym.Name);}
 
 "$"{id}					{
-					System.out.println("invio una myVar");
+					//System.out.println("invio una myVar");
 					return symbol(sym.Var,new String(yytext()));}
 {bool}					{return symbol(sym.Bool,new Boolean(yytext()));}
 {nl}+					{lines++;System.out.println("\t\tlinea:"+lines);return symbol(sym.EL);}
