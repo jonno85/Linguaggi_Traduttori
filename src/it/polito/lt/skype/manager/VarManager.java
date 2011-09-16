@@ -8,14 +8,17 @@ import java.util.Iterator;
 public class VarManager{
 
 	private HashMap var_tb;
+ //       private HashMap temp_var_tb;    //conterra le variabili temporanee per le operazioni intermedie
 	private myVar app = null;
 	private myVar ris_inter = null;
 	private Operation mkOper;
 	private String unknowVarName = null;
 	public static Collection c;
+        private int tmp_name = 1;
 	
 	public VarManager(){
 		var_tb = new HashMap();
+   //             temp_var_tb = new HashMap();
 		ris_inter = new myVar();
 		mkOper = new Operation();
 		unknowVarName = "QQSYSTEM";
@@ -23,12 +26,34 @@ public class VarManager{
 
     //Hash table in cui vengono memorizzati tutte le variabili dichiarate nel programma: nome,myVar
 //public void newVar(String name)    
-
-
-	public void add_var(myVar var){
-		var_tb.put(var.getName(),var);	
-		System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
+/*      
+        public void add_temp_var(myVar var){
+		temp_var_tb.put(var.getName(),var);	
+		System.out.println("Variabile tmp: "+var.getName()+" = "+var.getStringValue());
 	}
+*/
+        
+	public void add_var(myVar var){
+            var_tb.put(var.getName(),var);	
+            System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
+            //valutare la necessita di ricorsivita multilivello
+                myVar tmpOp1, tmpOp2;
+                if(var.getOperation()!=null){
+                    tmpOp1 = var.getOperation().getOp(1);
+                    tmpOp2 = var.getOperation().getOp(2);
+                    if("".equals(tmpOp1.getName())){
+                        tmpOp1.setName("_tmp_"+tmp_name++);
+                        add_var(tmpOp1);
+                    }
+                    if("".equals(tmpOp2.getName())){
+                        tmpOp2.setName("_tmp_"+tmp_name++);
+                        add_var(tmpOp2);
+                    }
+                }
+            //**************************************************
+		
+	}
+        
 	public void getListVar(){
 		c = var_tb.values();
 		Iterator itr = c.iterator();
@@ -40,6 +65,8 @@ public class VarManager{
 	}
 	public void assig(myVar var){
 		if((app = extractVar(var.getName()))!=null){
+                        if(app.getOperation()!=null)
+                            System.out.println("operazione interna trovta: "+app.getOperation().toString());
 			if(chkType(app,var)||app.getType()==myVar._notInit){
 				add_var(var);
 				System.out.println("Assegnazione: "+var.getName()+" = "+var.getStringValue());
@@ -47,8 +74,9 @@ public class VarManager{
 			else
 				System.out.println("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
 		}
-		else
+                else{    //variabile non dichiarata o senza nome
 			System.out.println("variabile: "+var.getName()+" NON DICHIARATA");
+                }
 	}
 
 	public myVar extractVar(String name){

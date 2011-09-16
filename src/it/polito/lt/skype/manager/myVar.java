@@ -66,10 +66,10 @@ public static final int _bool = 5;
 	}
         
 	public String toString(){
-		String pre_op_s="NO_OPERATION";
+		String pre_op_s="NO_OPERATION\n";
                 if(pre_op!=null)
                     pre_op_s=pre_op.toString();
-                return "\t name: "+name+" type: "+type+" value: "+value+"\n\tref pre operation: "+pre_op_s;	
+                return "\t name: "+name+" type: "+type+" value: "+value+" ref pre operation: "+pre_op_s;	
 	}
         
 	public String getName(){

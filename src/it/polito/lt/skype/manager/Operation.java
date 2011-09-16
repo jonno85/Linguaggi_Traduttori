@@ -33,9 +33,19 @@ public class Operation implements ICommand{
             return "\nop1: "+op1.toString()+" op2: "+op2.toString()+" sign: "+sign+"\n";
         }
         
+        //restituisce l'operando 1 o 2
+        public myVar getOp(int i){
+            if(i==1)
+                return op1;
+            if(i==2)
+                return op2;
+            return null;
+        }
+        
 	public Operation(){
 		result = null;
-		}
+	}
+        
 	public myVar Ioper(myVar a, myVar b, String segno){
 		result = null;
                 setArgument(a, b, segno);
