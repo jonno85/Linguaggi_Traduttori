@@ -1,14 +1,18 @@
-<<<<<<< HEAD
+start fichero.ss
+create $a=2,$d=5,$B,$E=0
+$B = $a*$d*5
+$E=$B+3
 
-inizio $a
-create $a= 5
-if $a <3 then
-=======
+fine pippo.ss
+
+stampa 'ciao'
+
+
 if $a <3 || $d==1 then
->>>>>>> refs/remotes/origin/ant_branch
+
 	$a = 1
 endif
-
+/*
 start fichero.ss
 create $c, $b = 0, $a3 = 5, $d = 0
 foreach $a 0 10 do

@@ -1,26 +1,24 @@
 package it.polito.lt.skype.manager;
 
-import it.polito.lt.skype.command.CommandException;
-import it.polito.lt.skype.command.CommandParameter;
-import it.polito.lt.skype.command.ICommand;
-import it.polito.lt.skype.parser.ParserException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
-public class VarManager implements ICommand{
+
+public class VarManager{
 
 	private HashMap var_tb;
+ //       private HashMap temp_var_tb;    //conterra le variabili temporanee per le operazioni intermedie
 	private myVar app = null;
 	private myVar ris_inter = null;
 	private Operation mkOper;
 	private String unknowVarName = null;
 	public static Collection c;
+        private int tmp_name = 1;
 	
 	public VarManager(){
 		var_tb = new HashMap();
+   //             temp_var_tb = new HashMap();
 		ris_inter = new myVar();
 		mkOper = new Operation();
 		unknowVarName = "QQSYSTEM";
@@ -28,12 +26,41 @@ public class VarManager implements ICommand{
 
     //Hash table in cui vengono memorizzati tutte le variabili dichiarate nel programma: nome,myVar
 //public void newVar(String name)    
+     
+   /*     public void add_tmp_var(myVar var)
+        {
+        var.setName("_tmp_"+tmp_name++);
+        var_tb.put(var.getName(),var);	
+		System.out.println("add_tmp_var(): "+var.getName()+" = "+var.getStringValue());
+	}*/
 
-
+        
 	public void add_var(myVar var){
-		var_tb.put(var.getName(),var);	
-		System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
+           var_tb.put(var.getName(),var);	
+            System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
+            //if(var.getName().equals(""));
+            	//var.setName("_tmp_"+tmp_name++);
+            //var_tb.put(var.getName(),var);	
+            //System.out.println("add_var(): "+var.getName()+" = "+var.getStringValue());
+            
+			//valutare la necessita di ricorsivita multilivello
+                myVar tmpOp1, tmpOp2;
+                if(var.getOperation()!=null){
+                    tmpOp1 = var.getOperation().getOp(1);
+                    tmpOp2 = var.getOperation().getOp(2);
+                    if("".equals(tmpOp1.getName())){
+                        tmpOp1.setName("_tmp_"+tmp_name++);
+                        add_var(tmpOp1);
+                    }
+                    if("".equals(tmpOp2.getName())){
+                        tmpOp2.setName("_tmp_"+tmp_name++);
+                        add_var(tmpOp2);
+                    }
+                }
+            //***************************************************/
+		
 	}
+        
 	public void getListVar(){
 		c = var_tb.values();
 		Iterator itr = c.iterator();
@@ -45,6 +72,8 @@ public class VarManager implements ICommand{
 	}
 	public void assig(myVar var){
 		if((app = extractVar(var.getName()))!=null){
+                        if(app.getOperation()!=null)
+                            System.out.println("operazione interna trovta: "+app.getOperation().toString());
 			if(chkType(app,var)||app.getType()==myVar._notInit){
 				add_var(var);
 				System.out.println("Assegnazione: "+var.getName()+" = "+var.getStringValue());
@@ -52,8 +81,9 @@ public class VarManager implements ICommand{
 			else
 				System.out.println("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
 		}
-		else
+                else{    //variabile non dichiarata o senza nome
 			System.out.println("variabile: "+var.getName()+" NON DICHIARATA");
+                }
 	}
 
 	public myVar extractVar(String name){
@@ -91,7 +121,7 @@ public class VarManager implements ICommand{
 	}
 
 	public myVar makeSOper(myVar a, String segno){
-		a.printVar();
+		a.toString();
 		if(chkVar(a)){
 			System.out.println("dentro");
 			switch(a.getType()){
@@ -110,8 +140,8 @@ public class VarManager implements ICommand{
 	}
 
 	public myVar makeOper(myVar a, myVar b, String segno){
-		a.printVar();
-		b.printVar();
+		a.toString();
+		b.toString();
 		if( chkVar(a)&&chkVar(b)){
 			
 			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
@@ -305,40 +335,5 @@ public class VarManager implements ICommand{
             }
             return result;
         }
-
-    @Override
-    public boolean exec() throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCommandParameter(CommandParameter[][] cpl) throws ParserException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Path> getCommandResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String getCommandStringResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void usage() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 	
 }
