@@ -83,7 +83,7 @@ public class for_command implements ICommand, IFlowCommandControl{
         //indice di partenza
         if(common_vm.isPos(step)){
             index = common_vm.extractVar(start.getName());
-            while(common_vm.makeLODiv(index, end))
+            while(((Boolean)common_vm.makeLogicOper(index, end, "!=").getValue()).booleanValue())
             {
                 for(ICommand c : inside_command){
                     try {

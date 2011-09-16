@@ -241,7 +241,7 @@ stmt 		::= init_stmt:x EL	{:  Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.g
 
 // ********************* statement controllo di flusso
 
-str_stmt	::= if_stmt:x			{: 
+str_stmt	::= if_stmt:x			{: Utility.mf("raccolto IF stmt");
 						((if_command)x).print_parameters();
 						Utility.mf("raccolto IF stmt"); :}
 		| for_stmt:x			{: 
@@ -319,36 +319,7 @@ arit_stmt	::=	Minus:s arit_stmt:x		{: RESULT = parser.vm.makeOper(x,new myVar(x.
 		| RO arit_stmt:x RC 		{: RESULT = x; 		:}
 		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(x,s); :}
 ;
-
-//check the possibility to extract each time the real value
-
-
-logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
-		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
-		:}
-		| arit_stmt:x Maggug:s arit_stmt:y
-		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
-		:}
-		| arit_stmt:x Min:s arit_stmt:y
-		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
-		:}
-		| arit_stmt:x Minug:s arit_stmt:y
-		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
-		:}
-		| arit_stmt:x C_Ugg:s arit_stmt:y
-		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
-		:}
-		| arit_stmt:x Diver:s arit_stmt:y
-		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
-		:}
-;
-
+//qui logic erano
 // ***************** argomenti che subiscono un'operazione 
 // ***************** algebrica - booleana - concatenazione
 
@@ -601,35 +572,66 @@ i_arg		::= Int:x	{: RESULT = new myVar(myVar._int, x.intValue()); 		:}
 
 // ***************** espressione booleana
 
-cond_if		::= C_Orr:s {: 
-				Utility.mf("IF C_Orr: ");
+cond_if		::= C_Orr:s {://Utility.mf("IF C_Orr: ");
 				RESULT = s; :}
 		| C_Andd:s {: RESULT = s; :}
 ;
 
-conf		::= arit_stmt cond arit_stmt 
-				{:
-				
-				:}
-/*		| arit_stmt cond_if arit_stmt*/
-;
 
-conf_exp	::= conf
-		| logic_stmt:s	
-				{:
-				Utility.mf("IF LOGIC STMT -> CONF_EXP ");
+conf_exp	::= //C_Not conf_exp  {:	RESULT = s; :} %prec C_Not | 
+logic_stmt:s	{:
+				//Utility.mf("IF LOGIC STMT -> CONF_EXP ");
 				RESULT = s;
 				:}
-		| C_Not conf
-/*		| conf cond_if conf*/
-		| conf_exp cond_if conf
-		| conf_exp cond_if arit_stmt
+		//| conf_exp cond_if arit_stmt
 		| conf_exp:x cond_if:s logic_stmt:y
 				{:
-				Utility.mf("IF: CONF_EXP with AND/OR ...");
-				RESULT = parser.vm.makeOper(x,y,s);
+				Utility.mf("logic_stamt in confexp");
+				Utility.mf(x.toString());	
+				Utility.mf(s.toString());
+				Utility.mf(y.toString());			
+				myVar var = parser.vm.makeOper(x,y,s);
+				Utility.mf("logic "+var.toString());
+				RESULT=var;
 				:}
+		| RO conf_exp:x RC 		{: RESULT = x; 		:}
 ;
+
+
+
+
+//statement logici
+
+
+logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
+		{:
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		:}
+		| arit_stmt:x Maggug:s arit_stmt:y
+		{:
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		:}
+		| arit_stmt:x Min:s arit_stmt:y
+		{:
+			//Utility.mf("arit min "+x.toString()+" "+s+ " "+y.toString());		
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//Utility.mf("logic "+RESULT.toString());
+		:}
+		| arit_stmt:x Minug:s arit_stmt:y
+		{:
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		:}
+		| arit_stmt:x C_Ugg:s arit_stmt:y
+		{:
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		:} 
+		| arit_stmt:x Diver:s arit_stmt:y
+		{:
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		:}
+;
+
+
 
 
 //not_exp		::= C_Not Var 
@@ -642,10 +644,11 @@ conf_exp	::= conf
 if_head		::= Com_If conf_exp:x Com_If_2 EL i_stmt:l
 				{:
 				if_command ic = new if_command(x);
+				Utility.mf("IF HEAD: "+x.toString());				
 				ic.set_list_command(l);
 				parser.list_script.clear();
-				Utility.mf("IF HEAD condizione: ");
-				Utility.mf("\tSUBLEVEL: "+parser.sublevel);
+				//Utility.mf("IF HEAD condizione: ");
+				//Utility.mf("\tSUBLEVEL: "+parser.sublevel);
 				RESULT = ic;
 				:}
 ;
@@ -653,8 +656,8 @@ if_head		::= Com_If conf_exp:x Com_If_2 EL i_stmt:l
 if_stmt		::= if_head:x Com_If_m EL i_stmt:l Com_If_e
 				{:
 				x.set_list_command_else(l);
-				parser.list_script.clear();
-				x.close_command(new myVar());
+				//parser.list_script.clear();
+				//x.close_command(new myVar());
 				Utility.mf("IF ELSE CHIUSO");
 				RESULT = x;
 				:}

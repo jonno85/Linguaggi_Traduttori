@@ -3,6 +3,7 @@ package it.polito.lt.skype.manager;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.Path;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Operation implements ICommand{
         }
         
         public String toString(){
-            return " |"+op1.toString()+sign+op2.toString()+"|";
+            return " ("+op1.toString()+sign+op2.toString()+")";
         }
         
         //restituisce l'operando 1 o 2
@@ -101,6 +102,7 @@ public class Operation implements ICommand{
 			result = new myVar("",type, ((Boolean)(a.getValue())&((Boolean)(b.getValue()))));
 		if(segno.compareTo("|")==0 || segno.compareTo("||")==0) 
 			result = new myVar("",type, ((Boolean)(a.getValue())|((Boolean)(b.getValue()))));
+		//Utility.mf(result.toString());
 		return result;	
 	}
 	public myVar BNoper(myVar a, String segno){
@@ -126,12 +128,12 @@ public class Operation implements ICommand{
 		Integer op2 = (Integer)(b.getValue());
 		int type = a.getType();
 		switch(segno){
-			case">":{if(op1>op2)bool_result=true;else bool_result=false;}
-			case"<":{if(op1<op2)bool_result=true;else bool_result=false;}
-			case">=":{if(op1>=op2)bool_result=true;else bool_result=false;}
-			case"<=":{if(op1<=op2)bool_result=true;else bool_result=false;}
-			case"==":{if(op1==op2)bool_result=true;else bool_result=false;}
-			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false;}
+			case">":{if(op1>op2)bool_result=true;else bool_result=false; break;}
+			case"<":{if(op1<op2)bool_result=true;else bool_result=false; break;}
+			case">=":{if(op1>=op2)bool_result=true;else bool_result=false; break;}
+			case"<=":{if(op1<=op2)bool_result=true;else bool_result=false; break;}
+			case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
+			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 		}
 		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 		return tmp;
@@ -144,12 +146,12 @@ public class Operation implements ICommand{
 		Float op2 = (Float)(b.getValue());
 		int type = a.getType();
 		switch(segno){
-			case">":{if(op1>op2)bool_result=true;else bool_result=false;}
-			case"<":{if(op1<op2)bool_result=true;else bool_result=false;}
-			case">=":{if(op1>=op2)bool_result=true;else bool_result=false;}
-			case"<=":{if(op1<=op2)bool_result=true;else bool_result=false;}
-			case"==":{if(op1==op2)bool_result=true;else bool_result=false;}
-			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false;}
+			case">":{if(op1>op2)bool_result=true;else bool_result=false; break;}
+			case"<":{if(op1<op2)bool_result=true;else bool_result=false; break;}
+			case">=":{if(op1>=op2)bool_result=true;else bool_result=false; break;}
+			case"<=":{if(op1<=op2)bool_result=true;else bool_result=false; break;}
+			case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
+			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 		}
 		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 		return tmp;
@@ -162,8 +164,8 @@ public class Operation implements ICommand{
 	Float op2 = (Float)(b.getValue());
 	int type = a.getType();
 	switch(segno){
-		case"==":{if(op1==op2)bool_result=true;else bool_result=false;}
-		case"!=":{if(op1!=op2)bool_result=true;else bool_result=false;}
+		case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
+		case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 	}
 	myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 	return tmp;
@@ -173,8 +175,8 @@ public class Operation implements ICommand{
 		result = null;
 		int type = a.getType();
 		switch(segno){
-			case"==":{if(((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false;}
-			case"!=":{if(!((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false;}
+			case"==":{if(((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false; break;}
+			case"!=":{if(!((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false; break;}
 		}
 		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 		return tmp;

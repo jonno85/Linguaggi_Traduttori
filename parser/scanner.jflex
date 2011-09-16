@@ -219,19 +219,19 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 {order}					{return symbol(sym.Order,new String(yytext()));}
 
-{min}					{return symbol(sym.Min);}
-{magg}					{return symbol(sym.Magg);}
-{minug}					{return symbol(sym.Minug);}
-{maggug} 				{return symbol(sym.Maggug);}
-{diver} 				{return symbol(sym.Diver);}
+{min}					{return symbol(sym.Min,new String(yytext()));}
+{magg}					{return symbol(sym.Magg,new String(yytext()));}
+{minug}					{return symbol(sym.Minug,new String(yytext()));}
+{maggug} 				{return symbol(sym.Maggug,new String(yytext()));}
+{diver} 				{return symbol(sym.Diver,new String("!="));}
 
-{c_ug}					{return symbol(sym.C_Ug);}
-{c_ugg}					{return symbol(sym.C_Ugg);}
+{c_ug}					{return symbol(sym.C_Ug,new String(yytext()));}
+{c_ugg}					{return symbol(sym.C_Ugg,new String(yytext()));}
 {c_or}					{return symbol(sym.C_Or,new String("|"));}
 {c_and}					{return symbol(sym.C_And,new String("&"));}
 {c_not}					{return symbol(sym.C_Not,new String("!"));}
-{c_andd}				{return symbol(sym.C_Andd,new String("&&"));}
-{c_orr}					{return symbol(sym.C_Orr,new String("||"));}
+{c_andd}				{return symbol(sym.C_Andd,new String("&"));}
+{c_orr}					{return symbol(sym.C_Orr,new String("|"));}
 {com_ex}				{return symbol(sym.Com_Ex);}
 //{com_script}				{return symbol(sym.Com_Scr);}
 {com_rm}				{return symbol(sym.Com_Rm);}

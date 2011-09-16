@@ -319,36 +319,7 @@ arit_stmt	::=	Minus:s arit_stmt:x		{:/* RESULT = parser.vm.makeOper(x,new myVar(
 		| RO arit_stmt:x RC 		{:/* RESULT = x; 		*/:}
 		| C_Not:s arit_stmt:x		{:/* RESULT = parser.vm.makeSOper(x,s); */:}
 ;
-
-//check the possibility to extract each time the real value
-
-
-logic_stmt	::= arit_stmt:x Magg arit_stmt:y
-		{:/*
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMag(x,y));
-		*/:}
-		| arit_stmt:x Maggug arit_stmt:y
-		{:/*
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMaU(x,y));
-		*/:}
-		| arit_stmt:x Min arit_stmt:y
-		{:/*
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMin(x,y));
-		*/:}
-		| arit_stmt:x Minug arit_stmt:y
-		{:/*
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOMiU(x,y));
-		*/:}
-		| arit_stmt:x C_Ugg arit_stmt:y
-		{:/*
-			RESULT = new myVar(myVar._bool,parser.vm.makeLOUg(x,y));
-		*/:}
-		| arit_stmt:x Diver arit_stmt:y
-		{:/*
-			RESULT = new myVar(myVar._bool,parser.vm.makeLODiv(x,y));
-		*/:}
-;
-
+//qui logic erano
 // ***************** argomenti che subiscono un'operazione 
 // ***************** algebrica - booleana - concatenazione
 
@@ -607,15 +578,15 @@ cond_if		::= C_Orr:s {:/*
 		| C_Andd:s {:/* RESULT = s; */:}
 ;
 
-conf		::= arit_stmt cond arit_stmt 
+/*conf		::= arit_stmt cond arit_stmt 
 				{:/*
 				
-				*/:}
-/*		| arit_stmt cond_if arit_stmt*/
-;
+				:}
+		| arit_stmt cond_if arit_stmt
+;conf
+		|*/
 
-conf_exp	::= conf
-		| logic_stmt:s	
+conf_exp	::=  logic_stmt:s	
 				{:/*
 				Utility.mf("IF LOGIC STMT -> CONF_EXP ");
 				RESULT = s;
@@ -630,6 +601,40 @@ conf_exp	::= conf
 				RESULT = parser.vm.makeOper(x,y,s);
 				*/:}
 ;
+
+
+
+
+//statement logici
+
+
+logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
+		{:/*
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		*/:}
+		| arit_stmt:x Maggug:s arit_stmt:y
+		{:/*
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		*/:}
+		| arit_stmt:x Min:s arit_stmt:y
+		{:/*
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		*/:}
+		| arit_stmt:x Minug:s arit_stmt:y
+		{:/*
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		*/:}
+		| arit_stmt:x C_Ugg:s arit_stmt:y
+		{:/*
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		*/:} 
+		| arit_stmt:x Diver:s arit_stmt:y
+		{:/*
+			RESULT = parser.vm.makeLogicOper(x,y,s);
+		*/:}
+;
+
+
 
 
 //not_exp		::= C_Not Var 

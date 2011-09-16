@@ -67,14 +67,14 @@ public class if_command implements ICommand, IFlowCommandControl{
     @Override
     public void print_parameters() {
         Utility.mf("start: "+
-                ((condition!=null)?condition.getStringValue():"null"));
-        
-        Iterator it = inside_command.iterator();
+                ((condition!=null)?condition.toString():"null"));
+        Utility.mf(inside_command.toString());
+        /*Iterator it = inside_command.iterator();
         while (it.hasNext()) {
             ICommand c = (ICommand) it.next();
             c.toString();
             
-        }
+        }*/
     }
 
     @Override

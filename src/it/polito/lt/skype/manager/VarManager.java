@@ -175,7 +175,8 @@ public class VarManager{
                                             break;
                                             }
                                     case 5:{
-                                    	ris_inter = mkOper.Boper(a,b,segno);	
+                                    	ris_inter = mkOper.Boper(a,b,segno);
+                                		//Utility.mf(ris_inter.toString());
                                     	break;
                                     }
                                     default: return null;
@@ -186,7 +187,7 @@ public class VarManager{
 			}
 		}
 		//System.out.println("VALORE VARIABILE INVALIDO");
-		return null;
+		return ris_inter;
 	}
         
         public myVar Auto_Neg(myVar a,String segno){
@@ -204,12 +205,7 @@ public class VarManager{
     		a.toString();
     		b.toString();
     		if( chkVar(a)&&chkVar(b)){
-    			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
-    				b.setType(3);
-    			}
-    			if(a.getType()!=3 & b.getType()==3 & segno.equalsIgnoreCase("+")){
-    				a.setType(3);
-    			}
+    			
     			if(chkType(a,b)){
     				switch(a.getType()){
                                         case 1: {
@@ -238,7 +234,7 @@ public class VarManager{
     			}
     		}
     		//System.out.println("VALORE VARIABILE INVALIDO");
-    		return null;
+    		return bool_ris_inter;
     	}
         
        

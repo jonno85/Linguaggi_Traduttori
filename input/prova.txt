@@ -1,18 +1,11 @@
-start fichero.ss
-create $a=true,$d=false,$B,$E=false
-$B = $a | $d & true
-$E=$B |false
+
+create $a=4,$d=1,$B,$E=false
 
 
-fine pippo.ss
-
-stampa 'ciao'
-
-
-if $a <3 || $d==1 then
-
+foreach $a 0 10 do
+	$B=4
 	$a = 1
-endif
+next +1
 /*
 start fichero.ss
 create $c, $b = 0, $a3 = 5, $d = 0
