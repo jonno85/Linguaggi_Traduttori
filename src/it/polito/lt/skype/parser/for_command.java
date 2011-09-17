@@ -26,7 +26,9 @@ public class for_command implements ICommand, IFlowCommandControl{
     private boolean close = false;
     private LinkedList<ICommand> inside_command = null;
     private LinkedList<ICommand> backup_command  = null;
-    private VarManager common_vm = null;
+ 
+
+	private VarManager common_vm = null;
     
     
     public for_command(myVar index, myVar start, myVar end, VarManager vm)
@@ -36,7 +38,7 @@ public class for_command implements ICommand, IFlowCommandControl{
         this.end = end;
         this.common_vm = vm;
         this.close = false;
-
+        inside_command = new LinkedList<ICommand>();
     }
     
     public boolean close_command(myVar step)
@@ -146,7 +148,16 @@ public class for_command implements ICommand, IFlowCommandControl{
     public LinkedList<ICommand> getBackupCommand() {
         return backup_command;
     }
-    
+    public LinkedList<ICommand> getInsideCommand() {
+ 		return inside_command;
+ 	}
+
+ 	public void setInsideCommand(LinkedList<ICommand> inside_command) {
+ 		this.inside_command = inside_command;
+ 	}
+
+ 	
+ 	
     
     
 }

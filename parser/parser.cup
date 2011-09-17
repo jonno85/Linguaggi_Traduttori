@@ -139,7 +139,7 @@ script		::= start_s i_stmt:x end_s
 					parser.script_enabled=false;					
 					//Utility.mf("CHIUDO SCRIPT");
 					//salvataggio script
-					parser.csc=new CScript((LinkedList<ICommand>)x);					
+					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script);					
 					//esecuzione script
 					
 					:}
@@ -200,7 +200,7 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 					RESULT = (ICommand)s; :}
 		| str_stmt:s EL		{:
 					parser.list_script.add(s);
-					//Utility.mf("AGGIUNGO STR STMT: "+((s==null)?"null ":"no "+s.toString())); 
+					Utility.mf("AGGIUNGO STR STMT: "+((s==null)?"null ":"no "+s.toString())); 
 					RESULT = s;
 					//parser.list_script.add(s);
 					//Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
@@ -267,7 +267,10 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 					:}
 		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
-		| Com_P arit_stmt EL
+		| Com_P arit_stmt:s EL {:PCommand pcom = new PCommand(s);
+					//pcom.setCommandParameter(new CommandParameter[]{new CommandParameter(null,s.getName(),null)});
+					parser.list_script.add(pcom);
+					RESULT = pcom; :}
 		| conf_exp EL /*********************************************/
 		| EL
 ;
@@ -280,8 +283,8 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 						RESULT = x;
 						:}
 		| for_stmt:x			{: 
-						//x.print_parameters(); nullpointerexc
-						//Utility.mf("raccolto FOR stmt"); 
+						x.print_parameters(); 
+						Utility.mf("raccolto FOR stmt"); 
 						RESULT = x;
 						:}
 //		| str_stmt for_stmt		{: Utility.mf("raccolto FOR stmt interno"); :}
@@ -612,9 +615,9 @@ cond_if		::= C_Orr:s {://Utility.mf("IF C_Orr: ");
 		| C_Andd:s {: RESULT = s; :}
 ;
 
+//C_Not conf_exp  {:	RESULT = s; :} %prec C_Not | 
+conf_exp	::= logic_stmt:s{:
 
-conf_exp	::= //C_Not conf_exp  {:	RESULT = s; :} %prec C_Not | 
-logic_stmt:s	{:
 				//Utility.mf("IF LOGIC STMT -> CONF_EXP ");
 				RESULT = s;
 				:}
@@ -739,8 +742,10 @@ for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x);
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
 				{:
-				//System.out.println("FOR HEAD variabili "+x.getValue()+"\t"+y.getValue()+"\t"+z.getValue());
+				System.out.println("FOR HEAD variabili "+x.getValue()+"\t"+y.getValue()+"\t"+z.getValue());
 				for_command fc = new for_command(x,y,z,parser.vm);
+				fc.setBackupCommand(parser.list_script);
+				parser.list_script=fc.getInsideCommand();				
 				//Utility.mf("\tSUBLEVEL: "+(++parser.sublevel));
 				RESULT = fc;
 				:}
@@ -754,7 +759,7 @@ i_Op_ps		::= Plus:x	{: RESULT = x; 						:}
 //check if minus is passed for value step
 for_tail 	::= Com_For_e i_Op_ps:s for_arg:y 
 				{: 
-				//Utility.mf("CICLO FOR CHIUSO");
+				Utility.mf("CICLO FOR CHIUSO");
 				//Utility.mf("\tSUBLEVEL: "+(--parser.sublevel));
 				//Utility.mf("step: "+parser.vm.Auto_Neg(y,s));
 				RESULT = parser.vm.Auto_Neg(y,s);
@@ -763,10 +768,9 @@ for_tail 	::= Com_For_e i_Op_ps:s for_arg:y
 
 for_stmt	::= for_head:x i_stmt:l for_tail:y
 		{:
-		x.set_list_command(l);
-		parser.list_script.clear();
+		parser.list_script = x.getBackupCommand();		
 		x.close_command(y);
-		//System.out.println("for cycle");
+		System.out.println("for cycle");
 		RESULT = x;
 		:}
 ;

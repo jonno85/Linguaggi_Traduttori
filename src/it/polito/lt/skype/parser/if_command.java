@@ -41,7 +41,7 @@ public class if_command implements ICommand, IFlowCommandControl{
         return false;
     }
     
-    public void exec_alter_flow_command() throws CommandException{
+   /* public void exec_alter_flow_command() throws CommandException{
     	for(ICommand c : inside_command_else){
             try {
                 c.exec();
@@ -51,7 +51,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                         "IF recursive Exception: "+ex.getMessage(), null);
             }
         }
-    }
+    }*/
 
     @Override
     public void set_list_command(LinkedList inside_command) {
@@ -84,7 +84,30 @@ public class if_command implements ICommand, IFlowCommandControl{
 
     @Override
     public boolean exec() throws CommandException {
-    	if(condition.getType()==1){
+    condition.exec();
+    if(((Boolean)condition.getValue()).booleanValue()){
+    	for(ICommand c : inside_command){
+            try {
+                c.exec();
+            } catch (CommandException ex) {
+                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+                        "IF recursive Exception: "+ex.getMessage(), null);
+            }
+        }
+    }
+    else{
+    	for(ICommand c : inside_command_else){
+            try {
+                c.exec();
+            } catch (CommandException ex) {
+                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+                        "IF recursive Exception: "+ex.getMessage(), null);
+            }
+        }
+    }
+    /*	if(condition.getType()==1){
     		if((Integer)condition.getValue()==0){
     			for(ICommand c : inside_command){
     	            try {
@@ -125,7 +148,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     	        }
     		}else
     			exec_alter_flow_command();
-    	}
+    	}*/
     	return true;
     }
 

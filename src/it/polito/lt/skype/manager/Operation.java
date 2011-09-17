@@ -32,11 +32,11 @@ public class Operation implements ICommand{
         }
         
         //metodo magico per eccellenza
-        public myVar makeOper(myVar a, myVar b, String segno){
-        	if(segno=="<"||segno==">"||segno=="<="||segno==">="||segno=="=="||segno=="!=")
-        		return makeLogicOper(a, b, segno);
+        public myVar makeOper(){
+        	if(sign=="<"||sign==">"||sign=="<="||sign==">="||sign=="=="||sign=="!=")
+        		return makeLogicOper(op1, op2, sign);
         	else 
-        		return makeNumOper(a, b, segno);
+        		return makeNumOper(op1, op2, sign);
         }
         
         //metodo magico, da segno e parametri torna l'operazione giusta

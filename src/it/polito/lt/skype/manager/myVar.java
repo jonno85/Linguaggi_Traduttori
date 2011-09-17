@@ -132,7 +132,9 @@ public static final int _bool = 5;
 
     @Override
     public boolean exec() throws CommandException {
-        pre_op.makeOper //e qui che ce va?
+        if(pre_op!=null)
+    	this.value=pre_op.makeOper().getValue();
+        return true;
     }
 
     @Override

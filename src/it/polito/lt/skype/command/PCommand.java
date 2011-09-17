@@ -1,18 +1,19 @@
 package it.polito.lt.skype.command;
 
 import it.polito.lt.skype.manager.VarManager;
+import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserException;
 
 import java.nio.file.Path;
 import java.util.List;
 
 public class PCommand implements ICommand {
-	private StringBuffer text = new StringBuffer();
+	//private StringBuffer text = new StringBuffer();
 	private int n_substr = 0;
-	private VarManager common_vm = null;
-
-	public PCommand(VarManager vm){
-		this.common_vm = vm;
+	private myVar mv = null;
+	private String var_name=null;
+	public PCommand(myVar mv){
+		this.mv = mv;
 	}
 	
 	public PCommand(){
@@ -20,7 +21,10 @@ public class PCommand implements ICommand {
 	
 	@Override
 	public boolean exec() throws CommandException {
-		Utility.mf(text.toString());
+		String vvalue="NULL";
+		
+		if(mv!=null)
+		Utility.mf(mv.getStringValue());
 		return true;
 	}
 
@@ -34,7 +38,7 @@ public class PCommand implements ICommand {
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl)
 			throws ParserException {
-		n_substr = cpl.length;
+		/*n_substr = cpl.length;
 		int i = 0;
 		while(i < n_substr){
 			if(cpl[i].getValue().equalsIgnoreCase("#"))
@@ -43,7 +47,8 @@ public class PCommand implements ICommand {
 				text.append(common_vm.extractVar(cpl[i++].getValue()).getStringValue());
 			else
 				text.append(cpl[i++].getValue());
-		}
+		}*/
+		//var_name=cpl[0].getValue();
 
 	}
 
@@ -62,7 +67,7 @@ public class PCommand implements ICommand {
 
 	@Override
 	public String getCommandStringResult() {
-		return text.toString();
+		return null;
 	}
 
 	@Override

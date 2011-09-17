@@ -1,9 +1,9 @@
 start fichero.ss
-create $a=4,$d=1,$B,$E=false
+create $q $u $a=4,$d=1.0,$B,$E=false
 
 $a = $d + 6
 $B = $a * 2
-
+	
 if $a ==20 && $E==false then
 	$a = 9000
 	$d=202
@@ -12,10 +12,21 @@ else
 	$d = 609
 endif
 
-print $d
+print $B
+print $a
 
 fine pippo.ss
+
+throw fichero.ss
 /*
+if $a ==20 && $E==false then
+	$a = 9000
+	$d=202
+else
+	$a = 101
+	$d = 609
+endif
+
 start fichero.ss
 create $c, $b = 0, $a3 = 5, $d = 0
 foreach $a 0 10 do
