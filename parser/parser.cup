@@ -32,7 +32,7 @@ init with {:
 	ifcc = null;
 	ic = null;
 
-	list_script = new LinkedList<ICommand>();
+	//list_script = new LinkedList<ICommand>();
 	todo = new LinkedList<ICommand>();
 
 :}
@@ -105,13 +105,13 @@ non terminal		S;
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
 non terminal myVar	i_arg, assig_stmt, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
 non terminal String		commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
-non terminal Object[]		sh_stmt, LS_stmt;
+non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
 non terminal for_command	for_stmt, for_head;
-non terminal if_command		if_stmt, if_head;
+non terminal if_command		if_stmt, if_head, if_head_half, if_else;
 non terminal LinkedList		i_stmt;
-non terminal ICommand		init_stmt, stmt, str_stmt;
+non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt;
 
 
 
@@ -160,31 +160,40 @@ end_s		::= End_S File:s
 
 i_stmt		::= stmt:s		{://RE-Init
 					parser.todo.add(s);
-                                        
+					
 					parser.cp = new CommandParameter[7];
 					parser.cpm = new CommandParameter[7][];
 					parser.com = null;
 					parser.comFind = null;
 					:}
-		| i_stmt stmt:s
+		| i_stmt stmt:s		{:
+					parser.todo.add(s);
+					//parser.list_script.add(s);
+					:}
 ;
 
 // ********************* statemente generali
 
 stmt 		::= init_stmt:x EL	{:  Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.getListVar();
-		| assig_stmt:x EL	{:
-					if(parser.vm.extractVar(x.getName())!=null){
-						parser.vm.assig(x);
-						Utility.mf(x.toString());
+		| assig_stmt:s EL	{:
+					parser.list_script.add(s);
+					Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
+					if(parser.vm.extractVar(s.getName())!=null){
+						parser.vm.assig(s);
+						Utility.mf(s.toString());
 					}
 					else Utility.mf("VARIABILE INESISTENTE");
 					Utility.mf("ASSIG STMT RACCOLTO");
-					RESULT = (ICommand)x; :}
+					RESULT = (ICommand)s; :}
 		| str_stmt:s EL		{:
 					parser.list_script.add(s);
+					Utility.mf("AGGIUNGO STR STMT: "+((s==null)?"null ":"no "+s.toString())); 
+					RESULT = s;
+					//parser.list_script.add(s);
 					Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
 					:}
-		| sh_stmt:x EL		{:
+		| sh_stmt:s EL		{:
+
 					System.out.println("raccolto sh stmt: parameter setting"); 
 					parser.cp[0] = parser.array_file.get(0);
 					parser.cp[1] = parser.array_path.get(0);
@@ -197,9 +206,14 @@ stmt 		::= init_stmt:x EL	{:  Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.g
 						else
 							Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
+//					ESECUZIONE SOLO IN SCRIPT O SHELL
+//					if(script)
 					parser.com.exec();
 					Utility.mf(parser.com.getCommandStringResult());
-					
+
+					parser.list_script.add(s);
+					Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
+
 					:}
 		| comm_find_stmt EL	{:
 					System.out.println("raccolto sh stmt = FIND");
@@ -241,14 +255,18 @@ stmt 		::= init_stmt:x EL	{:  Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.g
 
 // ********************* statement controllo di flusso
 
-str_stmt	::= if_stmt:x			{: Utility.mf("raccolto IF stmt");
+str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 						((if_command)x).print_parameters();
-						Utility.mf("raccolto IF stmt"); :}
+						Utility.mf("raccolto IF stmt"); 
+						RESULT = x;
+						:}
 		| for_stmt:x			{: 
 						//x.print_parameters(); nullpointerexc
-						Utility.mf("raccolto FOR stmt"); :}
-		| str_stmt for_stmt		{: Utility.mf("raccolto FOR stmt interno"); :}
-		| str_stmt if_stmt		{: Utility.mf("raccolto IF stmt interno"); :}
+						Utility.mf("raccolto FOR stmt"); 
+						RESULT = x;
+						:}
+//		| str_stmt for_stmt		{: Utility.mf("raccolto FOR stmt interno"); :}
+//		| str_stmt if_stmt		{: Utility.mf("raccolto IF stmt interno"); :}
 ;
 
 // ********************* statement di assegnazione valori
@@ -266,10 +284,8 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 // ********************* statement di inizializzazione variabili
 
 init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x); Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); :}
-					
 		| Com_Str Var:x			{: parser.vm.add_var(new myVar(x)); Utility.mf("DICHIARAZIONI\nvar: "+x.toString());:}
 		| init_stmt assig_stmt:x	{: parser.vm.add_var(x);Utility.mf("assegnazione: "+x.toString());:}
-						
 		| init_stmt Var:x		{: parser.vm.add_var(new myVar(x)); Utility.mf("var: "+x.toString());:}
 ;
 
@@ -641,30 +657,54 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 
 // **************** IF statement
 
-if_head		::= Com_If conf_exp:x Com_If_2 EL i_stmt:l
+if_head		::= Com_If conf_exp:x Com_If_2 EL 
 				{:
 				if_command ic = new if_command(x);
 				Utility.mf("IF HEAD: "+x.toString());				
-				ic.set_list_command(l);
-				parser.list_script.clear();
+				//ic.set_list_command(l);
+				//parser.list_script.clear();
 				//Utility.mf("IF HEAD condizione: ");
 				//Utility.mf("\tSUBLEVEL: "+parser.sublevel);
+				//Utility.mf("LISTA GENERALE?: "+((parser.list_script==null)?"si":"no"));
+				ic.setBackupCommand(parser.list_script);
+
+				parser.list_script = ic.getInsideCommand();
+				//Utility.mf("associata lista interna if");
 				RESULT = ic;
 				:}
 ;
 
-if_stmt		::= if_head:x Com_If_m EL i_stmt:l Com_If_e
+if_else		::= if_head_half:x Com_If_m EL
 				{:
-				x.set_list_command_else(l);
-				//parser.list_script.clear();
-				//x.close_command(new myVar());
-				Utility.mf("IF ELSE CHIUSO");
+				parser.list_script = x.getElseCommand();
 				RESULT = x;
 				:}
-		| if_head:x Com_If_e
+;
+
+if_head_half	::= if_head:x i_stmt:l
 				{:
-				x.close_command();
-				Utility.mf("IF CHIUSO");
+				RESULT = x;
+				:}
+;
+
+if_stmt		::= if_else:x i_stmt:l Com_If_e
+				{:
+				//x.set_list_command_else(l);
+				//parser.list_script.clear();
+				//x.close_command(new myVar());
+				Utility.mf("IF ELSE: CHIUSO");
+				parser.list_script = x.getBackupCommand();
+				x.print_parameters();
+				RESULT = x;
+				:}
+		| if_head_half:x Com_If_e
+				{:
+				//x.close_command();
+				Utility.mf("IF: CHIUSO");
+				//Utility.mf("LISTA IF?: "+((parser.list_script==null)?"si":"no"));
+				parser.list_script = x.getBackupCommand();
+				//Utility.mf("LISTA GENERALE?: "+((parser.list_script==null)?"si":"no"));
+				//x.print_parameters();
 				RESULT = x;
 				:}
 ;

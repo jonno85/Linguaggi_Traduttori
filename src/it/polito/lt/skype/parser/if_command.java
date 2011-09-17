@@ -21,8 +21,9 @@ public class if_command implements ICommand, IFlowCommandControl{
     private myVar name = null;
     private boolean close = false;
     private myVar condition = null;
-    private LinkedList<ICommand> inside_command;
-    private LinkedList<ICommand> inside_command_else;
+    private LinkedList<ICommand> inside_command = null;
+    private LinkedList<ICommand> inside_command_else = null;
+    private LinkedList<ICommand> backup_command  = null;
 
     
     
@@ -31,6 +32,8 @@ public class if_command implements ICommand, IFlowCommandControl{
         this.condition = condition;
         Utility.mf(this.condition.getStringValue());
         this.close = false;
+        inside_command = new LinkedList<ICommand>();
+        inside_command_else = new LinkedList<ICommand>();
     }
     
     public boolean close_command(myVar step)
@@ -45,7 +48,7 @@ public class if_command implements ICommand, IFlowCommandControl{
             } catch (CommandException ex) {
                 throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                         Thread.currentThread().getStackTrace()[2].getMethodName(),
-                        "FOR recursive Exception: "+ex.getMessage(), null);
+                        "IF recursive Exception: "+ex.getMessage(), null);
             }
         }
     }
@@ -68,7 +71,10 @@ public class if_command implements ICommand, IFlowCommandControl{
     public void print_parameters() {
         Utility.mf("start: "+
                 ((condition!=null)?condition.toString():"null"));
-        Utility.mf(inside_command.toString());
+        Utility.mf("LISTA IF vuota?: "+((inside_command!=null)?"no":"si"));
+        Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
+        Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
+        Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
         /*Iterator it = inside_command.iterator();
         while (it.hasNext()) {
             ICommand c = (ICommand) it.next();
@@ -87,7 +93,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     	            } catch (CommandException ex) {
     	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
     	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-    	                        "FOR recursive Exception: "+ex.getMessage(), null);
+    	                        "IF recursive Exception: "+ex.getMessage(), null);
     	            }
     	        }
     		}else
@@ -101,7 +107,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                         } catch (CommandException ex) {
                             throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                                     Thread.currentThread().getStackTrace()[2].getMethodName(),
-                                    "FOR recursive Exception: "+ex.getMessage(), null);
+                                    "IF recursive Exception: "+ex.getMessage(), null);
                         }
                     }
     		}else
@@ -115,7 +121,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     	            } catch (CommandException ex) {
     	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
     	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-    	                        "FOR recursive Exception: "+ex.getMessage(), null);
+    	                        "IF recursive Exception: "+ex.getMessage(), null);
     	            }
     	        }
     		}else
@@ -158,6 +164,26 @@ public class if_command implements ICommand, IFlowCommandControl{
     public boolean close_command() {
         close = true;
         return true;
+    }
+
+    @Override
+    public void setBackupCommand(LinkedList<ICommand> bak) {
+        backup_command = bak;
+    }
+
+    @Override
+    public LinkedList<ICommand> getBackupCommand() {
+        Utility.mf("BACKUP COMMAND: "+backup_command.toString());
+        Utility.mf("INSIDE COMMAND: "+inside_command.toString());
+        return backup_command;
+    }
+    
+    public LinkedList<ICommand> getInsideCommand() {
+        return inside_command;
+    }
+    
+    public LinkedList<ICommand> getElseCommand() {
+        return inside_command_else;
     }
     
 }

@@ -33,4 +33,8 @@ public interface IFlowCommandControl extends ICommand{
     public boolean isClose();
     
     public void print_parameters();
+    
+    public void setBackupCommand(LinkedList<ICommand> bak);
+    
+    public LinkedList<ICommand> getBackupCommand();
 }

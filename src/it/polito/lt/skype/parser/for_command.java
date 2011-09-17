@@ -24,7 +24,8 @@ public class for_command implements ICommand, IFlowCommandControl{
     private myVar end = null;
     private myVar step = null;
     private boolean close = false;
-    private LinkedList<ICommand> inside_command;
+    private LinkedList<ICommand> inside_command = null;
+    private LinkedList<ICommand> backup_command  = null;
     private VarManager common_vm = null;
     
     
@@ -134,6 +135,16 @@ public class for_command implements ICommand, IFlowCommandControl{
     @Override
     public boolean close_command() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setBackupCommand(LinkedList<ICommand> bak) {
+        backup_command = bak;
+    }
+
+    @Override
+    public LinkedList<ICommand> getBackupCommand() {
+        return backup_command;
     }
     
     
