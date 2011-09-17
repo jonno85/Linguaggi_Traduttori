@@ -1,23 +1,18 @@
 start fichero.ss
 create $a=4,$d=1,$B,$E=false
+
 $a = $d + 6
 $B = $a * 2
-$E=true
-if $a <3 || $d==1 then
-	$a = 1
-	$d=3
-	if $a == 1 then
-		$a = 312
-	endif
+
+if $a ==20 && $E==false then
+	$a = 9000
+	$d=202
 else
-	$a = 5
-	$d = 29
+	$a = 101
+	$d = 609
 endif
 
-foreach $a 0 10 do
-	$B=4
-	$a = 1
-next +1
+print $d
 
 fine pippo.ss
 /*

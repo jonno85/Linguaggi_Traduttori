@@ -15,7 +15,7 @@ public class Operation implements ICommand{
         private myVar op1 = null;
         private myVar op2 = null;
         private String sign = null;
-        
+        private myVar bool_ris_inter;
         
         public Operation(myVar a, myVar b, String segno)
         {
@@ -31,8 +31,81 @@ public class Operation implements ICommand{
             sign = segno;
         }
         
+        //metodo magico per eccellenza
+        public myVar makeOper(myVar a, myVar b, String segno){
+        	if(segno=="<"||segno==">"||segno=="<="||segno==">="||segno=="=="||segno=="!=")
+        		return makeLogicOper(a, b, segno);
+        	else 
+        		return makeNumOper(a, b, segno);
+        }
+        
+        //metodo magico, da segno e parametri torna l'operazione giusta
+        public myVar makeNumOper(myVar a, myVar b, String segno){
+   
+				switch(a.getType()){
+                                    case 1: {
+                                            //Utility.mf("intero");
+                                             result = Ioper(a,b,segno);
+                                             break;
+                                            }
+                                    case 2:  {
+                                    	result = Foper(a,b,segno);
+                                    			break;
+                                    		}
+                                    		
+                                    case 3: {
+                                            //Utility.mf("concatenazione stringa");
+                                    	result = Soper(a,b,segno);
+                                            break;
+                                            }
+                                    case 5:{
+                                    	result = Boper(a,b,segno);
+                                		//Utility.mf(ris_inter.toString());
+                                    	break;
+                                    }
+                                    default: return null;
+				
+                                    
+				
+				
+			}
+			result.setOperation(new Operation(a,b,segno));
+			return result;
+        }
+        
+        //metodo magico parte2: va accorpato poi, qui si trattano i confronti
+        public myVar makeLogicOper(myVar a, myVar b, String segno){
+        	switch(a.getType()){
+	            case 1: {
+	            		bool_ris_inter = LogicIoper(a,b,segno);
+	            			break;
+	            		}
+	            case 2:  {
+	            		bool_ris_inter = LogicFoper(a,b,segno);
+	            			break;
+	            		}
+	            		
+	            case 3: {
+	                    //Utility.mf("confronto stringa");
+	                    bool_ris_inter = LogicSoper(a,b,segno);
+	                    break;
+	                    }
+	            case 5:{
+	            	bool_ris_inter = LogicBoper(a,b,segno);	
+	            	break;
+	            }
+	            default: return null;
+        	}
+        		bool_ris_inter.setOperation(new Operation(a,b,segno));
+        		return bool_ris_inter;
+        }
+        
+        
+        
+        
+        
         public String toString(){
-            return " ("+op1.toString()+sign+op2.toString()+")";
+            return " ("+op1.toString()+"["+sign+"]"+op2.toString()+")";
         }
         
         //restituisce l'operando 1 o 2
@@ -53,10 +126,10 @@ public class Operation implements ICommand{
                 setArgument(a, b, segno);
 		//Integer op1 = (Integer)(a.getValue());
 		//Integer op2 = (Integer)(b.getValue());
-		//System.out.println("valori "+op1+" "+op2);
+		//Utility.mf("valori "+op1+" "+op2);
 		int type = a.getType(); 
 		if(segno.compareTo("+")==0){
-			//System.out.println("operazione somma");
+			//Utility.mf("operazione somma");
 			result = new myVar("",type,new Integer(((Integer)op1.getValue()).intValue()
                                                                     + ((Integer)op2.getValue()).intValue()));
 		}
@@ -134,6 +207,7 @@ public class Operation implements ICommand{
 			case"<=":{if(op1<=op2)bool_result=true;else bool_result=false; break;}
 			case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
 			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
+			default: return null;
 		}
 		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 		return tmp;
@@ -152,6 +226,7 @@ public class Operation implements ICommand{
 			case"<=":{if(op1<=op2)bool_result=true;else bool_result=false; break;}
 			case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
 			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
+			default: return null;
 		}
 		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 		return tmp;
@@ -160,12 +235,13 @@ public class Operation implements ICommand{
 	public myVar LogicBoper(myVar a, myVar b, String segno){
 			
 	        setArgument(a, b, segno);
-	Float op1 = (Float)(a.getValue());
-	Float op2 = (Float)(b.getValue());
+	Boolean op1 = (Boolean)(a.getValue());
+	Boolean op2 = (Boolean)(b.getValue());
 	int type = a.getType();
 	switch(segno){
 		case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
 		case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
+		default: return null;
 	}
 	myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 	return tmp;
@@ -177,6 +253,7 @@ public class Operation implements ICommand{
 		switch(segno){
 			case"==":{if(((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false; break;}
 			case"!=":{if(!((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false; break;}
+			default: return null;
 		}
 		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
 		return tmp;

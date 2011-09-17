@@ -68,7 +68,7 @@ public static final int _bool = 5;
 	public String toString(){
 		String pre_op_s="#";
                 if(pre_op!=null)
-                    pre_op_s= "+OP: "+pre_op.toString();
+                    pre_op_s= "--{"+pre_op.toString()+"}";
                 return name+"("+value+")."+type+pre_op_s;	
 	}
         
@@ -132,7 +132,7 @@ public static final int _bool = 5;
 
     @Override
     public boolean exec() throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        pre_op.makeOper //e qui che ce va?
     }
 
     @Override

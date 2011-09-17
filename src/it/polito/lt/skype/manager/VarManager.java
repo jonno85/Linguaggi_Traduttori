@@ -34,18 +34,18 @@ public class VarManager{
         {
         var.setName("_tmp_"+tmp_name++);
         var_tb.put(var.getName(),var);	
-		System.out.println("add_tmp_var(): "+var.getName()+" = "+var.getStringValue());
+		Utility.mf("add_tmp_var(): "+var.getName()+" = "+var.getStringValue());
 	}*/
 
         
 	public void add_var(myVar var){
 		  
 		var_tb.put(var.getName(),var);	
-            //System.out.println("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
+            //Utility.mf("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
             //if(var.getName().equals(""));
             	//var.setName("_tmp_"+tmp_name++);
             //var_tb.put(var.getName(),var);	
-            //System.out.println("add_var(): "+var.getName()+" = "+var.getStringValue());
+            //Utility.mf("add_var(): "+var.getName()+" = "+var.getStringValue());
             
 			//valutare la necessita di ricorsivita multilivello
                 myVar tmpOp1, tmpOp2;
@@ -62,7 +62,7 @@ public class VarManager{
                     }
                 }
             //***************************************************/
-                Utility.mf(var.getName()+" stored"); 
+                //Utility.mf(var.getName()+" stored"); 
 	}
         
 	public void getListVar(){
@@ -71,22 +71,23 @@ public class VarManager{
 		myVar app;
 		while(itr.hasNext()){
 			app=(myVar)itr.next();
-			System.out.println("Variabile " +app.getName()+" Tipo " +app.getType());
+			//Utility.mf("Variabile " +app.getName()+" Tipo " +app.getType());
 		}
 	}
 	public void assig(myVar var){
 		if((app = extractVar(var.getName()))!=null){
                         if(app.getOperation()!=null)
-                            System.out.println("operazione interna trovta: "+app.getOperation().toString());
+                            //Utility.mf("operazione interna trovta: "+app.getOperation().toString());
 			if(chkType(app,var)||app.getType()==myVar._notInit){
 				add_var(var);
-				System.out.println("Assegnazione: "+var.getName()+" = "+var.getStringValue());
+				//Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
 			}
-			else
-				System.out.println("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
+			else{
+				//Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
+			}
 		}
                 else{    //variabile non dichiarata o senza nome
-			System.out.println("variabile: "+var.getName()+" NON DICHIARATA");
+			//Utility.mf("variabile: "+var.getName()+" NON DICHIARATA");
                 }
 	}
 
@@ -127,15 +128,15 @@ public class VarManager{
 	public myVar makeSOper(myVar a, String segno){
 		a.toString();
 		if(chkVar(a)){
-			System.out.println("dentro");
+			//Utility.mf("dentro");
 			switch(a.getType()){
 				//case 1: {
-					//System.out.println("intero");
+					//Utility.mf("intero");
 					//return ris_inter = mkOper.Neg(a);
 					//}
 				//case 2: return ris_inter = mkOper.Neg(a);
 				 case 5: {
-					 System.out.println("booleano");
+					 //Utility.mf("booleano");
 					 ris_inter = mkOper.BNoper(a,segno);
 					 break;
                  }
@@ -143,7 +144,7 @@ public class VarManager{
 			}
 			ris_inter.setOperation(new Operation(a,null,segno));
 		}
-		//System.out.println("VALORE VARIABILE INVALIDO");
+		//Utility.mf("VALORE VARIABILE INVALIDO");
 		return ris_inter;
 	}
 
@@ -151,6 +152,7 @@ public class VarManager{
 		a.toString();
 		b.toString();
 		if( chkVar(a)&&chkVar(b)){
+
 			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
 				b.setType(3);
 			}
@@ -158,35 +160,11 @@ public class VarManager{
 				a.setType(3);
 			}
 			if(chkType(a,b)){
-				switch(a.getType()){
-                                    case 1: {
-                                            //System.out.println("intero");
-                                             ris_inter = mkOper.Ioper(a,b,segno);
-                                             break;
-                                            }
-                                    case 2:  {
-                                    			ris_inter = mkOper.Foper(a,b,segno);
-                                    			break;
-                                    		}
-                                    		
-                                    case 3: {
-                                            //System.out.println("concatenazione stringa");
-                                            ris_inter = mkOper.Soper(a,b,segno);
-                                            break;
-                                            }
-                                    case 5:{
-                                    	ris_inter = mkOper.Boper(a,b,segno);
-                                		//Utility.mf(ris_inter.toString());
-                                    	break;
-                                    }
-                                    default: return null;
-				}
-				ris_inter.setOperation(new Operation(a,b,segno));
-				
-				
-			}
+				ris_inter=mkOper.makeNumOper(a, b, segno);
+			}			
+		
 		}
-		//System.out.println("VALORE VARIABILE INVALIDO");
+		//Utility.mf("VALORE VARIABILE INVALIDO");
 		return ris_inter;
 	}
         
@@ -207,33 +185,11 @@ public class VarManager{
     		if( chkVar(a)&&chkVar(b)){
     			
     			if(chkType(a,b)){
-    				switch(a.getType()){
-                                        case 1: {
-                                        		bool_ris_inter = mkOper.LogicIoper(a,b,segno);
-                                        			break;
-                                        		}
-                                        case 2:  {
-                                        		bool_ris_inter = mkOper.LogicFoper(a,b,segno);
-                                        			break;
-                                        		}
-                                        		
-                                        case 3: {
-                                                System.out.println("confronto stringa");
-                                                bool_ris_inter = mkOper.LogicSoper(a,b,segno);
-                                                break;
-                                                }
-                                        case 5:{
-                                        	bool_ris_inter = mkOper.LogicBoper(a,b,segno);	
-                                        	break;
-                                        }
-                                        default: return null;
-    				}
-    				bool_ris_inter.setOperation(new Operation(a,b,segno));
-    				
+    				bool_ris_inter = mkOper.makeLogicOper(a, b, segno);
     				
     			}
     		}
-    		//System.out.println("VALORE VARIABILE INVALIDO");
+    		//Utility.mf("VALORE VARIABILE INVALIDO");
     		return bool_ris_inter;
     	}
         
