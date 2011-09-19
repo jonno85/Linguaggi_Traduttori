@@ -657,10 +657,12 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 		:}
 		| arit_stmt:x Minug:s arit_stmt:y
 		{:
+			
 			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
 		| arit_stmt:x C_Ugg:s arit_stmt:y
 		{:
+			Utility.mf("CONFRONTO == "+x.toString()+" "+s+ " "+y.toString());
 			RESULT = parser.vm.makeLogicOper(x,y,s);
 		:} 
 		| arit_stmt:x Diver:s arit_stmt:y
@@ -714,7 +716,7 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 				//x.set_list_command_else(l);
 				//parser.list_script.clear();
 				//x.close_command(new myVar());
-				//Utility.mf("IF ELSE: CHIUSO");
+				Utility.mf("IF ELSE: CHIUSO");
 				parser.list_script = x.getBackupCommand();
 				x.print_parameters();
 				RESULT = x;

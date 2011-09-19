@@ -98,7 +98,12 @@ public class for_command implements ICommand, IFlowCommandControl{
                     }
                 }
                 //aggiornamento indice
-                index = common_vm.makeOper(index, step,"+");
+                try {
+					index = common_vm.makeOper(index, step,"+");
+				} catch (ParserException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
         return true;

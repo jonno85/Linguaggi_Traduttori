@@ -1,12 +1,12 @@
 start fichero.ss
-create $q $u $a=4,$d=1.0,$B,$E=false
+create $q $u $a=4,$d=1,$B,$E=false
 
 $a = $d + 6
 $B = $a * 2
 	
 if $a ==20 && $E==false then
 	$a = 9000
-	$d=202
+	$d = 202
 else
 	$a = 101
 	$d = 609
@@ -19,6 +19,7 @@ fine pippo.ss
 
 throw fichero.ss
 /*
+
 if $a ==20 && $E==false then
 	$a = 9000
 	$d=202

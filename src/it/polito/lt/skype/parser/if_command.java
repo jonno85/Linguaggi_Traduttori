@@ -69,17 +69,17 @@ public class if_command implements ICommand, IFlowCommandControl{
 
     @Override
     public void print_parameters() {
-        //Utility.mf("start: "+ ((condition!=null)?condition.toString():"null"));
-        //Utility.mf("LISTA IF vuota?: "+((inside_command!=null)?"no":"si"));
-        //Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
-        //Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
-        //Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
-        /*Iterator it = inside_command.iterator();
+        Utility.mf("start: "+ ((condition!=null)?condition.toString():"null"));
+        Utility.mf("LISTA IF vuota?: "+((inside_command!=null)?"no":"si"));
+        Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
+        Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
+        Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
+       Iterator it = inside_command.iterator();
         while (it.hasNext()) {
             ICommand c = (ICommand) it.next();
             c.toString();
             
-        }*/
+        }
     }
 
     @Override
@@ -88,6 +88,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     if(((Boolean)condition.getValue()).booleanValue()){
     	for(ICommand c : inside_command){
             try {
+            	Utility.mf("Command if exec() iterator: "+c.toString());
                 c.exec();
             } catch (CommandException ex) {
                 throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
@@ -99,6 +100,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     else{
     	for(ICommand c : inside_command_else){
             try {
+            	Utility.mf("Command if exec() iterator: "+c.toString());
                 c.exec();
             } catch (CommandException ex) {
                 throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),

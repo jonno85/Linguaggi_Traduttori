@@ -4,6 +4,7 @@ import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.Path;
 import java.util.List;
@@ -31,45 +32,55 @@ public class Operation implements ICommand{
             sign = segno;
         }
         
-        //metodo magico per eccellenza
-        public myVar makeOper(){
-        	if(sign=="<"||sign==">"||sign=="<="||sign==">="||sign=="=="||sign=="!=")
-        		return makeLogicOper(op1, op2, sign);
-        	else 
-        		return makeNumOper(op1, op2, sign);
+        public myVar getResult(){
+        	return result;
         }
         
-        //metodo magico, da segno e parametri torna l'operazione giusta
-        public myVar makeNumOper(myVar a, myVar b, String segno){
-   
+        
+        public myVar makeOper() throws CommandException, ParserException{
+        	Utility.mf("Lanciato makeOPER: "+sign);
+        	if(sign=="<"||sign==">"||sign=="<="||sign==">="||sign.equalsIgnoreCase("==")||sign=="!=")
+        		return makeLogicOper(op1, op2, sign);
+        	else {
+        		op1.exec();
+        		op2.exec();
+        		return makeNumOper(op1, op2, sign);
+        	}
+        }
+        
+       
+        public myVar makeNumOper(myVar a, myVar b, String segno) throws ParserException{
+        	Utility.mf("MAKE NUM OPERATION "+a.toString()+" "+segno+" "+b.toString() );
 				switch(a.getType()){
                                     case 1: {
-                                            //Utility.mf("intero");
+                                            Utility.mf("intero");
                                              result = Ioper(a,b,segno);
                                              break;
                                             }
                                     case 2:  {
+                                    	Utility.mf("float");
                                     	result = Foper(a,b,segno);
                                     			break;
                                     		}
                                     		
                                     case 3: {
-                                            //Utility.mf("concatenazione stringa");
+                                            Utility.mf("concatenazione stringa");
                                     	result = Soper(a,b,segno);
                                             break;
                                             }
                                     case 5:{
+                                    	Utility.mf("boolean");
                                     	result = Boper(a,b,segno);
                                 		//Utility.mf(ris_inter.toString());
                                     	break;
                                     }
                                     default: return null;
 				
-                                    
-				
-				
 			}
-			result.setOperation(new Operation(a,b,segno));
+			if(result==null)
+				throw new ParserException(ParserErrorType.INVALID_PARAMETER, this.getClass().getName(),
+                   Thread.currentThread().getStackTrace()[2].getMethodName(), "Opeation problem");
+				result.setOperation(new Operation(a,b,segno));
 			return result;
         }
         
@@ -126,7 +137,7 @@ public class Operation implements ICommand{
                 setArgument(a, b, segno);
 		//Integer op1 = (Integer)(a.getValue());
 		//Integer op2 = (Integer)(b.getValue());
-		//Utility.mf("valori "+op1+" "+op2);
+		
 		int type = a.getType(); 
 		if(segno.compareTo("+")==0){
 			//Utility.mf("operazione somma");
@@ -178,12 +189,19 @@ public class Operation implements ICommand{
 		//Utility.mf(result.toString());
 		return result;	
 	}
+	
 	public myVar BNoper(myVar a, String segno){
 		int type = a.getType();
 		if(segno.compareTo("!")==0) 
 			result = new myVar("",type, (!((Boolean)(a.getValue()))));
 		return result;	
 	}
+	
+	public myVar BNoper(){
+			result = new myVar("",myVar._bool, (!((Boolean)(op1.getValue()))));
+		return result;	
+	}
+	
 	public myVar Neg(myVar a){
 		result = a;//null;
 		int type = a.getType();
@@ -416,7 +434,21 @@ public class Operation implements ICommand{
 
     @Override
     public boolean exec() throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
+       if(op2==null){
+    	   Utility.mf("EXEC: valori "+op1.toString());
+    	   result=BNoper();
+       }
+       else{
+    	   Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
+    	   try {
+			makeOper();
+		} catch (ParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       }
+       return true;
+    	   
     }
 
     @Override

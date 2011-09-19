@@ -1,6 +1,7 @@
 package it.polito.lt.skype.manager;
 
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.parser.ParserException;
 
 import java.util.HashMap;
 import java.util.Collection;
@@ -77,7 +78,7 @@ public class VarManager{
 	public void assig(myVar var){
 		if((app = extractVar(var.getName()))!=null){
                         if(app.getOperation()!=null)
-                            //Utility.mf("operazione interna trovta: "+app.getOperation().toString());
+                            Utility.mf("operazione interna trovta: "+app.getOperation().toString());
 			if(chkType(app,var)||app.getType()==myVar._notInit){
 				add_var(var);
 				//Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
@@ -148,7 +149,7 @@ public class VarManager{
 		return ris_inter;
 	}
 
-	public myVar makeOper(myVar a, myVar b, String segno){
+	public myVar makeOper(myVar a, myVar b, String segno) throws ParserException{
 		a.toString();
 		b.toString();
 		if( chkVar(a)&&chkVar(b)){

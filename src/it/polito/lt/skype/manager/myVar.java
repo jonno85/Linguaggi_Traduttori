@@ -132,11 +132,14 @@ public static final int _bool = 5;
 
     @Override
     public boolean exec() throws CommandException {
-        if(pre_op!=null)
-    	this.value=pre_op.makeOper().getValue();
+        if(pre_op!=null){
+        	pre_op.exec();
+        	this.value=pre_op.getResult().getValue();
+        }
         return true;
     }
 
+   
     @Override
     public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
         throw new UnsupportedOperationException("Not supported yet.");
