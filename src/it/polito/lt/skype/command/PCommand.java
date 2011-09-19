@@ -12,8 +12,12 @@ public class PCommand implements ICommand {
 	private int n_substr = 0;
 	private myVar mv = null;
 	private String var_name=null;
-	public PCommand(myVar mv){
+        private VarManager myVm = null;
+	
+        
+        public PCommand(myVar mv, VarManager vm){
 		this.mv = mv;
+                myVm = vm;
 	}
 	
 	public PCommand(){
@@ -22,9 +26,13 @@ public class PCommand implements ICommand {
 	@Override
 	public boolean exec() throws CommandException {
 		String vvalue="NULL";
-		
-		if(mv!=null)
-		Utility.mf(mv.getStringValue());
+		myVar tmp = null;
+                
+		if(mv!=null){
+                     tmp = myVm.extractVar(mv.getName());
+                    //Utility.mf(tmp.getStringValue());
+                    Utility.mf(tmp.toString());
+                }
 		return true;
 	}
 

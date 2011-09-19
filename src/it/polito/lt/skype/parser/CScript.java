@@ -7,15 +7,34 @@ import java.util.List;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.manager.VarManager;
 
 public class CScript implements ICommand {
 	private LinkedList<ICommand> list=null;
+        private VarManager myVm = null;
+	private VarManager bak_myVm = null;
 	
-	
-	public CScript(LinkedList<ICommand> l)
+	public CScript(LinkedList<ICommand> l, VarManager bak_vm)
 	{
 		list=l;
+                myVm = new VarManager();
+                bak_myVm = bak_vm;
 	}
+        
+        public VarManager getScriptVM(){
+            return myVm;
+        }
+        
+        public void setBakVm(VarManager bak_vm){
+            bak_myVm = bak_vm;
+        }
+        
+        public VarManager getBakVm(){
+            return bak_myVm;
+        }
+        
+        
+        
 	
 	@Override
 	public boolean exec() throws CommandException {

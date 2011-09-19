@@ -139,7 +139,7 @@ script		::= start_s i_stmt:x end_s
 					parser.script_enabled=false;					
 					//Utility.mf("CHIUDO SCRIPT");
 					//salvataggio script
-					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script);					
+					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm);					
 					//esecuzione script
 					
 					:}
@@ -164,7 +164,8 @@ throw_s		::= Throw_S File	{:
 
 end_s		::= End_S File:s
 					{:
-					
+					//ripristino vm originale
+					parser.vm = csc.getBakVm();
 					//Utility.mf("FINE SCRIPT");
 					:}
 ;
@@ -267,7 +268,7 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 					:}
 		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
-		| Com_P arit_stmt:s EL {:PCommand pcom = new PCommand(s);
+		| Com_P arit_stmt:s EL {:PCommand pcom = new PCommand(s, parser.vm);
 					//pcom.setCommandParameter(new CommandParameter[]{new CommandParameter(null,s.getName(),null)});
 					parser.list_script.add(pcom);
 					RESULT = pcom; :}
@@ -293,10 +294,10 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 
 // ********************* statement di assegnazione valori
 
-assig_stmt	::= Var:x C_Ug arit_stmt:y	{:                                              
+assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						myVar vx = new myVar();
 						vx.set(y);
-						vx.setName(x); 											
+						vx.setName(x); 							
 						RESULT = vx;
 						//Utility.mf("fine da arit_stmt a assig_stmt");
 						:}

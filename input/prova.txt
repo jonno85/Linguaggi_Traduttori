@@ -4,7 +4,7 @@ create $q $u $a=4,$d=1,$B,$E=false
 $a = $d + 6
 $B = $a * 2
 	
-if $a ==20 && $E==false then
+if $a ==7 || $E==true then
 	$a = 9000
 	$d = 202
 else
@@ -14,6 +14,8 @@ endif
 
 print $B
 print $a
+print $d
+print $E
 
 fine pippo.ss
 

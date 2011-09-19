@@ -182,10 +182,12 @@ public class Operation implements ICommand{
 	public myVar Boper(myVar a, myVar b, String segno){
 		result = null;
 		int type = a.getType();
+                boolean op1 = ((Boolean)a.getValue()).booleanValue();
+                boolean op2 = ((Boolean)b.getValue()).booleanValue();
 		if(segno.compareTo("&")==0 | segno.compareTo("&&")==0) //rimosso costruttore boolean - check!
-			result = new myVar("",type, ((Boolean)(a.getValue())&((Boolean)(b.getValue()))));
+			result = new myVar("",type, op1 & op2);
 		if(segno.compareTo("|")==0 || segno.compareTo("||")==0) 
-			result = new myVar("",type, ((Boolean)(a.getValue())|((Boolean)(b.getValue()))));
+			result = new myVar("",type, (op1 | op2));
 		//Utility.mf(result.toString());
 		return result;	
 	}
@@ -214,9 +216,9 @@ public class Operation implements ICommand{
 	
 	public myVar LogicIoper(myVar a, myVar b, String segno){
 		result = null;
-                setArgument(a, b, segno);
-		Integer op1 = (Integer)(a.getValue());
-		Integer op2 = (Integer)(b.getValue());
+                //setArgument(a, b, segno);
+		int op1 = ((Integer)(a.getValue())).intValue();
+		int op2 = ((Integer)(b.getValue())).intValue();
 		int type = a.getType();
 		switch(segno){
 			case">":{if(op1>op2)bool_result=true;else bool_result=false; break;}
@@ -227,15 +229,15 @@ public class Operation implements ICommand{
 			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 			default: return null;
 		}
-		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
+		myVar tmp = new myVar("",myVar._bool, bool_result);
 		return tmp;
 	}
 	
 	public myVar LogicFoper(myVar a, myVar b, String segno){
 		
                 setArgument(a, b, segno);
-		Float op1 = (Float)(a.getValue());
-		Float op2 = (Float)(b.getValue());
+		float op1 = ((Float)(a.getValue())).floatValue();
+		float op2 = ((Float)(b.getValue())).floatValue();
 		int type = a.getType();
 		switch(segno){
 			case">":{if(op1>op2)bool_result=true;else bool_result=false; break;}
@@ -246,22 +248,22 @@ public class Operation implements ICommand{
 			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 			default: return null;
 		}
-		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
+		myVar tmp = new myVar("",myVar._bool, bool_result);
 		return tmp;
 	}
 	
 	public myVar LogicBoper(myVar a, myVar b, String segno){
 			
 	        setArgument(a, b, segno);
-	Boolean op1 = (Boolean)(a.getValue());
-	Boolean op2 = (Boolean)(b.getValue());
+	boolean op1 = ((Boolean)(a.getValue())).booleanValue();
+	boolean op2 = ((Boolean)(b.getValue())).booleanValue();
 	int type = a.getType();
 	switch(segno){
 		case"==":{if(op1==op2)bool_result=true;else bool_result=false; break;}
 		case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 		default: return null;
 	}
-	myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
+	myVar tmp = new myVar("",myVar._bool, bool_result);
 	return tmp;
 	}
 	
@@ -273,164 +275,10 @@ public class Operation implements ICommand{
 			case"!=":{if(!((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false; break;}
 			default: return null;
 		}
-		myVar tmp = new myVar("",myVar._bool,new Boolean(bool_result));
+		myVar tmp = new myVar("",myVar._bool, bool_result);
 		return tmp;
 	}
 	
-	 /*public boolean makeLOMag(myVar x, myVar y)
-     {
-     	
-         boolean result = false;
-         if(x.getType()==y.getType())
-         {
-             switch(x.getType())
-             {
-                 case 1:
-                     if((Integer)x.getValue()>(Integer)y.getValue())
-                         result = true;
-                     break;
-                 case 2:
-                     if((Float)x.getValue()>(Float)y.getValue())
-                         result = true;
-                     break;
-                 case 3:
-                     if(x.getStringValue().length()>y.getStringValue().length())
-                         result = true;
-                     break;
-             }
-         }
-         return result;
-     }
-      
-       //Logic Operation >=
-      
-     public boolean makeLOMaU(myVar x, myVar y)
-     {
-         boolean result = false;
-         if(x.getType()==y.getType())
-         {
-             switch(x.getType())
-             {
-                 case 1:
-                     if((Integer)x.getValue()>=(Integer)y.getValue())
-                         result = true;
-                     break;
-                 case 2:
-                     if((Float)x.getValue()>=(Float)y.getValue())
-                         result = true;
-                     break;
-                 case 3:
-                     if(x.getStringValue().length()>=y.getStringValue().length())
-                         result = true;
-                     break;
-             }
-         }
-         return result;
-     }
-     
-      // Logic Operation <
-     
-     public boolean makeLOMin(myVar x, myVar y)
-     {
-         boolean result = false;
-         if(x.getType()==y.getType())
-         {
-             switch(x.getType())
-             {
-                 case 1:
-                     if((Integer)x.getValue()<(Integer)y.getValue())
-                         result = true;
-                     break;
-                 case 2:
-                     if((Float)x.getValue()<(Float)y.getValue())
-                         result = true;
-                     break;
-                 case 3:
-                     if(x.getStringValue().length()<y.getStringValue().length())
-                         result = true;
-                     break;
-             }
-         }
-         return result;
-     }
-     
-    //Logic Operation <=
-      
-     public boolean makeLOMiU(myVar x, myVar y)
-     {
-         boolean result = false;
-         if(x.getType()==y.getType())
-         {
-             switch(x.getType())
-             {
-                 case 1:
-                     if((Integer)x.getValue()<=(Integer)y.getValue())
-                         result = true;
-                     break;
-                 case 2:
-                     if((Float)x.getValue()<=(Float)y.getValue())
-                         result = true;
-                     break;
-                 case 3:
-                     if(x.getStringValue().length()<=y.getStringValue().length())
-                         result = true;
-                     break;
-             }
-         }
-         return result;
-     }
-      
-      // Logic Operation ==
-      
-     public boolean makeLOUg(myVar x, myVar y)
-     {
-         boolean result = false;
-         if(x.getType()==y.getType())
-         {
-             switch(x.getType())
-             {
-                 case 1:
-                     if((Integer)x.getValue()==(Integer)y.getValue())
-                         result = true;
-                     break;
-                 case 2:
-                     if((Float)x.getValue()==(Float)y.getValue())
-                         result = true;
-                     break;
-                 case 3:
-                     if(x.getStringValue().length()==y.getStringValue().length())
-                         result = true;
-                     break;
-             }
-         }
-         return result;
-     }
-     
-      //Logic Operation !=
-      
-     public boolean makeLODiv(myVar x, myVar y)
-     {
-         boolean result = false;
-         if(x.getType()==y.getType())
-         {
-             switch(x.getType())
-             {
-                 case 1:
-                     if((Integer)x.getValue()!=(Integer)y.getValue())
-                         result = true;
-                     break;
-                 case 2:
-                     if((Float)x.getValue()!=(Float)y.getValue())
-                         result = true;
-                     break;
-                 case 3:
-                     if(x.getStringValue().length()!=y.getStringValue().length())
-                         result = true;
-                     break;
-             }
-         }
-         return result;
-     }*/
 
     @Override
     public boolean exec() throws CommandException {
@@ -441,7 +289,7 @@ public class Operation implements ICommand{
        else{
     	   Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
     	   try {
-			makeOper();
+			result = makeOper();
 		} catch (ParserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
