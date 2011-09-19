@@ -106,7 +106,7 @@ terminal String		Var;
 non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
-non terminal myVar	i_arg, assig_stmt, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
+non terminal myVar	i_arg, /*assig_stmt,*/ arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
 non terminal String		commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
 non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
@@ -116,7 +116,7 @@ non terminal if_command		if_stmt, if_head, if_head_half, if_else;
 non terminal LinkedList		i_stmt;
 non terminal CScript		script;
 non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt;
-
+non terminal ASCommand		assig_stmt;
 
 
 precedence left Minus, Plus, C_Or;
@@ -139,7 +139,7 @@ script		::= start_s i_stmt:x end_s
 					parser.script_enabled=false;					
 					//Utility.mf("CHIUDO SCRIPT");
 					//salvataggio script
-					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm);					
+								
 					//esecuzione script
 					
 					:}
@@ -152,6 +152,8 @@ start_s			::= Start_S File:s EL
 					//Utility.mf("INIZIO SCRIPT");
 					parser.script_enabled=true;					
 					parser.list_script = new LinkedList<ICommand>();
+					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm);							
+					
 					//parser.list_script.add(s);
 					:}
 ;
@@ -165,7 +167,7 @@ throw_s		::= Throw_S File	{:
 end_s		::= End_S File:s
 					{:
 					//ripristino vm originale
-					parser.vm = csc.getBakVm();
+					parser.vm = parser.csc.getBakVm();
 					//Utility.mf("FINE SCRIPT");
 					:}
 ;
@@ -192,11 +194,11 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 		| assig_stmt:s EL	{:
 					parser.list_script.add(s);
 					//Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
-					if(parser.vm.extractVar(s.getName())!=null){
-						parser.vm.assig(s);
+					//if(parser.vm.extractVar(s.getName())!=null){
+					//	parser.vm.assig(s);
 						//Utility.mf(s.toString());
-					}
-					else Utility.mf("VARIABILE INESISTENTE");
+					//}
+					//else Utility.mf("VARIABILE INESISTENTE");
 					//Utility.mf("ASSIG STMT RACCOLTO");
 					RESULT = (ICommand)s; :}
 		| str_stmt:s EL		{:
@@ -265,6 +267,7 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 					
 					
 					//Utility.mf(parser.comFind.getCommandStringResult());
+
 					:}
 		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
@@ -295,10 +298,15 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 // ********************* statement di assegnazione valori
 
 assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
-						myVar vx = new myVar();
-						vx.set(y);
-						vx.setName(x); 							
-						RESULT = vx;
+						//operazioni fatte in fase di parsing di script (ritorna un Icommand)
+						ASCommand ac= new ASCommand(parser.vm,y);
+						ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
+						RESULT=ac;
+						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
+						//myVar vx = new myVar();
+						//vx.set(y);
+						//vx.setName(x); 							
+						//RESULT = vx;
 						//Utility.mf("fine da arit_stmt a assig_stmt");
 						:}
 //		| Var:x				{:RESULT = new myVar(x);:}
@@ -306,9 +314,9 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 
 // ********************* statement di inizializzazione variabili
 
-init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x); :}//Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); :}
+init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x.getVar()); :}//Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); :}
 		| Com_Str Var:x			{: parser.vm.add_var(new myVar(x));:}// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());:}
-		| init_stmt assig_stmt:x	{: parser.vm.add_var(x);:}//Utility.mf("assegnazione: "+x.toString());:}
+		| init_stmt assig_stmt:x	{: parser.vm.add_var(x.getVar());:}//Utility.mf("assegnazione: "+x.toString());:}
 		| init_stmt Var:x		{: parser.vm.add_var(new myVar(x)); :}//Utility.mf("var: "+x.toString());:}
 ;
 
