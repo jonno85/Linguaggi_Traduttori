@@ -3,6 +3,7 @@ package it.polito.lt.skype.manager;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.Path;
 import java.util.List;
@@ -65,12 +66,12 @@ public static final int _bool = 5;
 		this.name = name;
 	}
         
-	public String toString(){
-		String pre_op_s="#";
-                if(pre_op!=null)
-                    pre_op_s= "--{"+pre_op.toString()+"}";
-                return name+"("+value+")."+type+pre_op_s;	
-	}
+//	public String toString(){
+//		String pre_op_s="#";
+//                if(pre_op!=null)
+//                    pre_op_s= "--{"+pre_op.toString()+"}";
+//                return name+"("+value+")."+type+pre_op_s;	
+//	}
         
 	public String getName(){
 		return name;	
@@ -135,6 +136,7 @@ public static final int _bool = 5;
         if(pre_op!=null){
         	pre_op.exec();
         	this.value=pre_op.getResult().getValue();
+        	Utility.mf("EXEC:MYVAR: VALORE DELLA VARIABILE "+this.name+" [" +this+ "] ORA é: "+this.value);
         }
         return true;
     }

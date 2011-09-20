@@ -38,7 +38,10 @@ public class VarManager{
 		Utility.mf("add_tmp_var(): "+var.getName()+" = "+var.getStringValue());
 	}*/
 
-        
+    public String getTempName(){
+    	return "_tmp_"+tmp_name++;
+    }
+	
 	public void add_var(myVar var){
 		  
 		var_tb.put(var.getName(),var);	
@@ -54,11 +57,11 @@ public class VarManager{
                     tmpOp1 = var.getOperation().getOp(1);
                     tmpOp2 = var.getOperation().getOp(2);
                     if("".equals(tmpOp1.getName())){
-                        tmpOp1.setName("_tmp_"+tmp_name++);
+                        tmpOp1.setName(getTempName());
                         add_var(tmpOp1);
                     }
                     if("".equals(tmpOp2.getName())){
-                        tmpOp2.setName("_tmp_"+tmp_name++);
+                        tmpOp2.setName(getTempName());
                         add_var(tmpOp2);
                     }
                 }
@@ -77,18 +80,19 @@ public class VarManager{
 	}
 	public void assig(myVar var){
 		if((app = extractVar(var.getName()))!=null){
-                        if(app.getOperation()!=null)
-                            Utility.mf("operazione interna trovta: "+app.getOperation().toString());
-			if(chkType(app,var)||app.getType()==myVar._notInit){
-				add_var(var);
-				//Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
-			}
-			else{
-				//Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
-			}
-		}
+                    if(app.getOperation()!=null)
+                        Utility.mf("operazione interna trovta: "+app.getOperation().toString());
+					if(chkType(app,var)||app.getType()==myVar._notInit){
+						add_var(var);
+						//Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
+					}
+					else{ if(app.getOperation()!=null)
+                        Utility.mf("operazione interna trovta: "+app.getOperation().toString());
+						//Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
+					}
+				}
                 else{    //variabile non dichiarata o senza nome
-			//Utility.mf("variabile: "+var.getName()+" NON DICHIARATA");
+			Utility.mf("variabile: "+var.getName()+" NON DICHIARATA");
                 }
 	}
 

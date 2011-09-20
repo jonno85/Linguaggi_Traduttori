@@ -153,12 +153,13 @@ start_s			::= Start_S File:s EL
 					parser.script_enabled=true;					
 					parser.list_script = new LinkedList<ICommand>();
 					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm);							
-					
+					parser.vm=parser.csc.getScriptVM();
 					//parser.list_script.add(s);
 					:}
 ;
 
 throw_s		::= Throw_S File	{:
+					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
 					parser.csc.exec();
 					//Utility.mf("LANCIA SCRIPT");
 					:}
@@ -168,7 +169,7 @@ end_s		::= End_S File:s
 					{:
 					//ripristino vm originale
 					parser.vm = parser.csc.getBakVm();
-					//Utility.mf("FINE SCRIPT");
+					Utility.mf("VARMANAGER: "+parser.vm);
 					:}
 ;
 
@@ -299,8 +300,10 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 
 assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//operazioni fatte in fase di parsing di script (ritorna un Icommand)
-						ASCommand ac= new ASCommand(parser.vm,y);
-						ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
+						y.setName(parser.vm.getTempName());						
+						parser.vm.add_var(y);						
+						ASCommand ac= new ASCommand(parser.vm,y.getName(),x);
+						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
 						RESULT=ac;
 						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
 						//myVar vx = new myVar();
@@ -765,6 +768,7 @@ for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
 i_Op_ps		::= Plus:x	{: RESULT = x; 						:}
 		| Minus:x	{: RESULT = x; 						:}
 ;
+
 
 
 //check if minus is passed for value step

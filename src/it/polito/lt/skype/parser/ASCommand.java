@@ -11,20 +11,28 @@ import it.polito.lt.skype.manager.myVar;
 
 public class ASCommand implements ICommand {
 
-	private String dst;
+	private String dst,src;
 	private VarManager manager=null;
 	private myVar nuova=null, src_var=null;
 	
-	public ASCommand(VarManager vm,myVar src){
+	public ASCommand(VarManager vm,String src, String dst){
+		this.dst=dst;
+		this.src=src;
 		manager=vm;
-		this.src_var=src;
+		//this.src_var=src;
+		nuova = new myVar();
+		myVar src_var=manager.extractVar(src);
+		nuova.set(src_var);
+		nuova.setName(dst);
 	}
 	
 	
 	@Override
 	public boolean exec() throws CommandException {
 		myVar dst_var=manager.extractVar(dst);
-		nuova.setName(dst_var.getName());
+		nuova=manager.extractVar(src);
+		nuova.setName(dst);
+		nuova.exec();
 		manager.assig(nuova);
 		return true;
 		//la set sulla variabile di destinazione di tutti i valori della variabile sorgente
@@ -48,10 +56,7 @@ public class ASCommand implements ICommand {
 			throws ParserException {
 		
 		dst=cpl[0].getValue();
-		nuova = new myVar();
-		//myVar src_var=manager.extractVar(src);
-		nuova.set(src_var);
-		nuova.setName(dst);
+		
 
 	}
 

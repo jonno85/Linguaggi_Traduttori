@@ -38,12 +38,13 @@ public class Operation implements ICommand{
         
         
         public myVar makeOper() throws CommandException, ParserException{
-        	Utility.mf("Lanciato makeOPER: "+sign);
+        	//Utility.mf("Lanciato makeOPER: "+sign);
+        	op1.exec();
+    		op2.exec();
         	if(sign=="<"||sign==">"||sign=="<="||sign==">="||sign.equalsIgnoreCase("==")||sign=="!=")
         		return makeLogicOper(op1, op2, sign);
         	else {
-        		op1.exec();
-        		op2.exec();
+        		
         		return makeNumOper(op1, op2, sign);
         	}
         }
@@ -287,7 +288,7 @@ public class Operation implements ICommand{
     	   result=BNoper();
        }
        else{
-    	   Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
+    	   Utility.mf("EXEC2op: valori "+op1.getName()+"["+op1+"]"+op2.getName()+"["+op2+"]");
     	   try {
 			result = makeOper();
 		} catch (ParserException e) {
