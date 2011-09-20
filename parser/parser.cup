@@ -300,7 +300,8 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 
 assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//operazioni fatte in fase di parsing di script (ritorna un Icommand)
-						y.setName(parser.vm.getTempName());						
+						y.setName(parser.vm.getTempName());
+						y.setVM(parser.vm);
 						parser.vm.add_var(y);						
 						ASCommand ac= new ASCommand(parser.vm,y.getName(),x);
 						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
@@ -325,7 +326,8 @@ init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x.getVar()); :}//Utilit
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
 
-arit_stmt	::=	Minus:s arit_stmt:x		{: RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1)),"*"); :}%prec UMINUS
+arit_stmt	::=	Minus:s arit_stmt:x
+		{: RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1)),"*"); :}%prec UMINUS
 		| arit_stmt:x Times:s arit_stmt:y	
 		{:	//System.out.println(s);
 			//x.toString(); 

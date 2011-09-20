@@ -7,6 +7,7 @@ import java.util.List;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.manager.VarManager;
 
 public class CScript implements ICommand {

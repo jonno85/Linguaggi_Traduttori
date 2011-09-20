@@ -17,6 +17,7 @@ public class Operation implements ICommand{
         private myVar op2 = null;
         private String sign = null;
         private myVar bool_ris_inter;
+        private VarManager myVm = null;
         
         public Operation(myVar a, myVar b, String segno)
         {
@@ -32,6 +33,10 @@ public class Operation implements ICommand{
             sign = segno;
         }
         
+        public void setVM(VarManager vm){
+            myVm = vm;
+        }
+        
         public myVar getResult(){
         	return result;
         }
@@ -41,10 +46,11 @@ public class Operation implements ICommand{
         	//Utility.mf("Lanciato makeOPER: "+sign);
         	op1.exec();
     		op2.exec();
-        	if(sign=="<"||sign==">"||sign=="<="||sign==">="||sign.equalsIgnoreCase("==")||sign=="!=")
+        	if(sign.equalsIgnoreCase("<")||sign.equalsIgnoreCase(">")
+                        ||sign.equalsIgnoreCase("<=")||sign.equalsIgnoreCase(">=")
+                        ||sign.equalsIgnoreCase("==")||sign.equalsIgnoreCase("!="))
         		return makeLogicOper(op1, op2, sign);
         	else {
-        		
         		return makeNumOper(op1, op2, sign);
         	}
         }
@@ -283,18 +289,24 @@ public class Operation implements ICommand{
 
     @Override
     public boolean exec() throws CommandException {
+        if(myVm==null)
+            Utility.mf("CUIDADO varmanager nullo");
+       op1 = myVm.extractVar(op1.getName());
+       op1.setVM(myVm);
        if(op2==null){
     	   Utility.mf("EXEC: valori "+op1.toString());
     	   result=BNoper();
        }
        else{
-    	   Utility.mf("EXEC2op: valori "+op1.getName()+"["+op1+"]"+op2.getName()+"["+op2+"]");
+           op2 = myVm.extractVar(op2.getName());
+           op2.setVM(myVm);
+           Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
     	   try {
-			result = makeOper();
-		} catch (ParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		result = makeOper();
+            } catch (ParserException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+            }
        }
        return true;
     	   

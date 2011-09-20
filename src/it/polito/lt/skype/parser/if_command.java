@@ -74,7 +74,7 @@ public class if_command implements ICommand, IFlowCommandControl{
         Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
         Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
         Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
-       Iterator it = inside_command.iterator();
+        Iterator it = inside_command.iterator();
         while (it.hasNext()) {
             ICommand c = (ICommand) it.next();
             c.toString();

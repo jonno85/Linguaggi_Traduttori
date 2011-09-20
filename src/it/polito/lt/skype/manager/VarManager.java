@@ -1,5 +1,6 @@
 package it.polito.lt.skype.manager;
 
+import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.parser.ParserException;
 
@@ -10,7 +11,7 @@ import java.util.Iterator;
 
 public class VarManager{
 
-	private HashMap var_tb;
+	private HashMap<String, myVar> var_tb;
  //       private HashMap temp_var_tb;    //conterra le variabili temporanee per le operazioni intermedie
 	private myVar app = null;
 	private myVar ris_inter = null;
@@ -21,7 +22,7 @@ public class VarManager{
 		private myVar bool_ris_inter;
 	
 	public VarManager(){
-		var_tb = new HashMap();
+		var_tb = new HashMap<String, myVar>();
    //             temp_var_tb = new HashMap();
 		ris_inter = new myVar();
 		mkOper = new Operation();
@@ -43,8 +44,11 @@ public class VarManager{
     }
 	
 	public void add_var(myVar var){
-		  
+                //if(var_tb.get(var.getName())!=null)
+                //    Utility.mf("valore PRIMA di aggiornare " + (var_tb.get(var.getName())).getStringValue());
 		var_tb.put(var.getName(),var);	
+                //if(var_tb.get(var.getName())!=null)
+                //    Utility.mf("valore DOPO di aggiornare " + (var_tb.get(var.getName())).getStringValue());
             //Utility.mf("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
             //if(var.getName().equals(""));
             	//var.setName("_tmp_"+tmp_name++);
@@ -82,15 +86,15 @@ public class VarManager{
 		if((app = extractVar(var.getName()))!=null){
                     if(app.getOperation()!=null)
                         Utility.mf("operazione interna trovta: "+app.getOperation().toString());
-					if(chkType(app,var)||app.getType()==myVar._notInit){
-						add_var(var);
-						//Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
-					}
-					else{ if(app.getOperation()!=null)
+                    if(chkType(app,var)||app.getType()==myVar._notInit){
+                            add_var(var);
+                            //Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
+                    }
+                    else{ if(app.getOperation()!=null)
                         Utility.mf("operazione interna trovta: "+app.getOperation().toString());
-						//Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
-					}
-				}
+                            //Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
+                    }
+                }
                 else{    //variabile non dichiarata o senza nome
 			Utility.mf("variabile: "+var.getName()+" NON DICHIARATA");
                 }

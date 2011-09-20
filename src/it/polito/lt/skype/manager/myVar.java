@@ -14,6 +14,7 @@ private String name;
 private int type;
 private Object value;
 private Operation pre_op = null;
+private VarManager myVm = null;
 public static final int _notInit = 0;
 public static final int _int = 1;
 public static final int _float = 2;
@@ -66,12 +67,12 @@ public static final int _bool = 5;
 		this.name = name;
 	}
         
-//	public String toString(){
-//		String pre_op_s="#";
-//                if(pre_op!=null)
-//                    pre_op_s= "--{"+pre_op.toString()+"}";
-//                return name+"("+value+")."+type+pre_op_s;	
-//	}
+	public String toString(){
+		String pre_op_s="#";
+                if(pre_op!=null)
+                    pre_op_s= "--{"+pre_op.toString()+"}";
+                return name+"("+value+")."+type+pre_op_s;	
+	}
         
 	public String getName(){
 		return name;	
@@ -87,6 +88,10 @@ public static final int _bool = 5;
         
     public void setValue(Object value){
         this.value = value;
+    }
+    
+    public void setVM(VarManager vm){
+        myVm = vm;
     }
     
     public void set(myVar src )
@@ -134,6 +139,9 @@ public static final int _bool = 5;
     @Override
     public boolean exec() throws CommandException {
         if(pre_op!=null){
+                Utility.mf("imposto varmanager MYVAR");
+                pre_op.setVM(myVm);
+                Utility.mf("varmanager MYVAR:"+myVm);
         	pre_op.exec();
         	this.value=pre_op.getResult().getValue();
         	Utility.mf("EXEC:MYVAR: VALORE DELLA VARIABILE "+this.name+" [" +this+ "] ORA é: "+this.value);
