@@ -15,8 +15,8 @@ public class PCommand implements ICommand {
         private VarManager myVm = null;
 	
         
-        public PCommand(myVar mv, VarManager vm){
-		this.mv = mv;
+        public PCommand(String name, VarManager vm){
+		var_name = name;
                 myVm = vm;
 	}
 	
@@ -25,14 +25,23 @@ public class PCommand implements ICommand {
 	
 	@Override
 	public boolean exec() throws CommandException {
-		String vvalue="NULL";
-		myVar tmp = null;
-		if(mv!=null){
-                     tmp = myVm.extractVar(mv.getName());
-                    //Utility.mf(tmp.getStringValue());
-                    Utility.mf(tmp.toString());
-                }
-		return true;
+            //stampiamo solo il valore di una variabile
+            if(myVm.extractVar(var_name)!=null)
+                Utility.mf(myVm.extractVar(var_name).getStringValue());
+            else
+                /*var_name include una stringa concatenata di sotto strighe che 
+                non è riconducibile ad una variabile singola */
+                Utility.mf(var_name);
+            
+            /*
+                String vvalue="NULL";
+            myVar tmp = null;
+            if(mv!=null){
+                 tmp = myVm.extractVar(mv.getName());
+                //Utility.mf(tmp.getStringValue());
+                //Utility.mf(tmp.toString());
+            }*/
+            return true;
 	}
 
 	@Override
