@@ -307,7 +307,7 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//y.setName(parser.vm.getTempName());
 						//y.setVM(parser.vm);
 						//parser.vm.add_var(y);						
-						ASCommand ac= new ASCommand(parser.vm, x, y);
+						ASCommand ac= new ASCommand(parser.vm, x, parser.token_list);
 						Utility.mf(parser.token_list.toString());
 						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
 						//RESULT=ac;
@@ -739,9 +739,9 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 
 for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x); 
 					//System.out.println("Var: "+x); :}
-		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue(), parser.vm); 	:}
-		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue(), parser.vm); 	:}
-		| ID:x		{: RESULT= new myVar(myVar._string, x, parser.vm); :}
+		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 	:}
+		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 	:}
+		| ID:x		{: RESULT= new myVar(myVar._string, x); :}
 ;
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
