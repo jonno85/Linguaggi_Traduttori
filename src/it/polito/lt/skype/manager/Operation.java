@@ -19,12 +19,12 @@ public class Operation implements ICommand{
         private myVar bool_ris_inter;
         private VarManager myVm = null;
         
-        public Operation(myVar a, myVar b, String segno, VarManager vm)
+        public Operation(myVar a, myVar b, String segno)
         {
             op1 = a;
             op2 = b;
             sign = segno;
-            myVm = vm;
+            //myVm = vm;
         }
         
         public void setArgument(myVar a, myVar b, String segno)
@@ -43,17 +43,20 @@ public class Operation implements ICommand{
         }
         
         
-        public myVar makeOper() throws CommandException, ParserException{
+        public myVar makeOper(){
         	//Utility.mf("Lanciato makeOPER: "+sign);
-        	op1.exec();
-    		op2.exec();
         	if(sign.equalsIgnoreCase("<")||sign.equalsIgnoreCase(">")
                         ||sign.equalsIgnoreCase("<=")||sign.equalsIgnoreCase(">=")
                         ||sign.equalsIgnoreCase("==")||sign.equalsIgnoreCase("!="))
         		return makeLogicOper(op1, op2, sign);
         	else {
-        		return makeNumOper(op1, op2, sign);
+                    try {
+                        return makeNumOper(op1, op2, sign);
+                    } catch (ParserException ex) {
+                        ex.printStackTrace();
+                    }
         	}
+                return null;
         }
         
        
@@ -148,7 +151,6 @@ public class Operation implements ICommand{
 		
 		int type = a.getType(); 
 		if(segno.compareTo("+")==0){
-                        
 			result = new myVar(myVm.getTempName(),type,new Integer(((Integer)op1.getValue()).intValue()
                                                                     + ((Integer)op2.getValue()).intValue()));
 		}
@@ -208,18 +210,18 @@ public class Operation implements ICommand{
 	}
 	
 	public myVar BNoper(){
-			result = new myVar(myVm.getTempName(),myVar._bool, (!((Boolean)(op1.getValue()))));
-		return result;	
+            result = new myVar(myVm.getTempName(),myVar._bool, (!((Boolean)(op1.getValue()))));
+            return result;	
 	}
 	
 	public myVar Neg(myVar a){
-		result = a;//null;
-		int type = a.getType();
-		if(type==1)
-			result = new myVar(myVm.getTempName(),type,new Integer(-(Integer)a.getValue()));
-		if(type==2)
-			result = new myVar(myVm.getTempName(),type,new Float(-(Float)a.getValue()));
-		return result;
+            result = a;//null;
+            int type = a.getType();
+            if(type==1)
+                    result = new myVar(myVm.getTempName(),type,new Integer(-(Integer)a.getValue()));
+            if(type==2)
+                    result = new myVar(myVm.getTempName(),type,new Float(-(Float)a.getValue()));
+            return result;
 	}
 	
 	public myVar LogicIoper(myVar a, myVar b, String segno){
@@ -290,6 +292,7 @@ public class Operation implements ICommand{
 
     @Override
     public boolean exec() throws CommandException {
+       /*
         if(myVm==null){
             Utility.mf("CUIDADO varmanager nullo");     
         }
@@ -305,13 +308,12 @@ public class Operation implements ICommand{
            Utility.mf("op2: "+op2.getName()+" op2 value: "+op2.getStringValue());
            op2 = myVm.extractVar(op2.getName());
            Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
-    	   try {
+    	   
 		result = makeOper();
-            } catch (ParserException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-            }
+            
        }
+        * 
+        */
        return true;
     	   
     }

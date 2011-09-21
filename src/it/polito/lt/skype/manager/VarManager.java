@@ -17,7 +17,8 @@ public class VarManager{
 	private Operation mkOper;
 	private String unknowVarName = null;
 	public static Collection c;
-        private int tmp_name = 1;
+        private int tmp_num = 1;
+        private String tmp_name = "_tmp_";
 		private myVar bool_ris_inter;
 	
 	public VarManager(){
@@ -28,6 +29,10 @@ public class VarManager{
                 mkOper.setVM(this);
 		unknowVarName = "QQSYSTEM";
 	}
+        
+        public void setTmpName(String tmp){
+            tmp_name = tmp;
+        }
 
     //Hash table in cui vengono memorizzati tutte le variabili dichiarate nel programma: nome,myVar
 //public void newVar(String name)    
@@ -40,7 +45,7 @@ public class VarManager{
 	}*/
 
     public String getTempName(){
-    	return "_tmp_"+tmp_name++;
+    	return tmp_name+tmp_num++;
     }
 	
 	public void add_var(myVar var){
@@ -135,45 +140,35 @@ public class VarManager{
 	}
 
 	public myVar makeSOper(myVar a, String segno){
-		a.toString();
-		if(chkVar(a)){
-			//Utility.mf("dentro");
-			switch(a.getType()){
-				//case 1: {
-					//Utility.mf("intero");
-					//return ris_inter = mkOper.Neg(a);
-					//}
-				//case 2: return ris_inter = mkOper.Neg(a);
-				 case 5: {
-					 //Utility.mf("booleano");
-					 ris_inter = mkOper.BNoper(a,segno);
-					 break;
-                 }
-				 default: return null;
-			}
-		}
-		//Utility.mf("VALORE VARIABILE INVALIDO");
-		return ris_inter;
+            a.toString();
+            if(chkVar(a)){
+                switch(a.getType()){
+                    case 1: return ris_inter = mkOper.Neg(a);
+                    case 2: return ris_inter = mkOper.Neg(a);
+                    case 5: ris_inter = mkOper.BNoper(a,segno);
+                            break;
+                    default: return null;
+                }
+            }
+            return ris_inter;
 	}
 
 	public myVar makeOper(myVar a, myVar b, String segno) throws ParserException{
-		a.toString();
-		b.toString();
-		if( chkVar(a)&&chkVar(b)){
-
-			if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
-				b.setType(3);
-			}
-			if(a.getType()!=3 & b.getType()==3 & segno.equalsIgnoreCase("+")){
-				a.setType(3);
-			}
-			if(chkType(a,b)){
-				ris_inter=mkOper.makeNumOper(a, b, segno);
-			}			
-		
-		}
-		//Utility.mf("VALORE VARIABILE INVALIDO");
-		return ris_inter;
+            a.toString();
+            b.toString();
+            if( chkVar(a)&&chkVar(b)){
+                if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
+                    b.setType(3);
+                }
+                if(a.getType()!=3 & b.getType()==3 & segno.equalsIgnoreCase("+")){
+                    a.setType(3);
+                }
+                if(chkType(a,b)){
+                    ris_inter = mkOper.makeNumOper(a, b, segno);
+                }			
+            }
+            //Utility.mf("VALORE VARIABILE INVALIDO");
+            return ris_inter;
 	}
         
         public myVar Auto_Neg(myVar a,String segno){

@@ -35,6 +35,8 @@ init with {:
 	//list_script = new LinkedList<ICommand>();
 	todo = new LinkedList<ICommand>();
 
+	token_list = new ArrayList<String>();
+
 :}
 
 parser code {:
@@ -48,6 +50,8 @@ parser code {:
 	//public int sublevel = 0;
 
 	public ArrayList<CommandParameter> array_path, array_file, array_dim, array_perm, array_data;
+
+	public ArrayList<String> token_list;
 
 	public LinkedList<ICommand> list_script;
 	public LinkedList<ICommand> todo;
@@ -97,7 +101,6 @@ terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Co
 terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
 terminal Integer	Int;
 terminal Float		Vint;
-terminal Calendar	GMA;
 terminal 		UMINUS;
 terminal Boolean	Bool;
 terminal String		Var;
@@ -106,8 +109,8 @@ terminal String		Var;
 non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
-non terminal myVar	i_arg, /*assig_stmt,*/ arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
-non terminal String		commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
+non terminal myVar	i_arg, for_arg, conf_exp, logic_stmt, for_tail;
+non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if, sign, arit_stmt;
 non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
@@ -272,10 +275,11 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 					:}
 		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
-		| Com_P arit_stmt:s EL {:PCommand pcom = new PCommand(s, parser.vm);
-					//pcom.setCommandParameter(new CommandParameter[]{new CommandParameter(null,s.getName(),null)});
-					parser.list_script.add(pcom);
-					RESULT = pcom; :}
+		| Com_P arit_stmt:s EL {:
+					//PCommand pcom = new PCommand(s, parser.vm);
+					//parser.list_script.add(pcom);
+					//RESULT = pcom;
+					:}
 		| conf_exp EL /*********************************************/
 		| EL
 ;
@@ -300,16 +304,17 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 
 assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//operazioni fatte in fase di parsing di script (ritorna un Icommand)
-						y.setName(parser.vm.getTempName());
-						y.setVM(parser.vm);
-						parser.vm.add_var(y);						
-						ASCommand ac= new ASCommand(parser.vm,y.getName(),x);
+						//y.setName(parser.vm.getTempName());
+						//y.setVM(parser.vm);
+						//parser.vm.add_var(y);						
+						ASCommand ac= new ASCommand(parser.vm, x, y);
+						Utility.mf(parser.token_list.toString());
 						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
-						RESULT=ac;
+						//RESULT=ac;
 						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
 						//myVar vx = new myVar();
 						//vx.set(y);
-						//vx.setName(x); 							
+						//vx.setName(x);
 						//RESULT = vx;
 						//Utility.mf("fine da arit_stmt a assig_stmt");
 						:}
@@ -326,61 +331,45 @@ init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x.getVar()); :}//Utilit
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
 
-arit_stmt	::=	Minus:s arit_stmt:x
-		{: RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1),parser.vm),"*"); :}%prec UMINUS
-		| arit_stmt:x Times:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							:}
-		| arit_stmt:x Div:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							:}
-		| arit_stmt:x Plus:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							:}
-		| arit_stmt:x Minus:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							:}
-		| arit_stmt:x C_And:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							:}
-		| arit_stmt:x C_Or:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							:}
+sign		::= Times:x			{: RESULT = x; :}
+		| Div:x				{: RESULT = x; :}
+		| Plus:x			{: RESULT = x; :}
+		| Minus:x			{: RESULT = x; :}
+		| C_Or:x			{: RESULT = x; :}
+		| C_And:x			{: RESULT = x; :}
+;
 
-		| arit_arg:x			{: RESULT = x; 
-							//System.out.println("da arit_arg a arit_stmt");			
+arit_stmt	::=	Minus:s arit_stmt:x
+		{: parser.token_list.add(s);
+			//RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1),parser.vm),"*"); 
+		:}%prec UMINUS
+		| arit_stmt:x sign:s arit_stmt:y	
+		{:	//System.out.println(s);
+			//x.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
+			parser.token_list.add(s);
+		:}
+		| arit_arg:x			{:
+						parser.token_list.add(x);
+						RESULT = x;
+							//System.out.println("da arit_arg a arit_stmt");
 						:}
-		| RO arit_stmt:x RC 		{: RESULT = x; 		:}
-		| C_Not:s arit_stmt:x		{: RESULT = parser.vm.makeSOper(x,s); :}
+		| RO arit_stmt:x RC
+		| C_Not:s arit_stmt:x		{: 
+						parser.token_list.add(s);
+						:}
 ;
 //qui logic erano
 // ***************** argomenti che subiscono un'operazione 
 // ***************** algebrica - booleana - concatenazione
 
-arit_arg	::= Var:x			{: RESULT = parser.vm.extractVar(x); 
+arit_arg	::= Var:x			{: RESULT = x;
 							//System.out.println("Var a arit_arg "+x); 
 						:}
-		| i_arg:x			{: RESULT = x; 
-							//System.out.println("i_arg a arit_arg: "+x.toString());
-							//parser.vm.add_tmp_var(x);
+		| i_arg:x			{: 
+						parser.vm.add_var(x);
+						RESULT = x.getName();
+		//System.out.println("i_arg a arit_arg: "+x.toString());
 						:}
 ;
 
@@ -611,14 +600,13 @@ date_arg	::= Data:x	{: RESULT = x;	:}
 ;
 // ***************** argomento generico
 
-	//GMA:x	{: RESULT = new myVar(myVar._string, x,parser.vm);			:}
-i_arg		::= Int:x	{: RESULT = new myVar(myVar._int, x.intValue(),parser.vm); 		:}
-		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue(),parser.vm); 		:}
-		| Str:x		{: //System.out.println("str: "+x); 
-					RESULT= new myVar(myVar._string, x, parser.vm); 			:}
-		| IUnit:x	{: RESULT= new myVar(myVar._string, x, parser.vm); 			:}//verificare la dimensione
-		| FUnit:x	{: RESULT= new myVar(myVar._string, x, parser.vm); 			:}
-		| Bool:x	{: RESULT= new myVar(myVar._bool, new Boolean(x), parser.vm); 		:}
+
+i_arg		::= Int:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._int, x); 		:}
+		| Vint:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._float, x); 		:}
+		| Str:x		{: RESULT = new myVar(parser.vm.getTempName(), myVar._string, x); 			:}
+		| IUnit:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._string, x); 			:}//verificare la dimensione
+		| FUnit:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._string, x); 			:}
+		| Bool:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._bool, x); 		:}
 ;
 
 
@@ -657,31 +645,31 @@ conf_exp	::= logic_stmt:s{:
 
 logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//////RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
 		| arit_stmt:x Maggug:s arit_stmt:y
 		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
 		| arit_stmt:x Min:s arit_stmt:y
 		{:
 			//Utility.mf("arit min "+x.toString()+" "+s+ " "+y.toString());		
-			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//RESULT = parser.vm.makeLogicOper(x,y,s);
 			//Utility.mf("logic "+RESULT.toString());
 		:}
 		| arit_stmt:x Minug:s arit_stmt:y
 		{:
 			
-			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
 		| arit_stmt:x C_Ugg:s arit_stmt:y
 		{:
 			Utility.mf("CONFRONTO == "+x.toString()+" "+s+ " "+y.toString());
-			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//RESULT = parser.vm.makeLogicOper(x,y,s);
 		:} 
 		| arit_stmt:x Diver:s arit_stmt:y
 		{:
-			RESULT = parser.vm.makeLogicOper(x,y,s);
+			//RESULT = parser.vm.makeLogicOper(x,y,s);
 		:}
 ;
 

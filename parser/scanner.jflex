@@ -193,12 +193,6 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 {data}					{
 						Utility.mf("Data raccolta: " +yytext());
-						/*SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-						Date date = sdf.parse(yytext());
-						GregorianCalendar calendar = new GregorianCalendar();
-						calendar.setTime(date);
-						Utility.mf("Date: "+calendar.toString());
-						return symbol(sym.GMA,calendar);*/
 						String tdata = yytext().substring(0,2)+yytext().substring(3,5)+yytext().substring(6,10);
 						Utility.mf("Data trimmed: " +tdata);
 						return symbol(sym.Data, new String(tdata));
