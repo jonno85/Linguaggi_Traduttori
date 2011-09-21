@@ -115,6 +115,7 @@ public class Operation implements ICommand{
 	            default: return null;
         	}
         		bool_ris_inter.setOperation(new Operation(a,b,segno));
+        		
         		return bool_ris_inter;
         }
         
@@ -290,7 +291,7 @@ public class Operation implements ICommand{
     @Override
     public boolean exec() throws CommandException {
         if(myVm==null)
-            Utility.mf("CUIDADO varmanager nullo");
+            Utility.mf("CUIDADO varmanager nullo di op1 "+op1);
        op1 = myVm.extractVar(op1.getName());
        op1.setVM(myVm);
        if(op2==null){

@@ -85,6 +85,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     // IF EXEC
     @Override
     public boolean exec() throws CommandException {
+    //Utility.mf("condition "+condition);
     condition.exec();
     if(((Boolean)condition.getValue()).booleanValue()){
     	for(ICommand c : inside_command){

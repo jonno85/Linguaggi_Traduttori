@@ -45,13 +45,16 @@ public class VarManager{
 	
 	public void add_var(myVar var){
                 //if(var_tb.get(var.getName())!=null)
-                //    Utility.mf("valore PRIMA di aggiornare " + (var_tb.get(var.getName())).getStringValue());
+        //    Utility.mf("valore PRIMA di aggiornare " + (var_tb.get(var.getName())).getStringValue());
+		var.setVM(this);
+        if(var.getName().equals(""));
+    		var.setName("_tmp_"+tmp_name++);
 		var_tb.put(var.getName(),var);	
                 //if(var_tb.get(var.getName())!=null)
                 //    Utility.mf("valore DOPO di aggiornare " + (var_tb.get(var.getName())).getStringValue());
             //Utility.mf("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
-            //if(var.getName().equals(""));
-            	//var.setName("_tmp_"+tmp_name++);
+//            if(var.getName().equals(""));
+//            	var.setName("_tmp_"+tmp_name++);
             //var_tb.put(var.getName(),var);	
             //Utility.mf("add_var(): "+var.getName()+" = "+var.getStringValue());
             
@@ -102,8 +105,8 @@ public class VarManager{
 
 	public myVar extractVar(String name){
 		//restituisce la variabile che contiene il risultato intermedio
-		if(name.compareToIgnoreCase("")==0)
-			return ris_inter;			
+	//	if(name.compareToIgnoreCase("")==0)
+		//	return ris_inter;			
 		//restituisce la variabile se definita nella tabella delle variabili
 		return ((myVar)var_tb.get(name));
 	}

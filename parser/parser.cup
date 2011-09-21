@@ -300,8 +300,6 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 
 assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//operazioni fatte in fase di parsing di script (ritorna un Icommand)
-						y.setName(parser.vm.getTempName());
-						y.setVM(parser.vm);
 						parser.vm.add_var(y);						
 						ASCommand ac= new ASCommand(parser.vm,y.getName(),x);
 						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
@@ -697,8 +695,9 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 
 if_head		::= Com_If conf_exp:x Com_If_2 EL 
 				{:
+				parser.vm.add_var(x);
 				if_command ic = new if_command(x);
-				//Utility.mf("IF HEAD: "+x.toString());				
+				Utility.mf("IF HEAD: "+x.toString());				
 				//ic.set_list_command(l);
 				//parser.list_script.clear();
 				//Utility.mf("IF HEAD condizione: ");
