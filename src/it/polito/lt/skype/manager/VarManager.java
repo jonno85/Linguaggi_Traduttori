@@ -47,8 +47,8 @@ public class VarManager{
                 //if(var_tb.get(var.getName())!=null)
         //    Utility.mf("valore PRIMA di aggiornare " + (var_tb.get(var.getName())).getStringValue());
 		var.setVM(this);
-        if(var.getName().equals(""));
-    		var.setName("_tmp_"+tmp_name++);
+       // if(var.getName().equals(""));
+    	//	var.setName("_tmp_"+tmp_name++);
 		var_tb.put(var.getName(),var);	
                 //if(var_tb.get(var.getName())!=null)
                 //    Utility.mf("valore DOPO di aggiornare " + (var_tb.get(var.getName())).getStringValue());
@@ -59,19 +59,19 @@ public class VarManager{
             //Utility.mf("add_var(): "+var.getName()+" = "+var.getStringValue());
             
 			//valutare la necessita di ricorsivita multilivello
-                myVar tmpOp1, tmpOp2;
-                if(var.getOperation()!=null){
-                    tmpOp1 = var.getOperation().getOp(1);
-                    tmpOp2 = var.getOperation().getOp(2);
-                    if("".equals(tmpOp1.getName())){
-                        tmpOp1.setName(getTempName());
-                        add_var(tmpOp1);
-                    }
-                    if("".equals(tmpOp2.getName())){
-                        tmpOp2.setName(getTempName());
-                        add_var(tmpOp2);
-                    }
-                }
+//                myVar tmpOp1, tmpOp2;
+//                if(var.getOperation()!=null){
+//                    tmpOp1 = var.getOperation().getOp(1);
+//                    tmpOp2 = var.getOperation().getOp(2);
+//                    if("".equals(tmpOp1.getName())){
+//                        tmpOp1.setName(getTempName());
+//                        add_var(tmpOp1);
+//                    }
+//                    if("".equals(tmpOp2.getName())){
+//                        tmpOp2.setName(getTempName());
+//                        add_var(tmpOp2);
+//                    }
+//                }
             //***************************************************/
                 //Utility.mf(var.getName()+" stored"); 
 	}

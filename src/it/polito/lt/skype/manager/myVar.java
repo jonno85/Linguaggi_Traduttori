@@ -25,18 +25,23 @@ public static final int _bool = 5;
 	public myVar(){
         }
 
-	public myVar(String name, int type, Object value, Operation temp_op){
+	public myVar(String name, int type, Object value, Operation temp_op, VarManager myVm){
 		this.name = name;
 		this.type = type;
 		this.value = value;
-
-                pre_op = temp_op;
+		this.myVm=myVm;
+        pre_op = temp_op;
+        pre_op.setVM(myVm);
+        myVm.add_var(this);
+        
         }
         
-        public myVar(String name, int type, Object value){
+        public myVar(String name, int type, Object value, VarManager myVm){
 		this.name = name;
 		this.type = type;
 		this.value = value;
+		this.myVm=myVm;
+		myVm.add_var(this);
         }
         
         /**
@@ -44,23 +49,30 @@ public static final int _bool = 5;
          * @param name
          * @param value 
          */
-        public myVar(String name, Object value){
+        public myVar(String name, Object value, VarManager myVm){
 		this.name = name;
 		this.type = 1;
 		this.value = value;
+		this.myVm=myVm;
+		myVm.add_var(this);
         }
         
 
-	public myVar(int type, Object value){
-		this.name = "";
+	public myVar(int type, Object value, VarManager myVm){
+		
 		this.type = type;
 		this.value = value;
+		this.myVm=myVm;
+		this.name = this.myVm.getTempName();
+		myVm.add_var(this);
 	}
 
-	public myVar(String name){
+	public myVar(String name,VarManager myV){
 		this.name = name;
 		this.type = _notInit;
 		this.value = null;
+		this.myVm=myVm;
+		myVm.add_var(this);
 	}
         
 	public void setName(String name){	
@@ -100,6 +112,7 @@ public static final int _bool = 5;
     	this.setType(src.getType());
     	this.setValue(src.getValue());
     	this.setOperation(src.getOperation());
+    	this.myVm=src.myVm;
     }
         
 	public String getStringValue(){
@@ -124,7 +137,8 @@ public static final int _bool = 5;
          * @param op 
          */
         public void setOperation(Operation temp_op){
-            pre_op = temp_op;
+        	pre_op = temp_op;
+        	pre_op.setVM(this.myVm);
         }
         
         /**
@@ -139,8 +153,8 @@ public static final int _bool = 5;
     @Override
     public boolean exec() throws CommandException {
         if(pre_op!=null){
-                Utility.mf("imposto varmanager MYVAR");
-                pre_op.setVM(myVm);
+//                Utility.mf("imposto varmanager MYVAR");
+//                pre_op.setVM(myVm);
                 Utility.mf("varmanager MYVAR:"+myVm);
         	pre_op.exec();
         	this.value=pre_op.getResult().getValue();
