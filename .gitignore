@@ -1,0 +1,11 @@
+/generated/
+/nbproject/private/
+/build/
+/dist/
+/${build.dir}/
+/${build.classes.dir}/
+/bin/
+<<<<<<< HEAD
+=======
+/generated/
+>>>>>>> c5099c7e334ce49f5e9dbaee1b0436138bc4ca25
