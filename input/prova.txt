@@ -1,6 +1,8 @@
-start fichero.ss
-create $q $u $a=4,$d=1,$B,$E=false
 
+create $a=4,$d=1
+$a = 5+(($d+1)*$a)-3
+
+start fichero.ss
 $a = $d + 6
 $B = $a * 2
 	

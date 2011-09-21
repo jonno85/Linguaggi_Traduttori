@@ -22,18 +22,11 @@ public static final int _string = 3;
 public static final int _data = 4;
 public static final int _bool = 5;
 
+
 	public myVar(){
         }
 
-	public myVar(String name, int type, Object value, Operation temp_op, VarManager vm){
-		this.name = name;
-		this.type = type;
-		this.value = value;
-                myVm = vm;
-                pre_op = temp_op;
-        }
-        
-        public myVar(String name, int type, Object value, VarManager vm){
+        public myVar(String name, int type, Object value){
 		this.name = name;
 		this.type = type;
 		this.value = value;
@@ -44,20 +37,20 @@ public static final int _bool = 5;
          * @param name
          * @param value 
          */
-        public myVar(String name, Object value, VarManager vm){
+        public myVar(String name, Object value){
 		this.name = name;
 		this.type = 1;
 		this.value = value;
         }
         
 
-	public myVar(int type, Object value, VarManager vm){
-		this.name = "";
+	public myVar(int type, Object value){
+		
 		this.type = type;
 		this.value = value;
 	}
 
-	public myVar(String name, VarManager vm){
+	public myVar(String name){
 		this.name = name;
 		this.type = _notInit;
 		this.value = null;
@@ -86,21 +79,18 @@ public static final int _bool = 5;
 		this.type=type;
 	}
         
-    public void setValue(Object value){
-        this.value = value;
-    }
+        public void setValue(Object value){
+            this.value = value;
+        }
     
-    public void setVM(VarManager vm){
-        myVm = vm;
-    }
+        
     
-    public void set(myVar src )
-    {
-    	this.setName(src.getName());
-    	this.setType(src.getType());
-    	this.setValue(src.getValue());
-    	this.setOperation(src.getOperation());
-    }
+        public void set(myVar src )
+        {
+            this.setName(src.getName());
+            this.setType(src.getType());
+            this.setValue(src.getValue());
+        }
         
 	public String getStringValue(){
 		String valore = null;
@@ -115,41 +105,9 @@ public static final int _bool = 5;
 		return this.value;
 	}
         
-        public VarManager getVM(){
-                return myVm;
-        }
-        
-        /**
-         * [Aggiunge la operazione alla lista interna di operazioni per ricalcolare 
-         * la variabile a run-time  ]NO
-         * 
-         * aggiungiamo la variabile temporanea che contiene il risultato temporale 
-         * dell'operazione intermedia
-         * @param op 
-         */
-        public void setOperation(Operation temp_op){
-            pre_op = temp_op;
-        }
-        
-        /**
-         * restituisce la operazione dalla quale deriva la myVar
-         * @return 
-         */
-        
-        public Operation getOperation(){
-            return pre_op;
-        }
-
     @Override
     public boolean exec() throws CommandException {
-        if(pre_op!=null){
-                pre_op.setVM(myVm);
-                Utility.mf("varmanager MYVAR:"+myVm);
-        	pre_op.exec();
-        	this.value=pre_op.getResult().getValue();
-                myVm.add_var(this);
-        	Utility.mf("EXEC:MYVAR: VALORE DELLA VARIABILE "+this.name+" [" +this+ "] ORA é: "+this.value);
-        }
+        
         return true;
     }
 
@@ -185,3 +143,4 @@ public static final int _bool = 5;
     }
 
 }
+

@@ -88,7 +88,7 @@ public class Operation implements ICommand{
 			if(result==null)
 				throw new ParserException(ParserErrorType.INVALID_PARAMETER, this.getClass().getName(),
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "Opeation problem");
-				result.setOperation(new Operation(a,b,segno,this.myVm));
+				//result.setOperation(new Operation(a,b,segno,this.myVm));
 			return result;
         }
         
@@ -115,7 +115,7 @@ public class Operation implements ICommand{
 	            }
 	            default: return null;
         	}
-        		bool_ris_inter.setOperation(new Operation(a,b,segno,this.myVm));
+        		//bool_ris_inter.setOperation(new Operation(a,b,segno,this.myVm));
         		return bool_ris_inter;
         }
         
@@ -148,20 +148,19 @@ public class Operation implements ICommand{
 		
 		int type = a.getType(); 
 		if(segno.compareTo("+")==0){
-			Utility.mf("somma varmanager: "+a.getVM());
                         
-			result = new myVar(a.getVM().getTempName(),type,new Integer(((Integer)op1.getValue()).intValue()
-                                                                    + ((Integer)op2.getValue()).intValue()),myVm);
+			result = new myVar(myVm.getTempName(),type,new Integer(((Integer)op1.getValue()).intValue()
+                                                                    + ((Integer)op2.getValue()).intValue()));
 		}
 		if(segno.compareTo("-")==0) 
 			result = new myVar(myVm.getTempName(),type,new Integer(((Integer)op1.getValue()).intValue()
-                                                                    - ((Integer)op2.getValue()).intValue()),myVm);
+                                                                    - ((Integer)op2.getValue()).intValue()));
 		if(segno.compareTo("*")==0)
 			result = new myVar(myVm.getTempName(),type,new Integer(((Integer)op1.getValue()).intValue()
-                                                                    * ((Integer)op2.getValue()).intValue()),myVm);
+                                                                    * ((Integer)op2.getValue()).intValue()));
 		if(segno.compareTo("/")==0)
 			result = new myVar(myVm.getTempName(),type,new Integer(((Integer)op1.getValue()).intValue()
-                                                                    / ((Integer)op2.getValue()).intValue()),myVm);
+                                                                    / ((Integer)op2.getValue()).intValue()));
 		return result;
 
 	}
@@ -172,20 +171,20 @@ public class Operation implements ICommand{
 		Float op2 = (Float)(b.getValue());
 		int type = a.getType();
 		if(segno.compareTo("+")==0)
-			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()+op2.floatValue()), myVm);
+			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()+op2.floatValue()));
 		if(segno.compareTo("-")==0) 
-			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()-op2.floatValue()), myVm);
+			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()-op2.floatValue()));
 		if(segno.compareTo("*")==0)
-			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()*op2.floatValue()), myVm);
+			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()*op2.floatValue()));
 		if(segno.compareTo("/")==0)
-			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()/op2.floatValue()), myVm);
+			result = new myVar(myVm.getTempName(),type,new Float(op1.floatValue()/op2.floatValue()));
 		return result;
 	}
 	public myVar Soper(myVar a, myVar b, String segno){
 		result = null;
 		int type = a.getType();
 		if(segno.compareTo("+")==0) //rimosso costruttore String - check!
-			result = new myVar(myVm.getTempName(),type,(String)(a.getValue()+(String)(b.getValue())), myVm);	
+			result = new myVar(myVm.getTempName(),type,(String)(a.getValue()+(String)(b.getValue())));	
 		return result;
 	}
 	public myVar Boper(myVar a, myVar b, String segno){
@@ -194,9 +193,9 @@ public class Operation implements ICommand{
                 boolean op1 = ((Boolean)a.getValue()).booleanValue();
                 boolean op2 = ((Boolean)b.getValue()).booleanValue();
 		if(segno.compareTo("&")==0 | segno.compareTo("&&")==0) //rimosso costruttore boolean - check!
-			result = new myVar(myVm.getTempName(),type, op1 & op2, myVm);
+			result = new myVar(myVm.getTempName(),type, op1 & op2);
 		if(segno.compareTo("|")==0 || segno.compareTo("||")==0) 
-			result = new myVar(myVm.getTempName(),type, (op1 | op2), myVm);
+			result = new myVar(myVm.getTempName(),type, (op1 | op2));
 		//Utility.mf(result.toString());
 		return result;	
 	}
@@ -204,12 +203,12 @@ public class Operation implements ICommand{
 	public myVar BNoper(myVar a, String segno){
 		int type = a.getType();
 		if(segno.compareTo("!")==0) 
-			result = new myVar(myVm.getTempName(),type, (!((Boolean)(a.getValue()))), myVm);
+			result = new myVar(myVm.getTempName(),type, (!((Boolean)(a.getValue()))));
 		return result;	
 	}
 	
 	public myVar BNoper(){
-			result = new myVar(myVm.getTempName(),myVar._bool, (!((Boolean)(op1.getValue()))), myVm);
+			result = new myVar(myVm.getTempName(),myVar._bool, (!((Boolean)(op1.getValue()))));
 		return result;	
 	}
 	
@@ -217,9 +216,9 @@ public class Operation implements ICommand{
 		result = a;//null;
 		int type = a.getType();
 		if(type==1)
-			result = new myVar(myVm.getTempName(),type,new Integer(-(Integer)a.getValue()), myVm);
+			result = new myVar(myVm.getTempName(),type,new Integer(-(Integer)a.getValue()));
 		if(type==2)
-			result = new myVar(myVm.getTempName(),type,new Float(-(Float)a.getValue()), myVm);
+			result = new myVar(myVm.getTempName(),type,new Float(-(Float)a.getValue()));
 		return result;
 	}
 	
@@ -238,7 +237,7 @@ public class Operation implements ICommand{
 			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 			default: return null;
 		}
-		myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result, myVm);
+		myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result);
 		return tmp;
 	}
 	
@@ -257,7 +256,7 @@ public class Operation implements ICommand{
 			case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 			default: return null;
 		}
-		myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result, myVm);
+		myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result);
 		return tmp;
 	}
 	
@@ -272,7 +271,7 @@ public class Operation implements ICommand{
 		case"!=":{if(op1!=op2)bool_result=true;else bool_result=false; break;}
 		default: return null;
 	}
-	myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result, myVm);
+	myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result);
 	return tmp;
 	}
 	
@@ -284,7 +283,7 @@ public class Operation implements ICommand{
 			case"!=":{if(!((String)a.getValue()).equals((String)b.getValue()))bool_result=true;else bool_result=false; break;}
 			default: return null;
 		}
-		myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result, myVm);
+		myVar tmp = new myVar(myVm.getTempName(),myVar._bool, bool_result);
 		return tmp;
 	}
 	
@@ -298,7 +297,6 @@ public class Operation implements ICommand{
             op1 = myVm.extractVar(op1.getName());
         }
         Utility.mf("op1: "+op2.getName()+" op1 value: "+op1.getStringValue());
-       op1.setVM(myVm);
        if(op2==null){
     	   Utility.mf("EXEC: valori "+op1.toString());
     	   result=BNoper();
@@ -306,7 +304,6 @@ public class Operation implements ICommand{
        else{
            Utility.mf("op2: "+op2.getName()+" op2 value: "+op2.getStringValue());
            op2 = myVm.extractVar(op2.getName());
-           op2.setVM(myVm);
            Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
     	   try {
 		result = makeOper();

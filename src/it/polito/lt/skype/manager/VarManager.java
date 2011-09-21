@@ -55,7 +55,7 @@ public class VarManager{
             //var_tb.put(var.getName(),var);	
             //Utility.mf("add_var(): "+var.getName()+" = "+var.getStringValue());
             
-			//valutare la necessita di ricorsivita multilivello
+            /*
                 myVar tmpOp1, tmpOp2;
                 if(var.getOperation()!=null){
                     tmpOp1 = var.getOperation().getOp(1);
@@ -69,6 +69,8 @@ public class VarManager{
                         add_var(tmpOp2);
                     }
                 }
+                 
+                 */
             //***************************************************/
                 //Utility.mf(var.getName()+" stored"); 
 	}
@@ -84,14 +86,12 @@ public class VarManager{
 	}
 	public void assig(myVar var){
 		if((app = extractVar(var.getName()))!=null){
-                    if(app.getOperation()!=null)
-                        Utility.mf("operazione interna trovta: "+app.getOperation().toString());
                     if(chkType(app,var)||app.getType()==myVar._notInit){
                             add_var(var);
                             //Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
                     }
-                    else{ if(app.getOperation()!=null)
-                        Utility.mf("operazione interna trovta: "+app.getOperation().toString());
+                    else{
+                        Utility.mf("operazione interna trovta: ");
                             //Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
                     }
                 }
@@ -151,8 +151,6 @@ public class VarManager{
                  }
 				 default: return null;
 			}
-			ris_inter.setOperation(new Operation(a,null,segno,a.getVM()));
-                        ris_inter.setVM(a.getVM());
 		}
 		//Utility.mf("VALORE VARIABILE INVALIDO");
 		return ris_inter;

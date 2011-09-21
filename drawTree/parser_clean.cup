@@ -35,6 +35,8 @@ init with {:/*
 	//list_script = new LinkedList<ICommand>();
 	todo = new LinkedList<ICommand>();
 
+	token_list = new ArrayList<String>();
+
 */:}
 
 parser code {:/*
@@ -43,23 +45,28 @@ parser code {:/*
 	public CommandParameter[] cp, datap, permp, dimp ;
 	public CommandParameter[][] cpm;
 	public ICommand com, comFind;
-	public int counter_file = 0;
-	public int counter_path = 0;
-	public int sublevel = 0;
+	//public int counter_file = 0;
+	//public int counter_path = 0;
+	//public int sublevel = 0;
 
 	public ArrayList<CommandParameter> array_path, array_file, array_dim, array_perm, array_data;
+
+	public Arraylist<String> token_list;
 
 	public LinkedList<ICommand> list_script;
 	public LinkedList<ICommand> todo;
 	public IFlowCommandControl ifcc;
 	public ICommand ic;
 	public boolean if_control = false;
+	
+	public boolean script_enabled=false;	
+	public CScript csc=null;	
 
 	private String enviroment = "/home";
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
-		Utility.mf(x.getValue()+" tipo "+x.getParamType());
+		//Utility.mf(x.getValue()+" tipo "+x.getParamType());
 		if(x.getParamType()==ParamType.PATH)
 			array_path.add(x);
 		else
@@ -69,7 +76,7 @@ parser code {:/*
 	public void setEnviroment(String path)
 	{
 		enviroment = path;
-		Utility.mf("CURRENT-PATH now is: " + enviroment);
+		//Utility.mf("CURRENT-PATH now is: " + enviroment);
 	}
 
 	public String getEnviroment()
@@ -80,11 +87,11 @@ parser code {:/*
 	public void print_el(LinkedList<ICommand> ls)
 	{
 		
-		Utility.mf("ITERATORE di una lista da: "+ls.size());
-		for(ICommand i: ls){
-			Utility.mf("==elemento");
-			i.toString();
-		}
+		//Utility.mf("ITERATORE di una lista da: "+ls.size());
+		//for(ICommand i: ls){
+		//	Utility.mf("==elemento");
+		//	i.toString();
+		//}
 	}
 */:}
 ;
@@ -94,7 +101,6 @@ terminal Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, 
 terminal Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
 terminal Int;
 terminal Vint;
-terminal GMA;
 terminal UMINUS;
 terminal Bool;
 terminal Var;
@@ -102,17 +108,18 @@ terminal Var;
 
 non terminal		S;
 
-non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds, script;
-non terminal i_arg, assig_stmt, arit_stmt, for_arg, arit_arg, conf_exp, logic_stmt, for_tail;
-non terminal commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if;
-non terminal sh_stmt, LS_stmt;
+non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
+non terminal i_arg, arit_stmt, for_arg, conf_exp, logic_stmt, for_tail;
+non terminal arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if, sign;
+non terminal LS_stmt;
 //non terminal date_arg;
 non terminal param;
 non terminal for_stmt, for_head;
 non terminal if_stmt, if_head, if_head_half, if_else;
 non terminal i_stmt;
-non terminal init_stmt, stmt, str_stmt;
-
+non terminal script;
+non terminal sh_stmt, init_stmt, stmt, str_stmt;
+non terminal assig_stmt;
 
 
 precedence left Minus, Plus, C_Or;
@@ -132,8 +139,12 @@ S 		::= 	/* empty */
 
 script		::= start_s i_stmt:x end_s
 					{:/*
-					Utility.mf("CHIUDO SCRIPT");
+					parser.script_enabled=false;					
+					//Utility.mf("CHIUDO SCRIPT");
 					//salvataggio script
+								
+					//esecuzione script
+					
 					*/:}
 ;
 
@@ -141,18 +152,27 @@ script		::= start_s i_stmt:x end_s
 
 start_s			::= Start_S File:s EL
 					{:/*
-					Utility.mf("INIZIO SCRIPT");
+					//Utility.mf("INIZIO SCRIPT");
+					parser.script_enabled=true;					
 					parser.list_script = new LinkedList<ICommand>();
+					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm);							
+					parser.vm=parser.csc.getScriptVM();
 					//parser.list_script.add(s);
 					*/:}
 ;
 
-throw_s		::= Throw_S File
+throw_s		::= Throw_S File	{:/*
+					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
+					parser.csc.exec();
+					//Utility.mf("LANCIA SCRIPT");
+					*/:}
 ;
 
 end_s		::= End_S File:s
 					{:/*
-					Utility.mf("FINE SCRIPT");
+					//ripristino vm originale
+					parser.vm = parser.csc.getBakVm();
+					Utility.mf("VARMANAGER: "+parser.vm);
 					*/:}
 ;
 
@@ -174,56 +194,57 @@ i_stmt		::= stmt:s		{:/*//RE-Init
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt:x EL	{:/*  Utility.mf("INIT STMT RACCOLTO");	*/:} //parser.vm.getListVar();
-		| assig_stmt:x EL	{:/*
+stmt 		::= init_stmt:x EL	{:/*  //Utility.mf("INIT STMT RACCOLTO");	*/:} //parser.vm.getListVar();
+		| assig_stmt:s EL	{:/*
 					parser.list_script.add(s);
-					Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
-					if(parser.vm.extractVar(x.getName())!=null){
-						parser.vm.assig(x);
-						Utility.mf(x.toString());
-					}
-					else Utility.mf("VARIABILE INESISTENTE");
-					Utility.mf("ASSIG STMT RACCOLTO");
-					RESULT = (ICommand)x; */:}
+					//Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
+					//if(parser.vm.extractVar(s.getName())!=null){
+					//	parser.vm.assig(s);
+						//Utility.mf(s.toString());
+					//}
+					//else Utility.mf("VARIABILE INESISTENTE");
+					//Utility.mf("ASSIG STMT RACCOLTO");
+					RESULT = (ICommand)s; */:}
 		| str_stmt:s EL		{:/*
 					parser.list_script.add(s);
 					Utility.mf("AGGIUNGO STR STMT: "+((s==null)?"null ":"no "+s.toString())); 
 					RESULT = s;
 					//parser.list_script.add(s);
-					Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
+					//Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
 					*/:}
 		| sh_stmt:s EL		{:/*
 
-					System.out.println("raccolto sh stmt: parameter setting"); 
+					//System.out.println("raccolto sh stmt: parameter setting"); 
 					parser.cp[0] = parser.array_file.get(0);
 					parser.cp[1] = parser.array_path.get(0);
 					parser.cp[2] = parser.array_perm.get(0);
 					parser.cp[3] = parser.array_data.get(0);
 					parser.cp[4] = parser.array_dim.get(0);
-					for(int i=0; i<7; i++)
-						if(parser.cp[i]==null)
-							Utility.mf("*niente*");
-						else
-							Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
+					//for(int i=0; i<7; i++)
+					//	if(parser.cp[i]==null)
+					//		Utility.mf("*niente*");
+					//	else
+					//		Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
-//					ESECUZIONE SOLO IN SCRIPT O SHELL
-//					if(script)
-					parser.com.exec();
-					Utility.mf(parser.com.getCommandStringResult());
-
-					parser.list_script.add(s);
-					Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
+					//ESECUZIONE SOLO IN SCRIPT O SHELL
+					if(!parser.script_enabled){
+						parser.com.exec();
+						//Utility.mf(parser.com.getCommandStringResult());
+					}
+					else
+						parser.list_script.add(s);
+					//Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
 
 					*/:}
-		| comm_find_stmt EL	{:/*
-					System.out.println("raccolto sh stmt = FIND");
+		| comm_find_stmt:s EL	{:/*
+					//System.out.println("raccolto sh stmt = FIND");
 					parser.cpm[0] = new CommandParameter[parser.array_file.size()];
 					parser.cpm[1] = new CommandParameter[parser.array_path.size()];
 					parser.cpm[2] = new CommandParameter[parser.array_perm.size()];
 					parser.cpm[3] = new CommandParameter[parser.array_data.size()];
 					parser.cpm[4] = new CommandParameter[parser.array_dim.size()];
 
-					System.out.println("dopo onit");
+					//System.out.println("dopo onit");
 					parser.cpm[0] = parser.array_file.toArray(parser.cpm[0]);
 					parser.cpm[1] = parser.array_path.toArray(parser.cpm[1]);
 					parser.cpm[2] = parser.array_perm.toArray(parser.cpm[2]);
@@ -232,23 +253,32 @@ stmt 		::= init_stmt:x EL	{:/*  Utility.mf("INIT STMT RACCOLTO");	*/:} //parser.
 
 					//parser.cpm[6]=new CommandParameter[7];
 
-					System.out.println("dopo init 2'");
+					//System.out.println("dopo init 2'");
 
-					Utility.mf("SETCOMMANDPARAMETER");
+					//Utility.mf("SETCOMMANDPARAMETER");
 					parser.comFind.setCommandParameter(parser.cpm);
-					Utility.mf("EXEC");
-					parser.comFind.exec();
-					parser.array_file.clear();
-					parser.array_path.clear();
-					parser.array_perm.clear();
-					parser.array_data.clear();
-					parser.array_dim.clear();
+					if(!parser.script_enabled){
+						//Utility.mf("EXEC");
+						parser.comFind.exec();
+						parser.array_file.clear();
+						parser.array_path.clear();
+						parser.array_perm.clear();
+						parser.array_data.clear();
+						parser.array_dim.clear();
+					}
+					//else
+						//SISTEMAREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEparser.list_script.add(s);					
 					
-					Utility.mf(parser.comFind.getCommandStringResult());
+					
+					//Utility.mf(parser.comFind.getCommandStringResult());
+
 					*/:}
 		| script EL {:/*parser.print_el(parser.list_script);*/:}
 		| throw_s EL
-		| Com_P arit_stmt EL
+		| Com_P arit_stmt:s EL {:/*PCommand pcom = new PCommand(s, parser.vm);
+					//pcom.setCommandParameter(new CommandParameter[]{new CommandParameter(null,s.getName(),null)});
+					parser.list_script.add(pcom);
+					RESULT = pcom; */:}
 		| conf_exp EL /*********************************************/
 		| EL
 ;
@@ -257,11 +287,11 @@ stmt 		::= init_stmt:x EL	{:/*  Utility.mf("INIT STMT RACCOLTO");	*/:} //parser.
 
 str_stmt	::= if_stmt:x			{:/* //Utility.mf("raccolto IF stmt");
 						((if_command)x).print_parameters();
-						Utility.mf("raccolto IF stmt"); 
+						//Utility.mf("raccolto IF stmt"); 
 						RESULT = x;
 						*/:}
 		| for_stmt:x			{:/* 
-						//x.print_parameters(); nullpointerexc
+						x.print_parameters(); 
 						Utility.mf("raccolto FOR stmt"); 
 						RESULT = x;
 						*/:}
@@ -271,64 +301,53 @@ str_stmt	::= if_stmt:x			{:/* //Utility.mf("raccolto IF stmt");
 
 // ********************* statement di assegnazione valori
 
-assig_stmt	::= Var:x C_Ug arit_stmt:y	{:/*                                              
-						myVar vx = new myVar();
-						vx.set(y);
-						vx.setName(x); 											
-						RESULT = vx;
+assig_stmt	::= Var:x C_Ug arit_stmt:y	{:/*
+						//operazioni fatte in fase di parsing di script (ritorna un Icommand)
+						y.setName(parser.vm.getTempName());
+						y.setVM(parser.vm);
+						parser.vm.add_var(y);						
+						ASCommand ac= new ASCommand(parser.vm,y.getName(),x);
+						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
+						RESULT=ac;
+						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
+						//myVar vx = new myVar();
+						//vx.set(y);
+						//vx.setName(x); 							
+						//RESULT = vx;
 						//Utility.mf("fine da arit_stmt a assig_stmt");
 						*/:}
-//		| Var:x				{:/*RESULT = new myVar(x);*/:}
+//		| Var:x				{:/*RESULT = new myVar(x,parser.vm);*/:}
 ;
 
 // ********************* statement di inizializzazione variabili
 
-init_stmt	::=  Com_Str assig_stmt:x	{:/* parser.vm.add_var(x); Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); */:}
-		| Com_Str Var:x			{:/* parser.vm.add_var(new myVar(x)); Utility.mf("DICHIARAZIONI\nvar: "+x.toString());*/:}
-		| init_stmt assig_stmt:x	{:/* parser.vm.add_var(x);Utility.mf("assegnazione: "+x.toString());*/:}
-		| init_stmt Var:x		{:/* parser.vm.add_var(new myVar(x)); Utility.mf("var: "+x.toString());*/:}
+init_stmt	::=  Com_Str assig_stmt:x	{:/* parser.vm.add_var(x.getVar()); */:}//Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); :}
+		| Com_Str Var:x			{:/* parser.vm.add_var(new myVar(x,parser.vm));*/:}// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());:}
+		| init_stmt assig_stmt:x	{:/* parser.vm.add_var(x.getVar());*/:}//Utility.mf("assegnazione: "+x.toString());:}
+		| init_stmt Var:x		{:/* parser.vm.add_var(new myVar(x,parser.vm)); */:}//Utility.mf("var: "+x.toString());:}
 ;
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
 
-arit_stmt	::=	Minus:s arit_stmt:x		{:/* RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1)),"*"); */:}%prec UMINUS
-		| arit_stmt:x Times:s arit_stmt:y	
-		{:/*	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							*/:}
-		| arit_stmt:x Div:s arit_stmt:y	
-		{:/*	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							*/:}
-		| arit_stmt:x Plus:s arit_stmt:y	
-		{:/*	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							*/:}
-		| arit_stmt:x Minus:s arit_stmt:y	
-		{:/*	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							*/:}
-		| arit_stmt:x C_And:s arit_stmt:y	
-		{:/*	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							*/:}
-		| arit_stmt:x C_Or:s arit_stmt:y	
-		{:/*	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
-			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
-			RESULT = temp; 							*/:}
+sign		::= Times:x			{:/* RESULT = x; */:}
+		| Div:x				{:/* RESULT = x; */:}
+		| Plus:x			{:/* RESULT = x; */:}
+		| Minus:x			{:/* RESULT = x; */:}
+		| C_Or:x			{:/* RESULT = x; */:}
+		| C_And:x			{:/* RESULT = x; */:}
+;
 
+arit_stmt	::=	Minus:s arit_stmt:x
+		{:/* RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1),parser.vm),"*"); */:}%prec UMINUS
+		| arit_stmt:x sign:s arit_stmt:y	
+		{:/*	//System.out.println(s);
+			//x.toString(); 
+			//System.out.println("segno operazione: "+s); //y.toString(); 
+			token_list.add(x.getName());
+			token_list.add(y.getName());
+			token_list.add(s);
+			myVar temp = parser.vm.makeOper(((myVar)x),((myVar)y),s);
+			RESULT = temp; 							*/:}
 		| arit_arg:x			{:/* RESULT = x; 
 							//System.out.println("da arit_arg a arit_stmt");			
 						*/:}
@@ -339,12 +358,13 @@ arit_stmt	::=	Minus:s arit_stmt:x		{:/* RESULT = parser.vm.makeOper(x,new myVar(
 // ***************** argomenti che subiscono un'operazione 
 // ***************** algebrica - booleana - concatenazione
 
-arit_arg	::= Var:x			{:/* RESULT = parser.vm.extractVar(x); 
+arit_arg	::= Var:x			{:/* RESULT = x;
 							//System.out.println("Var a arit_arg "+x); 
 						*/:}
-		| i_arg:x			{:/* RESULT = x; 
-							//System.out.println("i_arg a arit_arg: "+x.toString());
-							//parser.vm.add_tmp_var(x);
+		| i_arg:x			{:/* 
+						parser.vm.add_var(x);
+						RESULT = x.getName();
+		//System.out.println("i_arg a arit_arg: "+x.toString());
 						*/:}
 ;
 
@@ -371,31 +391,31 @@ sh_stmt		::= commands:c param:p  {:/* parser.cp[2]=p; */:}
 
 // ***************** comandi standard mv, rm, cp e aggiunti cd, ls
 commands	::= Com_Cd		{:/* 
-					Utility.mf("CD!");
+					//Utility.mf("CD!");
 					RESULT= "cd";
 					parser.com = new CDCommand(parser.getEnviroment(),parser);
 					*/:}
 		//| Com_Cd Minor
 		| Com_MKDir		{:/* 
-					Utility.mf("MKDIR!");
+					//Utility.mf("MKDIR!");
 					RESULT= "mkdir";
 					parser.com = new MKDCommand(parser.getEnviroment());
 					*/:}
 
 		|Com_Mov		{:/* 
-					Utility.mf("MV!");
+					//Utility.mf("MV!");
 					RESULT= "mv";
 					parser.com = new MVCommand(parser.getEnviroment());
 					*/:}
 
 		| Com_Rm		{:/* 
-					Utility.mf("RM!");
+					//Utility.mf("RM!");
 					RESULT= "rm";
 					parser.com = new RMCommand(parser.getEnviroment());
 					*/:}
 
 		| Com_Cp		{:/* 
-					Utility.mf("CP!");
+					//Utility.mf("CP!");
 					RESULT= "cp";
 					parser.com = new CPCommand(parser.getEnviroment());
 					*/:}
@@ -403,24 +423,24 @@ commands	::= Com_Cd		{:/*
 ;
 
 LS_stmt		::= Com_Ls		{:/* 
-					Utility.mf("LS!");
+					//Utility.mf("LS!");
 					parser.com = new LSCommand(parser.getEnviroment());
 					*/:}
 
 		| LS_stmt Order:o	{:/* 
-					Utility.mf("LS Order!");
+					//Utility.mf("LS Order!");
 					parser.cp[0]=new CommandParameter(ParamType.BINARIO,o,null);
 					*/:}
 		
 		| LS_stmt Obj:o		{:/* 
-					Utility.mf("LS obj!");
+					//Utility.mf("LS obj!");
 					parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);
 					*/:}
 ;
 
 // ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
 comm_find_stmt	::= Com_Find param:x	{:/* 
-					Utility.mf("_FIND_!");
+					//Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand(parser.getEnviroment());
 
 //					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
@@ -432,7 +452,7 @@ comm_find_stmt	::= Com_Find param:x	{:/*
 		
 		| comm_find_stmt param:x
 					{:/*
-					Utility.mf("passo dentro comm_find_stmt");
+					//Utility.mf("passo dentro comm_find_stmt");
 					parser.add_param(x);
 					*/:}
 		| comm_find_stmt i_cc_conds
@@ -441,16 +461,16 @@ comm_find_stmt	::= Com_Find param:x	{:/*
 
 comm_find_stmt_2
 		::= commands:sc		{:/*
-					Utility.mf("COMANDO RICORSIVO! rilevato: "+sc);
+					//Utility.mf("COMANDO RICORSIVO! rilevato: "+sc);
 					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,sc,null)};
 					*/:}
 		| comm_find_stmt_2 Name param:p  
 					{:/*
-					Utility.mf("COMANDO RECURSIVO! rilevato:  CON PARAM"); 
+					//Utility.mf("COMANDO RECURSIVO! rilevato:  CON PARAM"); 
 					parser.cp[3]=p; 
 					*/:}	//il parametro 2(path src) è già passato dal comando find, in questa condizione è logico solo il param dst
 		| comm_find_stmt_2 Name {:/*
-					Utility.mf("COMANDO RECURSIVO! rilevato: SENZA PARAM!"); 
+					//Utility.mf("COMANDO RECURSIVO! rilevato: SENZA PARAM!"); 
 					*/:}
 ;
 // ***************** condizioni per i comandi
@@ -480,27 +500,27 @@ cc_conds	::=  cc_permission_cond:x
 //dimensione, utilizzati solo in find
 cc_dimension_cond ::=
 		  _where Dimension_Criteria Min i_arg:a 	{:/* 
-								Utility.mf("Dimension Criteria raccolto valore i_arg ricevuto: "+a.getStringValue());
+								//Utility.mf("Dimension Criteria raccolto valore i_arg ricevuto: "+a.getStringValue());
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.MIN);		
 								*/:}
 		| _where Dimension_Criteria Magg i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.MAG);		
 								*/:}
 		| _where Dimension_Criteria Minug i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.MINUG);		
 								*/:}
 		| _where Dimension_Criteria Maggug i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.MAGUG);		
 								*/:}
 		| _where Dimension_Criteria Diver i_arg:a{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.DIV);		
 								*/:}
 		| _where Dimension_Criteria C_Ug i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto OK");
+								//Utility.mf("Dimension Criteria raccolto OK");
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.UG);		
 								*/:}
 ;
@@ -508,59 +528,59 @@ cc_dimension_cond ::=
 //permessi
 cc_permission_cond ::=
 		 _where Permission_Criteria Min i_arg:a 	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.getStringValue(),SignType.MIN);
 								*/:}
 
 		| _where Permission_Criteria Magg i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.getStringValue(),SignType.MAG);		
 								*/:}
 
 		| _where Permission_Criteria Minug i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.getStringValue(),SignType.MINUG);		
 								*/:}
 
 		| _where Permission_Criteria Maggug i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.getStringValue(),SignType.MAGUG);		
 								*/:}
 
 		| _where Permission_Criteria Diver i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto");
+								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.getStringValue(),SignType.DIV);
 								*/:}
 
 		| _where Permission_Criteria C_Ug i_arg:a	{:/* 
-								Utility.mf("Dimension Criteria raccolto permesso = : OK");
+								//Utility.mf("Dimension Criteria raccolto permesso = : OK");
 								parser.cp[5]=new CommandParameter(ParamType.PERMESSI,a.getStringValue(),SignType.UG);			
 								*/:}
 ;		
 //date
 cc_date_cond ::=
 		 _where Date_Criteria Min date_arg:a	{:/* 
-								Utility.mf("Date Criteria MIN raccolto");
+								//Utility.mf("Date Criteria MIN raccolto");
 								parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MIN);					
 							*/:}
 		| _where Date_Criteria Magg date_arg:a	{:/* 
-								Utility.mf("Date Criteria MAG raccolto");
+								//Utility.mf("Date Criteria MAG raccolto");
 								parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MAG);					
 								*/:}
 		| _where Date_Criteria Minug date_arg:a		{:/* 
-								Utility.mf("Date Criteria MINUG raccolto");
+								//Utility.mf("Date Criteria MINUG raccolto");
 								parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MINUG);					
 								*/:}
 		| _where Date_Criteria Maggug date_arg:a	{:/* 
-								Utility.mf("Date Criteria MAGUG raccolto");
+								//Utility.mf("Date Criteria MAGUG raccolto");
 								parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.MAGUG);					
 								*/:}
 		| _where Date_Criteria Diver date_arg:a		{:/* 
-								Utility.mf("Date Criteria DIV raccolto");
+								//Utility.mf("Date Criteria DIV raccolto");
 								parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.DIV);					
 								*/:}
 		| _where Date_Criteria C_Ug date_arg:a		{:/* 
-								Utility.mf("Date Criteria UG raccolto");
+								//Utility.mf("Date Criteria UG raccolto");
 								parser.cp[4]=new CommandParameter(ParamType.DATA,a,SignType.UG);					
 								*/:}
 ;
@@ -575,14 +595,13 @@ date_arg	::= Data:x	{:/* RESULT = x;	*/:}
 ;
 // ***************** argomento generico
 
-	//GMA:x	{:/* RESULT = new myVar(myVar._string, x);			*/:}
-i_arg		::= Int:x	{:/* RESULT = new myVar(myVar._int, x.intValue()); 		*/:}
-		| Vint:x	{:/* RESULT= new myVar(myVar._float, x.floatValue()); 		*/:}
-		| Str:x		{:/* System.out.println("str: "+x); 
-					RESULT= new myVar(myVar._string, x); 			*/:}
-		| IUnit:x	{:/* RESULT= new myVar(myVar._string, x); 			*/:}//verificare la dimensione
-		| FUnit:x	{:/* RESULT= new myVar(myVar._string, x); 			*/:}
-		| Bool:x	{:/* RESULT= new myVar(myVar._bool, new Boolean(x)); 		*/:}
+
+i_arg		::= Int:x	{:/* RESULT = new myVar(parser.vm.getTempName(), myVar._int, x.intValue()); 		*/:}
+		| Vint:x	{:/* RESULT = new myVar(parser.vm.getTempName(), myVar._float, x.floatValue()); 		*/:}
+		| Str:x		{:/* RESULT = new myVar(parser.vm.getTempName(), myVar._string, x); 			*/:}
+		| IUnit:x	{:/* RESULT = new myVar(parser.vm.getTempName(), myVar._string, x); 			*/:}//verificare la dimensione
+		| FUnit:x	{:/* RESULT = new myVar(parser.vm.getTempName(), myVar._string, x); 			*/:}
+		| Bool:x	{:/* RESULT = new myVar(parser.vm.getTempName(), myVar._bool, new Boolean(x)); 		*/:}
 ;
 
 
@@ -593,21 +612,21 @@ cond_if		::= C_Orr:s {:/*//Utility.mf("IF C_Orr: ");
 		| C_Andd:s {:/* RESULT = s; */:}
 ;
 
+//C_Not conf_exp  {:/*	RESULT = s; */:} %prec C_Not | 
+conf_exp	::= logic_stmt:s{:/*
 
-conf_exp	::= //C_Not conf_exp  {:/*	RESULT = s; */:} %prec C_Not | 
-logic_stmt:s	{:/*
 				//Utility.mf("IF LOGIC STMT -> CONF_EXP ");
 				RESULT = s;
 				*/:}
 		//| conf_exp cond_if arit_stmt
 		| conf_exp:x cond_if:s logic_stmt:y
 				{:/*
-				Utility.mf("logic_stamt in confexp");
-				Utility.mf(x.toString());	
-				Utility.mf(s.toString());
-				Utility.mf(y.toString());			
+				//Utility.mf("logic_stamt in confexp");
+				//Utility.mf(x.toString());	
+				//Utility.mf(s.toString());
+				//Utility.mf(y.toString());			
 				myVar var = parser.vm.makeOper(x,y,s);
-				Utility.mf("logic "+var.toString());
+				//Utility.mf("logic "+var.toString());
 				RESULT=var;
 				*/:}
 		| RO conf_exp:x RC 		{:/* RESULT = x; 		*/:}
@@ -635,10 +654,12 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 		*/:}
 		| arit_stmt:x Minug:s arit_stmt:y
 		{:/*
+			
 			RESULT = parser.vm.makeLogicOper(x,y,s);
 		*/:}
 		| arit_stmt:x C_Ugg:s arit_stmt:y
 		{:/*
+			Utility.mf("CONFRONTO == "+x.toString()+" "+s+ " "+y.toString());
 			RESULT = parser.vm.makeLogicOper(x,y,s);
 		*/:} 
 		| arit_stmt:x Diver:s arit_stmt:y
@@ -660,7 +681,7 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 if_head		::= Com_If conf_exp:x Com_If_2 EL 
 				{:/*
 				if_command ic = new if_command(x);
-				Utility.mf("IF HEAD: "+x.toString());				
+				//Utility.mf("IF HEAD: "+x.toString());				
 				//ic.set_list_command(l);
 				//parser.list_script.clear();
 				//Utility.mf("IF HEAD condizione: ");
@@ -700,7 +721,7 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 		| if_head_half:x Com_If_e
 				{:/*
 				//x.close_command();
-				Utility.mf("IF: CHIUSO");
+				//Utility.mf("IF: CHIUSO");
 				//Utility.mf("LISTA IF?: "+((parser.list_script==null)?"si":"no"));
 				parser.list_script = x.getBackupCommand();
 				//Utility.mf("LISTA GENERALE?: "+((parser.list_script==null)?"si":"no"));
@@ -712,17 +733,19 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 // **************** FOREACH statement
 
 for_arg		::= Var:x	{:/* RESULT = parser.vm.extractVar(x); 
-					System.out.println("Var: "+x); */:}
-		| Int:x		{:/* RESULT = new myVar(myVar._int, x.intValue()); 	*/:}
-		| Vint:x	{:/* RESULT= new myVar(myVar._float, x.floatValue()); 	*/:}
-		| ID:x		{:/* RESULT= new myVar(myVar._string, x); */:}
+					//System.out.println("Var: "+x); */:}
+		| Int:x		{:/* RESULT = new myVar(myVar._int, x.intValue(), parser.vm); 	*/:}
+		| Vint:x	{:/* RESULT= new myVar(myVar._float, x.floatValue(), parser.vm); 	*/:}
+		| ID:x		{:/* RESULT= new myVar(myVar._string, x, parser.vm); */:}
 ;
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
 				{:/*
 				System.out.println("FOR HEAD variabili "+x.getValue()+"\t"+y.getValue()+"\t"+z.getValue());
 				for_command fc = new for_command(x,y,z,parser.vm);
-				Utility.mf("\tSUBLEVEL: "+(++parser.sublevel));
+				fc.setBackupCommand(parser.list_script);
+				parser.list_script=fc.getInsideCommand();				
+				//Utility.mf("\tSUBLEVEL: "+(++parser.sublevel));
 				RESULT = fc;
 				*/:}
 ;
@@ -732,20 +755,20 @@ i_Op_ps		::= Plus:x	{:/* RESULT = x; 						*/:}
 ;
 
 
+
 //check if minus is passed for value step
 for_tail 	::= Com_For_e i_Op_ps:s for_arg:y 
 				{:/* 
 				Utility.mf("CICLO FOR CHIUSO");
-				Utility.mf("\tSUBLEVEL: "+(--parser.sublevel));
-				Utility.mf("step: "+parser.vm.Auto_Neg(y,s));
+				//Utility.mf("\tSUBLEVEL: "+(--parser.sublevel));
+				//Utility.mf("step: "+parser.vm.Auto_Neg(y,s));
 				RESULT = parser.vm.Auto_Neg(y,s);
 				*/:}
 ;
 
 for_stmt	::= for_head:x i_stmt:l for_tail:y
 		{:/*
-		x.set_list_command(l);
-		parser.list_script.clear();
+		parser.list_script = x.getBackupCommand();		
 		x.close_command(y);
 		System.out.println("for cycle");
 		RESULT = x;
