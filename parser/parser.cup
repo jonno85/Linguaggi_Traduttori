@@ -110,7 +110,7 @@ non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
 non terminal myVar	i_arg, for_arg, conf_exp, logic_stmt, for_tail;
-non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, cond_if, sign, arit_stmt;
+non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, arit_stmt;
 non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
@@ -122,8 +122,8 @@ non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt;
 non terminal ASCommand		assig_stmt;
 
 
-precedence left Minus, Plus, C_Or;
-precedence left Div, Times, C_And;
+precedence left Minus, Plus, C_Or, C_Orr;
+precedence left Div, Times, C_And, C_Andd;
 precedence left C_Not;
 precedence left UMINUS;
 
@@ -194,7 +194,9 @@ i_stmt		::= stmt:s		{://RE-Init
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm.getListVar();
+stmt 		::= init_stmt:x EL	{:
+					parser.list_script.add(s);
+					:}
 		| assig_stmt:s EL	{:
 					parser.list_script.add(s);
 					//Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
@@ -267,7 +269,7 @@ stmt 		::= init_stmt:x EL	{:  //Utility.mf("INIT STMT RACCOLTO");	:} //parser.vm
 						parser.array_dim.clear();
 					}
 					//else
-						//SISTEMAREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEparser.list_script.add(s);					
+				//SISTEMAREparser.list_script.add(s);
 					
 					
 					//Utility.mf(parser.comFind.getCommandStringResult());
@@ -307,10 +309,11 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//y.setName(parser.vm.getTempName());
 						//y.setVM(parser.vm);
 						//parser.vm.add_var(y);						
-						ASCommand ac= new ASCommand(parser.vm, x, y);
+						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list);
+						
 						Utility.mf(parser.token_list.toString());
-						//ac.setCommandParameter(new CommandParameter[]{new CommandParameter(null,x,null)});
-						//RESULT=ac;
+
+						RESULT = ac;
 						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
 						//myVar vx = new myVar();
 						//vx.set(y);
@@ -321,43 +324,68 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 //		| Var:x				{:RESULT = new myVar(x,parser.vm);:}
 ;
 
+
 // ********************* statement di inizializzazione variabili
 
-init_stmt	::=  Com_Str assig_stmt:x	{: parser.vm.add_var(x.getVar()); :}//Utility.mf("DICHIARAZIONI:\nassegnazione: "+x.toString()); :}
-		| Com_Str Var:x			{: parser.vm.add_var(new myVar(x,parser.vm));:}// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());:}
-		| init_stmt assig_stmt:x	{: parser.vm.add_var(x.getVar());:}//Utility.mf("assegnazione: "+x.toString());:}
-		| init_stmt Var:x		{: parser.vm.add_var(new myVar(x,parser.vm)); :}//Utility.mf("var: "+x.toString());:}
+init_stmt	::=  Com_Str assig_stmt:x
+						{:
+						x.setDeclaration(true);
+						:}
+		| Com_Str Var:x
+						{:
+						parser.vm.add_var(new myVar(x,parser.vm));:}// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());
+						:}
+		| init_stmt assig_stmt:x
+						{:
+						x.setDeclaration(true);
+						:}
+		| init_stmt Var:x
+						{:
+						parser.vm.add_var(new myVar(x,parser.vm)); :}//Utility.mf("var: "+x.toString());
+						:}
 ;
 
 // ********************* gestione operazioni algebriche - booleane - concatenazione
 
-sign		::= Times:x			{: RESULT = x; :}
-		| Div:x				{: RESULT = x; :}
-		| Plus:x			{: RESULT = x; :}
-		| Minus:x			{: RESULT = x; :}
-		| C_Or:x			{: RESULT = x; :}
-		| C_And:x			{: RESULT = x; :}
-;
-
-arit_stmt	::=	Minus:s arit_stmt:x
-		{: parser.token_list.add(s);
-			//RESULT = parser.vm.makeOper(x,new myVar(x.getType(),new Integer(-1),parser.vm),"*"); 
+arit_stmt	::= Minus:s arit_stmt:x
+		{:
+			parser.token_list.add("--");
 		:}%prec UMINUS
-		| arit_stmt:x sign:s arit_stmt:y	
-		{:	//System.out.println(s);
-			//x.toString(); 
-			//System.out.println("segno operazione: "+s); //y.toString(); 
+		| arit_stmt:x Plus:s arit_stmt:y
+		{:
 			parser.token_list.add(s);
 		:}
-		| arit_arg:x			{:
-						parser.token_list.add(x);
-						RESULT = x;
-							//System.out.println("da arit_arg a arit_stmt");
-						:}
+		| arit_stmt:x Times:s arit_stmt:y
+		{:
+			parser.token_list.add(s);
+		:}
+		| arit_stmt:x Div:s arit_stmt:y
+		{:
+			parser.token_list.add(s);
+		:}
+		| arit_stmt:x Minus:s arit_stmt:y
+		{:
+			parser.token_list.add(s);
+		:}
+		| arit_stmt:x C_And:s arit_stmt:y
+		{:
+			parser.token_list.add(s);
+		:}
+		| arit_stmt:x C_Or:s arit_stmt:y
+		{:
+			parser.token_list.add(s);
+		:}
+		| arit_arg:x
+		{:
+		parser.token_list.add(x);
+		RESULT = x;
+			//System.out.println("da arit_arg a arit_stmt");
+		:}
 		| RO arit_stmt:x RC
-		| C_Not:s arit_stmt:x		{: 
-						parser.token_list.add(s);
-						:}
+		| C_Not:s arit_stmt:x
+		{:
+		parser.token_list.add("!!");
+		:}%prec C_Not
 ;
 //qui logic erano
 // ***************** argomenti che subiscono un'operazione 
@@ -521,6 +549,7 @@ cc_dimension_cond ::=
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.MAGUG);		
 								:}
 		| _where Dimension_Criteria Diver i_arg:a{: 
+
 								//Utility.mf("Dimension Criteria raccolto");
 								parser.cp[6]=new CommandParameter(ParamType.DIMENSIONE,a.getStringValue(),SignType.DIV);		
 								:}
@@ -612,29 +641,31 @@ i_arg		::= Int:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._int, x); 
 
 // ***************** espressione booleana
 
-cond_if		::= C_Orr:s {://Utility.mf("IF C_Orr: ");
-				RESULT = s; :}
-		| C_Andd:s {: RESULT = s; :}
-;
-
-//C_Not conf_exp  {:	RESULT = s; :} %prec C_Not | 
-conf_exp	::= logic_stmt:s{:
-
-				//Utility.mf("IF LOGIC STMT -> CONF_EXP ");
+conf_exp	::= logic_stmt:s
+				{:
+				Utility.mf("IF LOGIC STMT -> CONF_EXP ");
 				RESULT = s;
 				:}
-		//| conf_exp cond_if arit_stmt
-		| conf_exp:x cond_if:s logic_stmt:y
+		| conf_exp:x C_Orr:s conf_exp:y
 				{:
+				parser.token_list.add(s);
+				:}
+		| conf_exp:x C_Andd:s conf_exp:y
+				{:
+				parser.token_list.add(s);
 				//Utility.mf("logic_stamt in confexp");
 				//Utility.mf(x.toString());	
 				//Utility.mf(s.toString());
 				//Utility.mf(y.toString());			
-				myVar var = parser.vm.makeOper(x,y,s);
+				//myVar var = parser.vm.makeOper(x,y,s);
 				//Utility.mf("logic "+var.toString());
-				RESULT=var;
+				//RESULT=var;
 				:}
-		| RO conf_exp:x RC 		{: RESULT = x; 		:}
+		| RO conf_exp:x RC
+		| C_Not:s conf_exp
+				{:
+				parser.token_list.add(s);
+				:}%prec C_Not
 ;
 
 
@@ -645,36 +676,30 @@ conf_exp	::= logic_stmt:s{:
 
 logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 		{:
-			//////RESULT = parser.vm.makeLogicOper(x,y,s);
+			parser.token_list.add(s);
 		:}
 		| arit_stmt:x Maggug:s arit_stmt:y
 		{:
-			//RESULT = parser.vm.makeLogicOper(x,y,s);
+			parser.token_list.add(s);
 		:}
 		| arit_stmt:x Min:s arit_stmt:y
 		{:
-			//Utility.mf("arit min "+x.toString()+" "+s+ " "+y.toString());		
-			//RESULT = parser.vm.makeLogicOper(x,y,s);
-			//Utility.mf("logic "+RESULT.toString());
+			parser.token_list.add(s);
 		:}
 		| arit_stmt:x Minug:s arit_stmt:y
 		{:
-			
-			//RESULT = parser.vm.makeLogicOper(x,y,s);
+			parser.token_list.add(s);
 		:}
 		| arit_stmt:x C_Ugg:s arit_stmt:y
 		{:
 			Utility.mf("CONFRONTO == "+x.toString()+" "+s+ " "+y.toString());
-			//RESULT = parser.vm.makeLogicOper(x,y,s);
+			parser.token_list.add(s);
 		:} 
 		| arit_stmt:x Diver:s arit_stmt:y
 		{:
-			//RESULT = parser.vm.makeLogicOper(x,y,s);
+			parser.token_list.add(s);
 		:}
 ;
-
-
-
 
 //not_exp		::= C_Not Var 
 //		| C_Not i_arg
@@ -739,9 +764,9 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 
 for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x); 
 					//System.out.println("Var: "+x); :}
-		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue(), parser.vm); 	:}
-		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue(), parser.vm); 	:}
-		| ID:x		{: RESULT= new myVar(myVar._string, x, parser.vm); :}
+		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 	:}
+		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 	:}
+		| ID:x		{: RESULT= new myVar(myVar._string, x); :}
 ;
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
