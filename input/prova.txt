@@ -1,5 +1,9 @@
+$x=$a+-$b*$c
+$c=false|!$f & true
+$a==3 || $c==true && $d==3.4
 
-create $a=4,$d=1
+$x=$a+$b*-$c
+
 $a = 5+(($d+1)*$a)-3
 
 start fichero.ss
