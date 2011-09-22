@@ -111,8 +111,8 @@ terminal String		Var;
 non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
-non terminal myVar	i_arg, for_arg, logic_stmt, for_tail;
-non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, conf_exp, arit_stmt;
+non terminal myVar	i_arg,  logic_stmt;
+non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, conf_exp, arit_stmt,for_arg, for_tail;
 non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
@@ -174,7 +174,7 @@ end_s		::= End_S File:s
 					{:
 					//ripristino vm originale
 					parser.vm = parser.csc.getBakVm();
-					Utility.mf("VARMANAGER: "+parser.vm);
+					//Utility.mf("VARMANAGER: "+parser.vm);
 					:}
 ;
 
@@ -196,7 +196,7 @@ i_stmt		::= stmt:s		{://RE-Init
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt:s EL	{:Utility.mf("stmt: init_stmt: lista dichiar: "+parser.dec_list.toString());
+stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+parser.dec_list.toString());
 					DecCommand dc = new DecCommand(parser.dec_list);
 					parser.list_script.add(dc);
 					
@@ -213,7 +213,7 @@ stmt 		::= init_stmt:s EL	{:Utility.mf("stmt: init_stmt: lista dichiar: "+parser
 					RESULT = (ICommand)s; :}
 		| str_stmt:s EL		{:
 					parser.list_script.add(s);
-					Utility.mf("AGGIUNGO STR STMT: "+((s==null)?"null ":"no "+s.toString())); 
+					//Utility.mf("AGGIUNGO STR STMT: "+((s==null)?"null ":"no "+s.toString())); 
 					RESULT = s;
 					//parser.list_script.add(s);
 					//Utility.mf("risolto flow control statement -> INSERITO IN LIST SCRIPT"); 
@@ -305,7 +305,7 @@ str_stmt	::= if_stmt:x			{: //Utility.mf("raccolto IF stmt");
 						:}
 		| for_stmt:x			{: 
 						x.print_parameters(); 
-						Utility.mf("raccolto FOR stmt"); 
+						//Utility.mf("raccolto FOR stmt"); 
 						RESULT = x;
 						:}
 //		| str_stmt for_stmt		{: Utility.mf("raccolto FOR stmt interno"); :}
@@ -321,7 +321,7 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//parser.vm.add_var(y);						
 						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list);
 						
-						Utility.mf("assig_stmt raccolto: "+x+"<--"+parser.token_list.toString());
+						//Utility.mf("assig_stmt raccolto: "+x+"<--"+parser.token_list.toString());
 						parser.token_list = new ArrayList<String>();
 						RESULT = ac;
 						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
@@ -341,7 +341,7 @@ init_stmt	::=  Com_Str assig_stmt:x
 						{:
 						x.setDeclaration(true);
 						parser.dec_list = new ArrayList<ASCommand>();
-						Utility.mf("init_stmt: assig_stmt: "+x.toString());					
+						//Utility.mf("init_stmt: assig_stmt: "+x.toString());					
 						parser.dec_list.add(x);
 						:}
 		| Com_Str Var:x
@@ -352,7 +352,7 @@ init_stmt	::=  Com_Str assig_stmt:x
 		| init_stmt assig_stmt:x
 						{:
 						x.setDeclaration(true);
-						Utility.mf("init_stmt: assig_stmt: "+x.toString());	
+						//Utility.mf("init_stmt: assig_stmt: "+x.toString());	
 						parser.dec_list.add(x);
 						:}
 		| init_stmt Var:x
@@ -659,7 +659,7 @@ i_arg		::= Int:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._int, x); 
 
 conf_exp	::= logic_stmt:s
 				{:
-				Utility.mf("IF LOGIC STMT -> CONF_EXP ");
+				//Utility.mf("IF LOGIC STMT -> CONF_EXP ");
 				:}
 		| conf_exp:x C_Orr:s conf_exp:y
 				{:
@@ -753,7 +753,7 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 				//x.set_list_command_else(l);
 				//parser.list_script.clear();
 				//x.close_command(new myVar());
-				Utility.mf("IF ELSE: CHIUSO");
+				//Utility.mf("IF ELSE: CHIUSO");
 				parser.list_script = x.getBackupCommand();
 				x.print_parameters();
 				RESULT = x;
@@ -772,15 +772,24 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 
 // **************** FOREACH statement
 
-for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x); 			:}
-		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 	:}
-		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 	:}
-		| ID:x		{: RESULT= new myVar(myVar._string, x); 		:}
+for_arg		::= Var:x	{: RESULT = x;			:}
+		| Int:x		{: 	myVar m = new myVar(parser.vm.getTempName(),myVar._int, x.intValue());
+					parser.vm.add_var(m);
+					RESULT = m.getName(); 	
+				:}
+		| Vint:x	{: 	myVar m = new myVar(parser.vm.getTempName(),myVar._float, x.floatValue());
+					parser.vm.add_var(m);
+					RESULT = m.getName(); 	
+				:}
+		| ID:x		{: 	myVar m = new myVar(parser.vm.getTempName(),myVar._string, x);
+					parser.vm.add_var(m);
+					RESULT = m.getName();		
+				:}
 ;
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
 				{:
-				System.out.println("FOR HEAD variabili "+x.getValue()+"\t"+y.getValue()+"\t"+z.getValue());
+				//System.out.println("FOR HEAD variabili "+x+"\t"+y+"\t"+z);
 
 				for_command fc = new for_command(x,y,z,parser.vm);
 
@@ -800,7 +809,7 @@ i_Op_ps		::= Plus:x	{: RESULT = x; 						:}
 //check if minus is passed for value step
 for_tail 	::= Com_For_e i_Op_ps:s for_arg:y 
 				{: 
-				Utility.mf("CICLO FOR CHIUSO");
+				//Utility.mf("CICLO FOR CHIUSO");
 				RESULT = parser.vm.Auto_Neg(y,s);
 				:}
 ;
@@ -809,7 +818,7 @@ for_stmt	::= for_head:x i_stmt:l for_tail:y
 		{:
 		parser.list_script = x.getBackupCommand();		
 		x.close_command(y);
-		System.out.println("for cycle");
+		//System.out.println("for cycle");
 		RESULT = x;
 		:}
 ;

@@ -1,22 +1,48 @@
 start fichero.ss
-create $x=5, $a=49,$b=3, $c=8, $e=true, $f=true, $E=false
+create $pari='' $dispari='' $a=0 $b=1 $x=10 $resto=0
+
+$b=10-2
+print $b
+
+foreach $a 1 21 do	
+	$b=$a/2
+	$resto = $a - 2*$b   /*se scrivi $a-2*$b non funziona prende come id "$a-2".....*/
+	print 'ora resto è: '+$resto
+	print 'ora a è: '+$a
+	if $resto == 0 && $x==10 then
+		$pari=$a+' '+$pari
+		print 'pari!'
+	else
+		if $resto==1 then
+			$dispari=$a+' '+$dispari
+			print 'dispari!'
+		endif
+	endif
+next +1 
+
+print 'pari è: '+$pari
+print 'dispari è: '+$dispari
+$x=$x/2+10000
+print 'ics '+$x
+
+
+fine pippo.ss
+lancia scr1.ss
+/*
+
+ $x=5, $a=49,$b=3, $c='pio', $e=true, $f=true, $E=false
 
 foreach $a 0 10 do
-    if $a<=10 then
-        stampa 'valore $a '+$a
-    endif
-next +1
+   if $a ==0 && $x==10 then
+	$b = 9999
+	print 'in if '+$E
 
-if $a ==7 && $E==true then
-	$a = 9000
-	print 'sono qui '+$a
-
-	if $E==false then
-		print 'sono ancora qui'
+	if $a==0 then
+		$a=1
 	else
-		print 'sono la'
+		$a=0
 	endif
-else
+   else
 	$a = 101
 	if $E==false then
 		print 'sono su per giu'
@@ -24,6 +50,10 @@ else
 	print 'sono qua '+$a
 	$d = 609
 endif
+next +1
+
+
+
 
 $x =$a+-$b*$c
 $e =false|!$f & true
@@ -32,9 +62,8 @@ $e =false|!$f & true
 print 'x= '+$x +' ciao ciao '+$c
 print 'e= '+$e
 
-fine pippo.ss
-lancia scr1.ss
-/*
+
+
 start fichero.ss
 $a = $d + 6
 $B = $a * 2

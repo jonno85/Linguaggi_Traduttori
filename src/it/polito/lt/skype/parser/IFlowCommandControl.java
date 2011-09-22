@@ -26,7 +26,7 @@ public interface IFlowCommandControl extends ICommand{
      * comando per chiudere lo statement del controllo di flusso e 
      * impostare per i comandi che lo prevedono un valore finale o incremento
      */
-    public boolean close_command(myVar step);
+    public boolean close_command(String step);
     
     public boolean close_command();
     

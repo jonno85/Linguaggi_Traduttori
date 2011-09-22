@@ -90,17 +90,23 @@ public class Resolver {
             myVar op1 = null;
             myVar op2 = null;
             myVar result = null;
-                for(String s : exps){
+            //Utility.mf(exps.toString());
+            	for(String s : exps){
                     if(!isOperator(s))
                         stack.push(s);
                     else
                     {
+                    	 
+                    	
                         op1 = tmp_manager.extractVar(stack.pop());
+                        //Utility.mf("RESOLVE: OP1: "+op1);
                         if(!isUnaryOperator(s))
                         {
                             //operazione con 2 operandi
                             try {
+                            	
                                 op2 = tmp_manager.extractVar(stack.pop());
+                               // Utility.mf("RESOLVE: OP2: "+op2);
                                 result = tmp_manager.makeOper(op1, op2, s);
                                 tmp_manager.add_var(result);
                                 stack.push(result.getName());
@@ -119,6 +125,7 @@ public class Resolver {
                     }
                 }
                 result= tmp_manager.extractVar(stack.pop());
+                //Utility.mf("RESULT: "+result);
                 return result;
 	}
 	

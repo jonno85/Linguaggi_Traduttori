@@ -42,7 +42,7 @@ public class if_command implements ICommand, IFlowCommandControl{
         this.manager = manager;
     }
     
-    public boolean close_command(myVar step)
+    public boolean close_command(String step)
     {   
         return false;
     }
@@ -64,11 +64,11 @@ public class if_command implements ICommand, IFlowCommandControl{
 
     @Override
     public void print_parameters() {
-        Utility.mf("start: "+ ((condition!=null)?condition.toString():"null"));
-        Utility.mf("LISTA IF vuota?: "+((inside_command!=null)?"no":"si"));
-        Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
-        Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
-        Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
+//        Utility.mf("start: "+ ((condition!=null)?condition.toString():"null"));
+//        Utility.mf("LISTA IF vuota?: "+((inside_command!=null)?"no":"si"));
+//        Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
+//        Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
+//        Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
         Iterator it = inside_command.iterator();
         while (it.hasNext()) {
             ICommand c = (ICommand) it.next();
@@ -82,10 +82,11 @@ public class if_command implements ICommand, IFlowCommandControl{
     public boolean exec() throws CommandException {
         ris = new Resolver(manager, token_list, "if_tmp_");
         condition = ris.exec();
+        //Utility.mf("CONDIZIONE IF: "+condition);
         if(((Boolean)condition.getValue()).booleanValue()){
             for(ICommand c : inside_command){
                 try {
-                    Utility.mf("Command if exec() iterator: "+c.toString());
+                    //Utility.mf("Command if exec() iterator: "+c.toString());
                     c.exec();
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
@@ -97,7 +98,7 @@ public class if_command implements ICommand, IFlowCommandControl{
         else{
             for(ICommand c : inside_command_else){
                 try {
-                    Utility.mf("Command if exec() iterator: "+c.toString());
+                    //Utility.mf("Command if exec() iterator: "+c.toString());
                     c.exec();
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),

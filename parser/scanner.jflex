@@ -265,7 +265,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {tab}					{;}
 {sp}					{;}
 ","					{;}
-{str}					{Utility.mf("str: "+yytext());
+{str}					{//Utility.mf("str: "+yytext());
 					String s = new String(yytext());
 					return symbol(sym.Str,s.substring(1, s.length()-1));}
 //{id}					{Utility.mf("id value: "+yytext());}

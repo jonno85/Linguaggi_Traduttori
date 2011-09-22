@@ -117,8 +117,9 @@ public class VarManager{
         return ((myVar)var_tb.get(name));
 	}
 
-        public boolean isPos(myVar a){
-                if(a.getType()==1){
+        public boolean isPos(String name){
+             myVar a = extractVar(name);
+        	if(a.getType()==1){
                     if((Integer)a.getValue()>=0)  
                         return true;
                 }
@@ -159,26 +160,32 @@ public class VarManager{
 	}
 
 	public myVar makeOper(myVar a, myVar b, String segno) throws ParserException{
-            if( chkVar(a)&&chkVar(b)){
-                if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
-                    b.setType(3);
+            myVar x = new myVar();
+			myVar y = new myVar();
+			x.set(a);
+			y.set(b);
+			x.setType(3);
+			y.setType(3);
+            if( chkVar(x)&&chkVar(y)){
+                if((a.getType()==3 && b.getType()!=3||a.getType()!=3 && b.getType()==3) && segno.equalsIgnoreCase("+"))
+                	ris_inter = mkOper.makeOper(x, y, segno);
+                else{
+		                if(chkType(a,b))
+		                    ris_inter = mkOper.makeOper(a, b, segno);
+		                
                 }
-                if(a.getType()!=3 & b.getType()==3 & segno.equalsIgnoreCase("+")){
-                    a.setType(3);
-                }
-                if(chkType(a,b)){
-                    ris_inter = mkOper.makeOper(a, b, segno);
-                }			
             }
             //Utility.mf("VALORE VARIABILE INVALIDO");
             return ris_inter;
 	}
         
-        public myVar Auto_Neg(myVar a,String segno){
-                int type = a.getType();
+        public String Auto_Neg(String name,String segno){
+                myVar a =extractVar(name);                		
+        		
                 if(segno.equalsIgnoreCase("-"))
-                    return mkOper.Neg(a);
-                return a;
+                 a=   mkOper.Neg(extractVar(name));
+                add_var(a);
+                return name;
         }
         
         /*

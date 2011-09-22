@@ -24,6 +24,10 @@ public class for_command implements ICommand, IFlowCommandControl{
     private myVar start = null;
     private myVar end = null;
     private myVar step = null;
+    private String index_name = null;
+    private String start_name = null;
+    private String end_name = null;
+    private String step_name = null;
     private boolean close = false;
     private LinkedList<ICommand> inside_command = null;
     private LinkedList<ICommand> backup_command  = null;
@@ -35,23 +39,23 @@ public class for_command implements ICommand, IFlowCommandControl{
 	private VarManager common_vm = null;
     
     
-    public for_command(myVar index, myVar start, myVar end, VarManager vm/*, ArrayList token_list*/)
-    {
-        this.index = index;
-        this.start = start;
-        this.end = end;
-        this.common_vm = vm;
+    public for_command(String index, String start, String end, VarManager vm/*, ArrayList token_list*/)
+    { 
+    	this.common_vm = vm;
+    	this.index_name=index;
+    	this.start_name=start;
+    	this.end_name=end;
         this.close = false;
         inside_command = new LinkedList<ICommand>();
         //this.token_list= token_list;
         //this.manager = manager;
     }
     
-    public boolean close_command(myVar step)
+    public boolean close_command(String step)
     {   
         if(!close)
         {
-            this.step = step;
+            this.step_name = step;
             this.close = true;
             return close;
         }
@@ -89,13 +93,25 @@ public class for_command implements ICommand, IFlowCommandControl{
 
     @Override
     public boolean exec() throws CommandException {
-        //indice di partenza
-        if(common_vm.isPos(step)){
-            index = common_vm.extractVar(start.getName());
+    	//fissiamo gli estremi
+     	index = common_vm.extractVar(index_name);
+    	index.setValue(common_vm.extractVar(start_name).getValue());
+        start = common_vm.extractVar(start_name);
+        end = common_vm.extractVar(end_name);
+        step=common_vm.extractVar(step_name);
+        if(common_vm.isPos(step_name)){
+           //Utility.mf("for exec: "+index+" "+end+" "+step);
+           //Utility.mf("FOR COMMAND LIST: "+inside_command.toString());
             while(((Boolean)common_vm.makeLogicOper(index, end, "!=").getValue()).booleanValue())
             {
+            	index = common_vm.extractVar(index_name);
+            	start = common_vm.extractVar(start_name);
+                end = common_vm.extractVar(end_name);
+                step=common_vm.extractVar(step_name);
+                
                 for(ICommand c : inside_command){
                     try {
+                    	//Utility.mf("step: "+ common_vm.extractVar(index_name));
                         c.exec();
                     } catch (CommandException ex) {
                         throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
@@ -105,7 +121,8 @@ public class for_command implements ICommand, IFlowCommandControl{
                 }
                 //aggiornamento indice
                 try {
-					index = common_vm.makeOper(index, step,"+");
+					index.setValue(common_vm.makeOper(index, step,"+").getValue());
+					common_vm.assig(index);
 				} catch (ParserException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

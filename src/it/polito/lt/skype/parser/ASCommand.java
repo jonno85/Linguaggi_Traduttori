@@ -150,7 +150,7 @@ public class ASCommand implements ICommand {
             res = new Resolver(manager, exps, "AS_tmp");
             result = res.exec();
             result.setName(var);
-            Utility.mf("nome "+result.getName()+" valore finale: "+result.getStringValue());
+           // Utility.mf("nome "+result.getName()+" valore finale: "+result.getStringValue());
 
             if(declaration)
                 manager.add_var(result);

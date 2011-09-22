@@ -61,7 +61,7 @@ public class Operation implements ICommand{
         
        
         public myVar makeNumOper(myVar a, myVar b, String segno) throws ParserException{
-        	Utility.mf("MAKE NUM OPERATION "+a.toString()+" "+segno+" "+b.toString() );
+        	//Utility.mf("MAKE NUM OPERATION "+a.toString()+" "+segno+" "+b.toString() );
 				switch(a.getType()){
                                     case 1: {
                                             //Utility.mf("intero");
@@ -80,7 +80,7 @@ public class Operation implements ICommand{
                                             break;
                                             }
                                     case 5:{
-                                    	Utility.mf("boolean");
+                                    	//Utility.mf("boolean");
                                     	result = Boper(a,b,segno);
                                 		//Utility.mf(ris_inter.toString());
                                     	break;
@@ -145,7 +145,7 @@ public class Operation implements ICommand{
         
 	public myVar Ioper(myVar a, myVar b, String segno){
 		result = null;
-                setArgument(a, b, segno);
+                setArgument(b, a, segno);
 		//Integer op1 = (Integer)(a.getValue());
 		//Integer op2 = (Integer)(b.getValue());
 		
@@ -168,7 +168,7 @@ public class Operation implements ICommand{
 	}
 	public myVar Foper(myVar a, myVar b, String segno){
 		result = null;
-                setArgument(a, b, segno);
+                setArgument(b, a, segno);
 		Float op1 = (Float)(a.getValue());
 		Float op2 = (Float)(b.getValue());
 		int type = a.getType();
@@ -226,10 +226,10 @@ public class Operation implements ICommand{
 	
 	public myVar LogicIoper(myVar a, myVar b, String segno){
 		result = null;
-                //setArgument(a, b, segno);
-		int op1 = ((Integer)(a.getValue())).intValue();
-		int op2 = ((Integer)(b.getValue())).intValue();
-		int type = a.getType();
+                //setArgument(a, b, segno); ////INVERTITIIIIIIIIIIIIIII
+		int op1 = ((Integer)(b.getValue())).intValue();
+		int op2 = ((Integer)(a.getValue())).intValue();
+		//int type = a.getType();
 		switch(segno){
 			case">":{if(op1>op2)bool_result=true;else bool_result=false; break;}
 			case"<":{if(op1<op2)bool_result=true;else bool_result=false; break;}
@@ -246,8 +246,8 @@ public class Operation implements ICommand{
 	public myVar LogicFoper(myVar a, myVar b, String segno){
 		
                 setArgument(a, b, segno);
-		float op1 = ((Float)(a.getValue())).floatValue();
-		float op2 = ((Float)(b.getValue())).floatValue();
+		float op1 = ((Float)(b.getValue())).floatValue();
+		float op2 = ((Float)(a.getValue())).floatValue();
 		int type = a.getType();
 		switch(segno){
 			case">":{if(op1>op2)bool_result=true;else bool_result=false; break;}

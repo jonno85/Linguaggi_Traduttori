@@ -29,7 +29,7 @@ public class DecCommand implements ICommand {
 	public boolean exec() throws CommandException {
 		Utility.mf("lista dichiarazioni"+decList.toString());
 		for(ASCommand c: decList){
-			Utility.mf("elemento di decList: "+c.toString());
+			//Utility.mf("elemento di decList: "+c.toString());
 			c.exec();
 		}
 		return true;

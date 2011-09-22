@@ -45,9 +45,12 @@ public class PCommand implements ICommand {
                  {
                      op2 = tmp_manager.extractVar(stack.pop());
                      op1 = tmp_manager.extractVar(stack.pop());
-                         //operazione con 2 operandi
+                     //Utility.mf("print: "+op1+" "+op2); 
+                     //operazione con 2 operandi
                          try {
                              result = tmp_manager.makeOper(op1, op2, s);
+                            // Utility.mf("print: "+op1+" "+op2);
+                             //Utility.mf("print: "+result);
                              tmp_manager.add_var(result);
                              stack.push(result.getName());
                          } catch (ParserException ex) {
