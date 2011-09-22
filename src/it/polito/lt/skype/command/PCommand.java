@@ -27,9 +27,10 @@ public class PCommand implements ICommand {
 	public boolean exec() throws CommandException {
 		String vvalue="NULL";
 		myVar tmp = null;
+		Utility.mf("PRINT: "+myVm+" variabile: "+mv);
 		if(mv!=null){
                      tmp = myVm.extractVar(mv.getName());
-                    //Utility.mf(tmp.getStringValue());
+               
                     Utility.mf(tmp.toString());
                 }
 		return true;

@@ -1,48 +1,35 @@
 package it.polito.lt.skype.parser;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
-import it.polito.lt.skype.manager.VarManager;
 
-public class CScript implements ICommand {
-	private LinkedList<ICommand> list=null;
-        private VarManager myVm = null;
-	private VarManager bak_myVm = null;
+public class DecCommand implements ICommand {
+
+	private ArrayList<ASCommand> decList =null;
 	
-	public CScript(LinkedList<ICommand> l, VarManager bak_vm)
-	{
-		list=l;
-                myVm = new VarManager();
-                bak_myVm = bak_vm;
+	public DecCommand(ArrayList<ASCommand> decList) {
+		this.decList = decList;
 	}
-        
-        public VarManager getScriptVM(){
-            return myVm;
-        }
-        
-        public void setBakVm(VarManager bak_vm){
-            bak_myVm = bak_vm;
-        }
-        
-        public VarManager getBakVm(){
-            return bak_myVm;
-        }
-        
-        
-        
 	
+	public ArrayList<ASCommand> getDecList() {
+		return decList;
+	}
+
+	public void setDecList(ArrayList<ASCommand> decList) {
+		this.decList = decList;
+	}
+
 	@Override
 	public boolean exec() throws CommandException {
-		Utility.mf("lista exec: "+list.toString());
-		for(ICommand c: list)
-		{
-			Utility.mf("elemento: "+c.toString());
+		Utility.mf("lista dichiarazioni"+decList.toString());
+		for(ASCommand c: decList){
+			Utility.mf("elemento di decList: "+c.toString());
 			c.exec();
 		}
 		return true;

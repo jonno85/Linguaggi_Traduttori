@@ -1,12 +1,16 @@
-create $x $a=5 $b=3 $c=8
+start fichero.ss
+create $x=5, $a=49,$b=3, $c=8, $e=true, $f=true
+
 $x=$a+-$b*$c
-$c=false|!$f & true
-$a==3 || $c==true && $d==3.4
+$e=false|!$f & true
 
-$x=$a+$b*-$c
 
-$a = 5+(($d+1)*$a)-3
+print $x
+print $e
 
+fine pippo.ss
+lancia scr1.ss
+/*
 start fichero.ss
 $a = $d + 6
 $B = $a * 2
@@ -27,7 +31,7 @@ print $E
 fine pippo.ss
 
 throw fichero.ss
-/*
+
 
 if $a ==20 && $E==false then
 	$a = 9000

@@ -53,6 +53,8 @@ parser code {:
 
 	public ArrayList<String> token_list;
 
+	public ArrayList<ASCommand> dec_list;
+
 	public LinkedList<ICommand> list_script;
 	public LinkedList<ICommand> todo;
 	public IFlowCommandControl ifcc;
@@ -194,8 +196,10 @@ i_stmt		::= stmt:s		{://RE-Init
 
 // ********************* statemente generali
 
-stmt 		::= init_stmt:x EL	{:
-					parser.list_script.add(s);
+stmt 		::= init_stmt:s EL	{:Utility.mf("stmt: init_stmt: lista dichiar: "+parser.dec_list.toString());
+					DecCommand dc = new DecCommand(parser.dec_list);
+					parser.list_script.add(dc);
+					
 					:}
 		| assig_stmt:s EL	{:
 					parser.list_script.add(s);
@@ -278,8 +282,8 @@ stmt 		::= init_stmt:x EL	{:
 		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
 		| Com_P arit_stmt:s EL {:
-					//PCommand pcom = new PCommand(s, parser.vm);
-					//parser.list_script.add(pcom);
+					PCommand pcom = new PCommand(s, parser.vm);
+					parser.list_script.add(pcom);
 					//RESULT = pcom;
 					:}
 		| conf_exp EL /*********************************************/
@@ -311,8 +315,8 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//parser.vm.add_var(y);						
 						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list);
 						
-						Utility.mf(parser.token_list.toString());
-
+						Utility.mf("assig_stmt raccolto: "+x+"<--"+parser.token_list.toString());
+						parser.token_list = new ArrayList<String>();
 						RESULT = ac;
 						//operazioni fatte in fase di parsing riga di comando (ritorna un myVar)
 						//myVar vx = new myVar();
@@ -330,18 +334,24 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 init_stmt	::=  Com_Str assig_stmt:x
 						{:
 						x.setDeclaration(true);
+						parser.dec_list = new ArrayList<ASCommand>();
+						Utility.mf("init_stmt: assig_stmt: "+x.toString());					
+						parser.dec_list.add(x);
 						:}
 		| Com_Str Var:x
 						{:
-						parser.vm.add_var(new myVar(x,parser.vm));:}// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());
+						parser.dec_list = new ArrayList<ASCommand>();
+						parser.vm.add_var(new myVar(x,parser.vm));// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());
 						:}
 		| init_stmt assig_stmt:x
 						{:
 						x.setDeclaration(true);
+						Utility.mf("init_stmt: assig_stmt: "+x.toString());	
+						parser.dec_list.add(x);
 						:}
 		| init_stmt Var:x
 						{:
-						parser.vm.add_var(new myVar(x,parser.vm)); :}//Utility.mf("var: "+x.toString());
+						parser.vm.add_var(new myVar(x,parser.vm)); //Utility.mf("var: "+x.toString());
 						:}
 ;
 

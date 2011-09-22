@@ -15,11 +15,11 @@ public class VarManager{
 	private myVar app = null;
 	private myVar ris_inter = null;
 	private Operation mkOper;
-	private String unknowVarName = null;
-	public static Collection c;
-        private int tmp_num = 1;
-        private String tmp_name = "_tmp_";
-		private myVar bool_ris_inter;
+	private Collection c;
+	private VarManager mainManager=null;
+    private int tmp_num = 1;
+    private String tmp_name = "_tmp_";
+	private myVar bool_ris_inter;
 	
 	public VarManager(){
 		var_tb = new HashMap<String, myVar>();
@@ -27,7 +27,7 @@ public class VarManager{
 		ris_inter = new myVar();
 		mkOper = new Operation();
                 mkOper.setVM(this);
-		unknowVarName = "QQSYSTEM";
+
 	}
         
         public void setTmpName(String tmp){
@@ -106,11 +106,15 @@ public class VarManager{
 	}
 
 	public myVar extractVar(String name){
+		//Utility.mf("ExctractVar(): "+name);
 		//restituisce la variabile che contiene il risultato intermedio
-		if(name.compareToIgnoreCase("")==0)
-			return ris_inter;			
+		//if(name.compareToIgnoreCase("")==0)
+		//	return ris_inter;			
 		//restituisce la variabile se definita nella tabella delle variabili
-		return ((myVar)var_tb.get(name));
+		if(mainManager!=null)
+			if(mainManager.extractVar(name)!=null)
+               return mainManager.extractVar(name);
+        return ((myVar)var_tb.get(name));
 	}
 
         public boolean isPos(myVar a){
@@ -134,13 +138,14 @@ public class VarManager{
 	public boolean chkVar(myVar a){
 		boolean c = true;
 		if(a.getName()!=null)
-			if (extractVar(a.getName())==null)
-				c = false;
+			if(extractVar(a.getName())==null)
+				if(mainManager!=null)
+					if(mainManager.extractVar(a.getName())==null)
+						c = false;
 		return c;
 	}
 
 	public myVar makeSOper(myVar a, String segno){
-            a.toString();
             if(chkVar(a)){
                 switch(a.getType()){
                     case 1: return ris_inter = mkOper.Neg(a);
@@ -154,8 +159,6 @@ public class VarManager{
 	}
 
 	public myVar makeOper(myVar a, myVar b, String segno) throws ParserException{
-            a.toString();
-            b.toString();
             if( chkVar(a)&&chkVar(b)){
                 if(a.getType()==3 & b.getType()!=3 & segno.equalsIgnoreCase("+")){
                     b.setType(3);
@@ -164,7 +167,7 @@ public class VarManager{
                     a.setType(3);
                 }
                 if(chkType(a,b)){
-                    ris_inter = mkOper.makeNumOper(a, b, segno);
+                    ris_inter = mkOper.makeOper(a, b, segno);
                 }			
             }
             //Utility.mf("VALORE VARIABILE INVALIDO");
@@ -195,6 +198,14 @@ public class VarManager{
     		//Utility.mf("VALORE VARIABILE INVALIDO");
     		return bool_ris_inter;
     	}
+
+		public VarManager getMainManager() {
+			return mainManager;
+		}
+
+		public void setMainManager(VarManager mainManager) {
+			this.mainManager = mainManager;
+		}
         
        
 	

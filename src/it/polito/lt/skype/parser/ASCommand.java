@@ -43,8 +43,9 @@ public class ASCommand implements ICommand {
 		manager = vm;
                 tmp_manager = new VarManager();
                 tmp_manager.setTmpName("as_tmp_");
+                tmp_manager.setMainManager(vm);
                 stack = new Stack();                
-	}
+        }
 	
         public void setVars(ArrayList<String> list_vars){
             exps = list_vars;
@@ -107,13 +108,13 @@ public class ASCommand implements ICommand {
             return false;
         }
 	
-        public myVar extractVar(String name){
-            if(manager.extractVar(name)!=null)
-                return manager.extractVar(name);
-            if(tmp_manager.extractVar(name)!=null)
-                return tmp_manager.extractVar(name);
-            return null;
-        }
+//        public myVar extractVar(String name){
+//            if(manager.extractVar(name)!=null)
+//                return manager.extractVar(name);
+//            if(tmp_manager.extractVar(name)!=null)
+//                return tmp_manager.extractVar(name);
+//            return null;
+//        }
         
 	@Override
 	public boolean exec() throws CommandException {
@@ -125,12 +126,12 @@ public class ASCommand implements ICommand {
                         stack.push(s);
                     else
                     {
-                        op1 = extractVar(stack.pop());
+                        op1 = tmp_manager.extractVar(stack.pop());
                         if(!isUnaryOperator(s))
                         {
                             //operazione con 2 operandi
                             try {
-                                op2 = extractVar(stack.pop());
+                                op2 = tmp_manager.extractVar(stack.pop());
                                 result = tmp_manager.makeOper(op1, op2, s);
                                 tmp_manager.add_var(result);
                                 stack.push(result.getName());
@@ -145,8 +146,11 @@ public class ASCommand implements ICommand {
                             tmp_manager.add_var(result);
                             stack.push(result.getName());
                         }
+                        
                     }
                 }
+                result= tmp_manager.extractVar(stack.pop());
+                result.setName(var);
                 Utility.mf("nome "+result.getName()+" valore finale: "+result.getStringValue());
                 
                 if(declaration)
@@ -159,6 +163,10 @@ public class ASCommand implements ICommand {
 	
 	public myVar getVar(){
 		return nuova;
+	}
+	
+	public String toString(){
+		return ""+var+"<-"+exps.toString();
 	}
 
 	@Override

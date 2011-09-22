@@ -43,15 +43,15 @@ public class Operation implements ICommand{
         }
         
         
-        public myVar makeOper(){
+        public myVar makeOper(myVar a, myVar b, String sign){
         	//Utility.mf("Lanciato makeOPER: "+sign);
         	if(sign.equalsIgnoreCase("<")||sign.equalsIgnoreCase(">")
                         ||sign.equalsIgnoreCase("<=")||sign.equalsIgnoreCase(">=")
                         ||sign.equalsIgnoreCase("==")||sign.equalsIgnoreCase("!="))
-        		return makeLogicOper(op1, op2, sign);
+        		return makeLogicOper(a, b, sign);
         	else {
                     try {
-                        return makeNumOper(op1, op2, sign);
+                        return makeNumOper(a, b, sign);
                     } catch (ParserException ex) {
                         ex.printStackTrace();
                     }
@@ -204,16 +204,16 @@ public class Operation implements ICommand{
 	
 	public myVar BNoper(myVar a, String segno){
 		int type = a.getType();
-		if(segno.compareTo("!")==0) 
+		if(segno.compareTo("!!")==0||segno.compareTo("!")==0) 
 			result = new myVar(myVm.getTempName(),type, (!((Boolean)(a.getValue()))));
 		return result;	
 	}
 	
-	public myVar BNoper(){
-            result = new myVar(myVm.getTempName(),myVar._bool, (!((Boolean)(op1.getValue()))));
-            return result;	
-	}
-	
+//	public myVar BNoper(){
+//            result = new myVar(myVm.getTempName(),myVar._bool, (!((Boolean)(op1.getValue()))));
+//            return result;	
+//	}
+//	
 	public myVar Neg(myVar a){
             result = a;//null;
             int type = a.getType();
