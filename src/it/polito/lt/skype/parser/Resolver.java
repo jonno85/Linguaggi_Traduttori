@@ -1,49 +1,34 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package it.polito.lt.skype.parser;
 
-
-import java.nio.file.Path;
-import java.util.List;
-
-import it.polito.lt.skype.command.*;
-import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.manager.Operation;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
-public class ASCommand implements ICommand {
-
-	private String dst, var;
+/**
+ *
+ * @author jo
+ */
+public class Resolver {
 	private VarManager manager=null;
         private VarManager tmp_manager=null;
-	private myVar nuova=null, src_var=null;
         private Stack<String> stack = null;
-        private ArrayList<String> exps = null;
-        private boolean declaration = false;
+        private List<String> exps = null;
         private Operation oper = null;
-        private Resolver res = null;
         
-	/*
-	public ASCommand(VarManager vm,String var, String dst){
-		this.dst=dst;
-		this.var = var;
-		manager=vm;
-		//this.src_var=var;
-		nuova = new myVar();
-		myVar src_var=manager.extractVar(var);
-		nuova.set(src_var);
-		nuova.setName(dst);
-                stack = new Stack();
-                this.exps = new ArrayList();
-	}*/
         
-        public ASCommand(VarManager vm, String var, ArrayList<String> exps){
+        public Resolver(VarManager vm, ArrayList<String> exps, String tmp_var){
 		this.exps = exps;
-		this.var = var;
 		manager = vm;
                 tmp_manager = new VarManager();
-                tmp_manager.setTmpName("as_tmp_");
+                tmp_manager.setTmpName(tmp_var);
                 tmp_manager.setMainManager(vm);
                 stack = new Stack();                
         }
@@ -51,14 +36,6 @@ public class ASCommand implements ICommand {
         public void setVars(ArrayList<String> list_vars){
             exps = list_vars;
             Utility.mf(exps.toString());
-        }
-        
-        public void setDeclaration(boolean value){
-            declaration = value;
-        }
-        
-        public boolean  getDeclaration(){
-            return declaration;
         }
         
         public boolean isUnaryOperator(String op){
@@ -108,15 +85,11 @@ public class ASCommand implements ICommand {
             }
             return false;
         }
-	
-        
-	@Override
-	public boolean exec() throws CommandException {
-            myVar result = null;
-            /*
+
+	public myVar exec(){
             myVar op1 = null;
             myVar op2 = null;
-            
+            myVar result = null;
                 for(String s : exps){
                     if(!isOperator(s))
                         stack.push(s);
@@ -146,68 +119,13 @@ public class ASCommand implements ICommand {
                     }
                 }
                 result= tmp_manager.extractVar(stack.pop());
-                */
-            res = new Resolver(manager, exps, "AS_tmp");
-            result = res.exec();
-            result.setName(var);
-            Utility.mf("nome "+result.getName()+" valore finale: "+result.getStringValue());
-
-            if(declaration)
-                manager.add_var(result);
-            else
-                manager.assig(result);
-
-            return true;
+                return result;
 	}
 	
-	public myVar getVar(){
-		return nuova;
-	}
+
 	
 	public String toString(){
-		return ""+var+"<-"+exps.toString();
-	}
-
-	@Override
-	public boolean exec_from_prev_result(List<Path> stream)
-			throws CommandException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setCommandParameter(CommandParameter[] cpl)
-			throws ParserException {
-		
-		dst=cpl[0].getValue();
-		
-
-	}
-
-	@Override
-	public void setCommandParameter(CommandParameter[][] cpl)
-			throws ParserException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<Path> getCommandResult() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCommandStringResult() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void usage() {
-		// TODO Auto-generated method stub
-
+		return exps.toString();
 	}
 
 }
-

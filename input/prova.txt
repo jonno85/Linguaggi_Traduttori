@@ -1,11 +1,35 @@
 start fichero.ss
-create $x=5, $a=49,$b=3, $c=8, $e=true, $f=true
+create $x=5, $a=49,$b=3, $c=8, $e=true, $f=true, $E=false
 
-$x=$a+-$b*$c
-$e=false|!$f & true
+foreach $a 0 10 do
+    if $a<=10 then
+        stampa 'valore $a '+$a
+    endif
+next +1
+
+if $a ==7 && $E==true then
+	$a = 9000
+	print 'sono qui '+$a
+
+	if $E==false then
+		print 'sono ancora qui'
+	else
+		print 'sono la'
+	endif
+else
+	$a = 101
+	if $E==false then
+		print 'sono su per giu'
+	endif
+	print 'sono qua '+$a
+	$d = 609
+endif
+
+$x =$a+-$b*$c
+$e =false|!$f & true
 
 
-print 'x= '+$x
+print 'x= '+$x +' ciao ciao '+$c
 print 'e= '+$e
 
 fine pippo.ss
@@ -15,13 +39,7 @@ start fichero.ss
 $a = $d + 6
 $B = $a * 2
 	
-if $a ==7 || $E==true then
-	$a = 9000
-	$d = 202
-else
-	$a = 101
-	$d = 609
-endif
+
 
 print $B
 print $a

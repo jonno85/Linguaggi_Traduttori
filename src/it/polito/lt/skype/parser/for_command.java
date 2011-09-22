@@ -9,6 +9,7 @@ import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,12 +27,15 @@ public class for_command implements ICommand, IFlowCommandControl{
     private boolean close = false;
     private LinkedList<ICommand> inside_command = null;
     private LinkedList<ICommand> backup_command  = null;
+    private Resolver ris = null;
+    private VarManager manager = null;
+    private ArrayList<String> token_list = null;
  
 
 	private VarManager common_vm = null;
     
     
-    public for_command(myVar index, myVar start, myVar end, VarManager vm)
+    public for_command(myVar index, myVar start, myVar end, VarManager vm/*, ArrayList token_list*/)
     {
         this.index = index;
         this.start = start;
@@ -39,6 +43,8 @@ public class for_command implements ICommand, IFlowCommandControl{
         this.common_vm = vm;
         this.close = false;
         inside_command = new LinkedList<ICommand>();
+        //this.token_list= token_list;
+        //this.manager = manager;
     }
     
     public boolean close_command(myVar step)

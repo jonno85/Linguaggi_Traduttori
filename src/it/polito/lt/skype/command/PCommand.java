@@ -34,10 +34,10 @@ public class PCommand implements ICommand {
 	
 	@Override
 	public boolean exec() throws CommandException {
-		
-		 myVar op1 = null;
-         myVar op2 = null;
-         myVar result = null;
+            myVar result = null;	
+            myVar op1 = null;
+            myVar op2 = null;
+        
              for(String s : exps){
                  if(!isOperator(s))
                      stack.push(s);

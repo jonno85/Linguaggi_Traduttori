@@ -5,9 +5,11 @@ import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,16 +26,20 @@ public class if_command implements ICommand, IFlowCommandControl{
     private LinkedList<ICommand> inside_command = null;
     private LinkedList<ICommand> inside_command_else = null;
     private LinkedList<ICommand> backup_command  = null;
-
+    private Resolver ris = null;
+    private VarManager manager = null;
+    private ArrayList<String> token_list = null;
     
     
-    public if_command(myVar condition)
+    public if_command(VarManager manager, ArrayList token_list)
     {
-        this.condition = condition;
+        //this.condition = condition;
         //Utility.mf(this.condition.getStringValue());
         this.close = false;
         inside_command = new LinkedList<ICommand>();
         inside_command_else = new LinkedList<ICommand>();
+        this.token_list= token_list;
+        this.manager = manager;
     }
     
     public boolean close_command(myVar step)
@@ -41,17 +47,6 @@ public class if_command implements ICommand, IFlowCommandControl{
         return false;
     }
     
-   /* public void exec_alter_flow_command() throws CommandException{
-    	for(ICommand c : inside_command_else){
-            try {
-                c.exec();
-            } catch (CommandException ex) {
-                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-                        "IF recursive Exception: "+ex.getMessage(), null);
-            }
-        }
-    }*/
 
     @Override
     public void set_list_command(LinkedList inside_command) {
@@ -85,31 +80,32 @@ public class if_command implements ICommand, IFlowCommandControl{
     // IF EXEC
     @Override
     public boolean exec() throws CommandException {
-    condition.exec();
-    if(((Boolean)condition.getValue()).booleanValue()){
-    	for(ICommand c : inside_command){
-            try {
-            	Utility.mf("Command if exec() iterator: "+c.toString());
-                c.exec();
-            } catch (CommandException ex) {
-                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-                        "IF recursive Exception: "+ex.getMessage(), null);
+        ris = new Resolver(manager, token_list, "if_tmp_");
+        condition = ris.exec();
+        if(((Boolean)condition.getValue()).booleanValue()){
+            for(ICommand c : inside_command){
+                try {
+                    Utility.mf("Command if exec() iterator: "+c.toString());
+                    c.exec();
+                } catch (CommandException ex) {
+                    throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                            Thread.currentThread().getStackTrace()[2].getMethodName(),
+                            "IF recursive Exception: "+ex.getMessage(), null);
+                }
             }
         }
-    }
-    else{
-    	for(ICommand c : inside_command_else){
-            try {
-            	Utility.mf("Command if exec() iterator: "+c.toString());
-                c.exec();
-            } catch (CommandException ex) {
-                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-                        "IF recursive Exception: "+ex.getMessage(), null);
+        else{
+            for(ICommand c : inside_command_else){
+                try {
+                    Utility.mf("Command if exec() iterator: "+c.toString());
+                    c.exec();
+                } catch (CommandException ex) {
+                    throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                            Thread.currentThread().getStackTrace()[2].getMethodName(),
+                            "IF recursive Exception: "+ex.getMessage(), null);
+                }
             }
         }
-    }
     /*	if(condition.getType()==1){
     		if((Integer)condition.getValue()==0){
     			for(ICommand c : inside_command){

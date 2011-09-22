@@ -111,8 +111,8 @@ terminal String		Var;
 non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
-non terminal myVar	i_arg, for_arg, conf_exp, logic_stmt, for_tail;
-non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, arit_stmt;
+non terminal myVar	i_arg, for_arg, logic_stmt, for_tail;
+non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, conf_exp, arit_stmt;
 non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
@@ -660,7 +660,6 @@ i_arg		::= Int:x	{: RESULT = new myVar(parser.vm.getTempName(), myVar._int, x); 
 conf_exp	::= logic_stmt:s
 				{:
 				Utility.mf("IF LOGIC STMT -> CONF_EXP ");
-				RESULT = s;
 				:}
 		| conf_exp:x C_Orr:s conf_exp:y
 				{:
@@ -669,13 +668,6 @@ conf_exp	::= logic_stmt:s
 		| conf_exp:x C_Andd:s conf_exp:y
 				{:
 				parser.token_list.add(s);
-				//Utility.mf("logic_stamt in confexp");
-				//Utility.mf(x.toString());	
-				//Utility.mf(s.toString());
-				//Utility.mf(y.toString());			
-				//myVar var = parser.vm.makeOper(x,y,s);
-				//Utility.mf("logic "+var.toString());
-				//RESULT=var;
 				:}
 		| RO conf_exp:x RC
 		| C_Not:s conf_exp
@@ -708,7 +700,6 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 		:}
 		| arit_stmt:x C_Ugg:s arit_stmt:y
 		{:
-			Utility.mf("CONFRONTO == "+x.toString()+" "+s+ " "+y.toString());
 			parser.token_list.add(s);
 		:} 
 		| arit_stmt:x Diver:s arit_stmt:y
@@ -724,10 +715,13 @@ logic_stmt	::= arit_stmt:x Magg:s arit_stmt:y
 
 // **************** IF statement
 
-if_head		::= Com_If conf_exp:x Com_If_2 EL 
+if_head		::= Com_If conf_exp Com_If_2 EL 
 				{:
-				if_command ic = new if_command(x);
-				//Utility.mf("IF HEAD: "+x.toString());				
+				Resolver res = new Resolver(parser.vm, parser.token_list, "if_tmp_");
+				if_command ic = new if_command(parser.vm, parser.token_list);
+				parser.token_list = new ArrayList<String>();
+
+				//Utility.mf("IF HEAD: "+x.toString());
 				//ic.set_list_command(l);
 				//parser.list_script.clear();
 				//Utility.mf("IF HEAD condizione: ");
@@ -778,19 +772,20 @@ if_stmt		::= if_else:x i_stmt:l Com_If_e
 
 // **************** FOREACH statement
 
-for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x); 
-					//System.out.println("Var: "+x); :}
+for_arg		::= Var:x	{: RESULT = parser.vm.extractVar(x); 			:}
 		| Int:x		{: RESULT = new myVar(myVar._int, x.intValue()); 	:}
 		| Vint:x	{: RESULT= new myVar(myVar._float, x.floatValue()); 	:}
-		| ID:x		{: RESULT= new myVar(myVar._string, x); :}
+		| ID:x		{: RESULT= new myVar(myVar._string, x); 		:}
 ;
 
 for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
 				{:
 				System.out.println("FOR HEAD variabili "+x.getValue()+"\t"+y.getValue()+"\t"+z.getValue());
+
 				for_command fc = new for_command(x,y,z,parser.vm);
+
 				fc.setBackupCommand(parser.list_script);
-				parser.list_script=fc.getInsideCommand();				
+				parser.list_script=fc.getInsideCommand();
 				//Utility.mf("\tSUBLEVEL: "+(++parser.sublevel));
 				RESULT = fc;
 				:}
@@ -806,8 +801,6 @@ i_Op_ps		::= Plus:x	{: RESULT = x; 						:}
 for_tail 	::= Com_For_e i_Op_ps:s for_arg:y 
 				{: 
 				Utility.mf("CICLO FOR CHIUSO");
-				//Utility.mf("\tSUBLEVEL: "+(--parser.sublevel));
-				//Utility.mf("step: "+parser.vm.Auto_Neg(y,s));
 				RESULT = parser.vm.Auto_Neg(y,s);
 				:}
 ;
@@ -820,6 +813,7 @@ for_stmt	::= for_head:x i_stmt:l for_tail:y
 		RESULT = x;
 		:}
 ;
+
 
 
 
