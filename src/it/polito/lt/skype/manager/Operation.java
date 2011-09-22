@@ -184,9 +184,9 @@ public class Operation implements ICommand{
 	}
 	public myVar Soper(myVar a, myVar b, String segno){
 		result = null;
-		int type = a.getType();
-		if(segno.compareTo("+")==0) //rimosso costruttore String - check!
-			result = new myVar(myVm.getTempName(),type,(String)(a.getValue()+(String)(b.getValue())));	
+		String ris = new String(""+a.getValue().toString()+b.getValue().toString());
+		if(segno.compareTo("+")==0) //rimosso costruttore String - check
+			result = new myVar(myVm.getTempName(),3,ris);	
 		return result;
 	}
 	public myVar Boper(myVar a, myVar b, String segno){

@@ -120,7 +120,7 @@ non terminal for_command	for_stmt, for_head;
 non terminal if_command		if_stmt, if_head, if_head_half, if_else;
 non terminal LinkedList		i_stmt;
 non terminal CScript		script;
-non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt;
+non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt,print_stmt;
 non terminal ASCommand		assig_stmt;
 
 
@@ -279,16 +279,22 @@ stmt 		::= init_stmt:s EL	{:Utility.mf("stmt: init_stmt: lista dichiar: "+parser
 					//Utility.mf(parser.comFind.getCommandStringResult());
 
 					:}
+		| print_stmt:p EL {:parser.list_script.add(p);:}
 		| script EL {:parser.print_el(parser.list_script);:}
 		| throw_s EL
-		| Com_P arit_stmt:s EL {:
-					PCommand pcom = new PCommand(s, parser.vm);
-					parser.list_script.add(pcom);
-					//RESULT = pcom;
-					:}
 		| conf_exp EL /*********************************************/
 		| EL
 ;
+
+
+print_stmt		::= Com_P arit_stmt:s {:
+					PCommand pcom = new PCommand(parser.token_list, parser.vm);
+					parser.token_list = new ArrayList<String>();
+					RESULT =pcom;
+					//RESULT = pcom;
+					:}
+;
+
 
 // ********************* statement controllo di flusso
 

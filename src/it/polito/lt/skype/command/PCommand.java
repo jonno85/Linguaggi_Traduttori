@@ -5,19 +5,28 @@ import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserException;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class PCommand implements ICommand {
 	//private StringBuffer text = new StringBuffer();
 	private int n_substr = 0;
-	private myVar mv = null;
-	private String var_name=null;
-        private VarManager myVm = null;
 	
+	private String var_name=null;
+    private VarManager manager = null;
+    private ArrayList<String> exps=null;
+	private VarManager tmp_manager;
+	private Stack<String> stack;
         
-        public PCommand(myVar mv, VarManager vm){
-		this.mv = mv;
-                myVm = vm;
+        public PCommand(ArrayList<String> token_list, VarManager vm){
+		
+        manager = vm;
+        tmp_manager = new VarManager();
+        tmp_manager.setTmpName("pr_tmp_");
+        tmp_manager.setMainManager(vm);
+        stack = new Stack<String>();      
+        this.exps=token_list;
 	}
 	
 	public PCommand(){
@@ -25,17 +34,46 @@ public class PCommand implements ICommand {
 	
 	@Override
 	public boolean exec() throws CommandException {
-		String vvalue="NULL";
-		myVar tmp = null;
-		Utility.mf("PRINT: "+myVm+" variabile: "+mv);
-		if(mv!=null){
-                     tmp = myVm.extractVar(mv.getName());
-               
-                    Utility.mf(tmp.toString());
-                }
-		return true;
+		
+		 myVar op1 = null;
+         myVar op2 = null;
+         myVar result = null;
+             for(String s : exps){
+                 if(!isOperator(s))
+                     stack.push(s);
+                 else
+                 {
+                     op2 = tmp_manager.extractVar(stack.pop());
+                     op1 = tmp_manager.extractVar(stack.pop());
+                         //operazione con 2 operandi
+                         try {
+                             result = tmp_manager.makeOper(op1, op2, s);
+                             tmp_manager.add_var(result);
+                             stack.push(result.getName());
+                         } catch (ParserException ex) {
+                             ex.printStackTrace();
+                         }
+                     }
+                     
+                       
+             }
+             result= tmp_manager.extractVar(stack.pop());
+             Utility.mf("# "+result.getStringValue());
+             
+             return true;
+		
+		
+	
 	}
 
+	public boolean isOperator(String op){
+        switch(op){
+                case "+":
+                    return true;
+        }
+        return false;
+    }
+	
 	@Override
 	public boolean exec_from_prev_result(List<Path> stream)
 			throws CommandException {

@@ -5,8 +5,8 @@ $x=$a+-$b*$c
 $e=false|!$f & true
 
 
-print $x
-print $e
+print 'x= '+$x
+print 'e= '+$e
 
 fine pippo.ss
 lancia scr1.ss
