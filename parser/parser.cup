@@ -435,7 +435,7 @@ sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
 		| commands i_cc_conds
 		| sh_stmt param:p 	{: parser.cp[3]=p; :}
 		| sh_stmt i_cc_conds
-		//| commands_oa:x		{: RESULT = x; :}
+		| LS_stmt		{::}
 ;
 
 // ***************** comandi standard mv, rm, cp e aggiunti cd, ls
@@ -468,7 +468,7 @@ commands	::= Com_Cd		{:
 					RESULT= "cp";
 					parser.com = new CPCommand(parser.getEnviroment());
 					:}
-		| LS_stmt		{:RESULT= "ls";:}
+		//| LS_stmt		{:RESULT= "ls";:}
 ;
 
 LS_stmt		::= Com_Ls		{: 

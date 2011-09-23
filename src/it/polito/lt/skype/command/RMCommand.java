@@ -146,9 +146,10 @@ public class RMCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-       if (params[2]!=null)
+        params = cpl;
+        if (params[2]!=null)
        {
-            params = cpl;
+
             //percorso
             paramPath = (Paths.get(params[2].getValue()).normalize());
             paramPath= Paths.get(current).resolve(paramPath);
