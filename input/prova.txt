@@ -6,7 +6,7 @@ print $b
 
 foreach $a 1 21 do	
 	$b=$a/2
-	$resto = $a - 2*$b   /*se scrivi $a-2*$b non funziona prende come id "$a-2".....*/
+	$resto = $a - 2*$b   
 	print 'ora resto è: '+$resto
 	print 'ora a è: '+$a
 	if $resto == 0 && $x==10 then
