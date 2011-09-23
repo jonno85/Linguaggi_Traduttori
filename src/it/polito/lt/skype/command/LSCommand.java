@@ -20,6 +20,8 @@ import java.util.Set;
 
 
 
+
+
 public class LSCommand implements ICommand {
 
         private Path currentPath = null;
@@ -98,6 +100,7 @@ public class LSCommand implements ICommand {
                     Collections.reverse(string_result);
                 }
             }
+            Utility.mf("LSRESULT: "+string_result);
             return true;
 	}
 	

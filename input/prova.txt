@@ -1,16 +1,34 @@
+ls lt4/lt5/
+
+start fichero.ss
+	create $pari='' $dispari='' $a=0 $b=1 $x=10 $resto=0
+	foreach $a 1 21 do	
+		if $a==15  then
+			
+			mkdir lt2323232
+		else
+			mkdir lt2323232
+		endif
+	next +1 	
+
+fine pippo.ss
+lancia scr1.ss
+/*
 start fichero.ss
 create $pari='' $dispari='' $a=0 $b=1 $x=10 $resto=0
 
 $b=10-2
 print $b
 
-foreach $a 1 21 do	
+foreach $a 1 21 do
 	$b=$a/2
-	$resto = $a - 2*$b   
+$resto = $a-2*$b   /*se scrivi $a-2*$b non funziona prende come id "$a-2".....*/
 	print 'ora resto è: '+$resto
 	print 'ora a è: '+$a
+	mkdir lt
 	if $resto == 0 && $x==10 then
 		$pari=$a+' '+$pari
+		$x = $x + 10
 		print 'pari!'
 	else
 		if $resto==1 then
@@ -28,7 +46,7 @@ print 'ics '+$x
 
 fine pippo.ss
 lancia scr1.ss
-/*
+
 
  $x=5, $a=49,$b=3, $c='pio', $e=true, $f=true, $E=false
 

@@ -38,12 +38,14 @@ public class MKDCommand implements ICommand {
         string_result = new ArrayList<>();
     }
     
+    
+    
     @Override
     public boolean exec() throws CommandException {
         Path dir = null;
         synchronized(this){
             //n_par = params.length;
-            
+            Utility.mf("DIR DA CERARE: "+params[2].getValue());
                 //n_par--;
                 try {
                     my_perm = Files.readAttributes(position,PosixFileAttributes.class);

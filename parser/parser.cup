@@ -64,7 +64,7 @@ parser code {:
 	public boolean script_enabled=false;	
 	public CScript csc=null;	
 
-	private String enviroment = "/home";
+	private String enviroment = "/home/robizz";
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
@@ -78,7 +78,7 @@ parser code {:
 	public void setEnviroment(String path)
 	{
 		enviroment = path;
-		//Utility.mf("CURRENT-PATH now is: " + enviroment);
+		Utility.mf("CURRENT-PATH now is: " + enviroment);
 	}
 
 	public String getEnviroment()
@@ -221,11 +221,11 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 		| sh_stmt:s EL		{:
 
 					//System.out.println("raccolto sh stmt: parameter setting"); 
-					parser.cp[0] = parser.array_file.get(0);
-					parser.cp[1] = parser.array_path.get(0);
-					parser.cp[2] = parser.array_perm.get(0);
-					parser.cp[3] = parser.array_data.get(0);
-					parser.cp[4] = parser.array_dim.get(0);
+					//parser.cp[0] = parser.array_file.get(0);
+					//parser.cp[1] = parser.array_path.get(0);
+					//parser.cp[2] = parser.array_perm.get(0);
+					//parser.cp[3] = parser.array_data.get(0);
+					//parser.cp[4] = parser.array_dim.get(0);
 					//for(int i=0; i<7; i++)
 					//	if(parser.cp[i]==null)
 					//		Utility.mf("*niente*");
@@ -238,7 +238,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						//Utility.mf(parser.com.getCommandStringResult());
 					}
 					else
-						parser.list_script.add(s);
+						parser.list_script.add(parser.com);
 					//Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
 
 					:}
