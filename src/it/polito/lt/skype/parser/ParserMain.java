@@ -27,10 +27,11 @@ import java.io.*;
             //reader.read(myInput.readLine().toCharArray());
             Utility.mf("LETTO: "+ reader.toString());
            
-            
-			Lexer l = new Lexer(myInput);
+           // Yylex l = new Yylex(System.in);    	  
+			Lexer l = new Lexer(System.in);
 			/* Istanzio il parser */
 			parser p = new parser(l);
+			p.setEnviroment("/home/robizz/lt2");
 			/* Avvio il parser */
 			Object result = p.parse();
 			//p.debug_parse();

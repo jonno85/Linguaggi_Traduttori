@@ -233,7 +233,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {com_find}{prep_supporto}?		{return symbol(sym.Com_Find);}
 {com_cp}				{return symbol(sym.Com_Cp);}
 {com_cd}				{return symbol(sym.Com_Cd);}
-{com_ls}				{return symbol(sym.Com_Ls);}
+{com_ls}				{System.out.println("LS: "+ yytext());return symbol(sym.Com_Ls);}
 {com_str}				{return symbol(sym.Com_Str);}
 {com_mv}				{return symbol(sym.Com_Mov);}
 {com_mkdir}				{return symbol(sym.Com_MKDir);}

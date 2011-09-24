@@ -1,7 +1,7 @@
 start fichero.ss
 	cd lt4/
 	cd lt5/lt3
-	cp e  tre
+	mkdir tre
 	ls tre
 	
 	

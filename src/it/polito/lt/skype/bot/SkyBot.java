@@ -25,11 +25,16 @@ package it.polito.lt.skype.bot;
 
 
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.generated.parser.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.Runtime;
 import java.lang.Process;
 import java.io.*;
+
 
 import com.skype.ChatMessage;
 import com.skype.ChatMessageAdapter;
@@ -44,6 +49,8 @@ public class SkyBot {
     	Skype.setDeamon(false); // to prevent exiting from this program
         profilo.setMoodMessage("SHELL MODE: ON");
         Utility.mf("bot settato e pronto");
+        
+        
         ChatMessageAdapter meslis= new ChatMessageAdapter()  {
     	  
         	//ChatMessageAdapter class begin
@@ -62,6 +69,36 @@ public class SkyBot {
 				       		 *received.getSender().send(">>>hai detto: "+mes);
 				       		 *received.getSender().send("risultati comando:\n");
 				       		 **/
+//				       		InputStream is = parseStringToIS(mes);
+//				       		
+//				       		InputStreamReader reader = new InputStreamReader (is);
+//				            BufferedReader myInput = new BufferedReader (reader);
+				       		
+				           
+
+				       		Lexer l = new Lexer(new java.io.StringReader(mes+"\n")  );
+							
+							/* Istanzio il parser */
+							parser p = new parser(l);
+							p.setScanner(l);
+							
+							String output ="···";
+							p.se
+							/* Avvio il parser */
+							try {
+								Object result = p.debug_parse();
+								
+							} 
+							catch (Exception e) 
+							{
+								
+								// TODO Auto-generated catch block
+								Utility.mf("FALLITO: "+e.getMessage());
+								//System.out.println(myInput.toString());
+								e.printStackTrace();
+							}
+							//p.debug_parse();
+							Utility.mf("finito");
 				      	     
 				           	
 				           	//parsing comando
@@ -71,6 +108,21 @@ public class SkyBot {
 				   	     
 				           }
 				       }
+        	
+			        	 //from string to input stream
+			    public java.io.InputStream parseStringToIS(String str){
+			    	  if(str==null) return null;
+			    	  //str = str.trim();
+			    	  java.io.InputStream in = null;
+			    	  try{
+			    		  in = new java.io.ByteArrayInputStream(str.getBytes("UTF-8"));
+			    	  }catch(Exception ex){}
+			    	  return in;      
+			    	 }
+        	
+        	
+        	
+        	
 				   };//fine chatmessage adapter;
 				   
 				   
@@ -78,6 +130,10 @@ public class SkyBot {
         //Skype.removeChatMessageListener(meslis);
         //System.out.println("bot eliminato");
     }
+    
+   
 
+    
+    
 }
 
