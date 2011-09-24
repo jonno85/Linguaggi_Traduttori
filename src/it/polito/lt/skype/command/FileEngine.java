@@ -24,10 +24,10 @@ public class FileEngine {
 	{
 		ICommand ret= null;
 		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand(current);
-//		if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand(current);
+		if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand(current);
 		if(c.compareToIgnoreCase("ls")==0) ret=new LSCommand(current);
-//                if(c.compareToIgnoreCase("rm")==0) ret=new RMCommand(current);
-//		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand(current);
+        if(c.compareToIgnoreCase("rm")==0) ret=new RMCommand(current);
+		if(c.compareToIgnoreCase("find")==0) ret=new FINDCommand(current);
 		return ret;
 	}
 	

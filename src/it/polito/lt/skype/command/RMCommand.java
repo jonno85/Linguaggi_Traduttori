@@ -28,6 +28,7 @@ import java.util.List;
 public class RMCommand implements ICommand{
     
     private CommandParameter[] params = null;
+    private CommandEnv env;
     private int tot_elem = 0;
     private String current=null;
     private Path paramPath;
@@ -56,10 +57,10 @@ public class RMCommand implements ICommand{
      */
         
         
-    public RMCommand(String current)
-    {
+    public RMCommand(CommandEnv currentEnv)
+    {		env=currentEnv;
             result = new ArrayList<>();       
-            this.current =current;
+            this.current =currentEnv.getCurrentPathString();
             position = Paths.get(current);
             pattern = "";
     }
@@ -79,6 +80,9 @@ public class RMCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
+        
+        paramPath = (Paths.get(params[2].getValue()).normalize());
+        paramPath= env.getCurrentPath().resolve(paramPath);
         
         pattern = paramPath.getFileName().toString();
         position = paramPath.getParent();

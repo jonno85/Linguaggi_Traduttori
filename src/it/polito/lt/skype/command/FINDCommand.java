@@ -87,71 +87,7 @@ public class FINDCommand implements ICommand {
         		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
         	}
         	
-        	/*if(params[5]!=null)
-            {
-                ICommand rec_cmd = null;
-                pathResult_rec = new ArrayList<>();    
-                //for(Path curr_path : pathResult){
-                int n_params = 0;
-                
-                //nel caso di alcuni comandi esempio RM, puo non essere 
-                 // necessario scambio di parametri aggiuntivi
-                 
-                
-                rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),position);
-                Utility.mf("inside recursive_cmd");
-                
-                CommandParameter[] dyn_param = null;
-                
-                n_params=params[6].length;
-                Utility.mf("numero parametri ricevuti: "+n_params);
-                for(int k=0;k<n_params;k++){
-                    if(params[6][k]!=null)
-                        Utility.mf("parametri ricevuti: "+params[6][k].getValue());
-                    else
-                        Utility.mf("parametri nullo: "+k);
                 }
-                
-                Utility.mf("params 6: "+params[6]);
-                
-                if(params[6]!=null){
-                    Utility.mf("tenemos los parametros");
-                    n_params=params[6].length;
-                
-                    //  meglio una funzione proprietaria di classe per risistemare i parametri alla funzione ricorsiva
-                    //  caso ls 
-                     
-                    
-                    
-                    System.out.println("Numero parametri passati alla funzione interna: "+n_params);
-                    dyn_param = new CommandParameter[n_params];
-                    while(--n_params>=0)
-                    {
-                        dyn_param[n_params] = params[6][n_params];
-                        n_params--;
-                        System.out.println("passaggio");
-                    }
-                }else //inizializzazione solo per non produrre errori, di fatto non è utilizzato
-                {
-                    dyn_param = new CommandParameter[]{new CommandParameter(ParamType.NULL, ".", SignType.MAG)};
-                    
-                }
-
-                rec_cmd.setCommandParameter(dyn_param); 
-                try {
-                    Utility.mf("ESECUZIONE"+rec_cmd.toString()+"SU: "+pathResult.toString());
-                    rec_cmd.exec_from_prev_result(pathResult);
-                    pathResult_rec.addAll(rec_cmd.getCommandResult());
-                    string_result = null;
-                    string_result = new ArrayList<>();
-                    string_result.add(rec_cmd.getCommandStringResult());
-                } catch (CommandException ex) {
-                    throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
-                }
-
-
-            }*/
-        }
         
 	@Override
 	public boolean exec() throws CommandException {
@@ -175,7 +111,7 @@ public class FINDCommand implements ICommand {
                                        acontb++;
                        }
                        if(acontb==1){//se a contiene b, più di una volta a non va aggiunta
-                               pathList.add(Paths.get(params[1][i].getValue()));
+                               pathList.add(env.getCurrentPath().resolve(Paths.get(params[1][i].getValue())));
                                Utility.mf("subfolder: checked: "+a);
                        }
                        else

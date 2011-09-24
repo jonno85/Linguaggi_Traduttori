@@ -441,7 +441,7 @@ sh_stmt		::= commands_double_param:c param:p param:q  {: parser.cp[2]=p; parser.
 commands_double_param	::= Com_Mov	{: 
 					//Utility.mf("MV!");
 					RESULT= "mv";
-					parser.com = new MVCommand(parser.getEnviroment());
+					parser.com = new MVCommand(parser.enviroment);
 					:}
 			| Com_Cp	{: 
 					//Utility.mf("CP!");
@@ -461,7 +461,7 @@ commands	::= Com_Cd		{:
 		| Com_MKDir		{: 
 					//Utility.mf("MKDIR!");
 					RESULT= "mkdir";
-					parser.com = new MKDCommand(parser.getEnviroment());
+					parser.com = new MKDCommand(parser.enviroment);
 					:}
 
 		
@@ -469,7 +469,7 @@ commands	::= Com_Cd		{:
 		| Com_Rm		{: 
 					//Utility.mf("RM!");
 					RESULT= "rm";
-					parser.com = new RMCommand(parser.getEnviroment());
+					parser.com = new RMCommand(parser.enviroment);
 					:}
 
 		

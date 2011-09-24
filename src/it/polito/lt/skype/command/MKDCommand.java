@@ -23,6 +23,7 @@ import java.util.Set;
  */
 public class MKDCommand implements ICommand {
 
+	private CommandEnv env;
     private CommandParameter[] params = null;
     private int n_par = 0;
     private Path position = null;
@@ -32,8 +33,9 @@ public class MKDCommand implements ICommand {
     private PosixFileAttributes my_perm;
 
     
-    public MKDCommand(String current){
-        position = Paths.get(current);
+    public MKDCommand(CommandEnv env){
+        this.env=env;
+    	position = env.getCurrentPath();
         pathResult = new ArrayList<>();
         string_result = new ArrayList<>();
     }
@@ -44,7 +46,8 @@ public class MKDCommand implements ICommand {
     public boolean exec() throws CommandException {
         Path dir = null;
         synchronized(this){
-            //n_par = params.length;
+        	position = env.getCurrentPath();
+        	//n_par = params.length;
             Utility.mf("DIR DA CERARE: "+params[2].getValue());
                 //n_par--;
                 try {

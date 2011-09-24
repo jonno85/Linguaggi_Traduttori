@@ -30,6 +30,7 @@ import static java.nio.file.StandardCopyOption.*;
  */
 public class MVCommand implements ICommand{
     
+	private CommandEnv env;
     private Path currentPath=null;
     private CommandParameter[] params = null;
     private int tot_elem = 0;
@@ -62,10 +63,11 @@ public class MVCommand implements ICommand{
          *          6 = dimensione
          */
         
-    public MVCommand(String current)
+    public MVCommand(CommandEnv currentEnv)
     {
-            result = new ArrayList<>();       
-            position_src = currentPath = Paths.get(current);
+            env=currentEnv;
+    		result = new ArrayList<>();       
+            position_src = currentPath = env.getCurrentPath();
             pattern_src = "";
     }
     
@@ -95,6 +97,15 @@ public class MVCommand implements ICommand{
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();*/
+        currentPath=env.getCurrentPath();
+        if(params[3]!=null)
+            target = Paths.get(params[3].getValue()).normalize();
+        target= currentPath.resolve(target);
+        
+        paramPath_src = Paths.get(params[2].getValue()).normalize();
+        paramPath_src= currentPath.resolve(paramPath_src);
+        pattern_src = paramPath_src.getFileName().toString();
+        position_src = paramPath_src.getParent();
         
         isRegFolder_src = false;
         isFile_src = false;
