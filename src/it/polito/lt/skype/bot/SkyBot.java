@@ -82,12 +82,11 @@ public class SkyBot {
 							parser p = new parser(l);
 							p.setScanner(l);
 							
-							String output ="···";
-							p.se
+							
 							/* Avvio il parser */
 							try {
-								Object result = p.debug_parse();
-								
+								Object result = p.parse();
+								received.getSender().send(p.getOutput());
 							} 
 							catch (Exception e) 
 							{

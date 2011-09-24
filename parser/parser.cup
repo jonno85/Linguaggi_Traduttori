@@ -66,6 +66,8 @@ parser code {:
 
 	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
 
+	public String output="#\n";	
+
 	public void add_param(CommandParameter x) throws ParserException
 	{
 		//Utility.mf(x.getValue()+" tipo "+x.getParamType());
@@ -95,6 +97,20 @@ parser code {:
 		//	i.toString();
 		//}
 	}
+
+	public void setOutput(String output){
+		this.output=output;
+	}
+	
+	public void appendOutput(String output){
+		this.output=this.output+output;
+	}
+	
+	public String getOutput(){
+		return this.output;
+	}
+				
+	
 :}
 ;
 
@@ -202,7 +218,14 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					
 					:}
 		| assig_stmt:s EL	{:
-					parser.list_script.add(s);
+						//ESECUZIONE SOLO IN SCRIPT O SHELL
+					if(!parser.script_enabled){
+						parser.com.exec();
+						parser.appendOutput(parser.com.getCommandStringResult());
+						//Utility.mf(parser.com.getCommandStringResult());
+					}
+					else
+						parser.list_script.add(parser.com);
 					//Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
 					//if(parser.vm.extractVar(s.getName())!=null){
 					//	parser.vm.assig(s);
@@ -236,6 +259,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
 						parser.com.exec();
+						parser.appendOutput(parser.com.getCommandStringResult());
 						//Utility.mf(parser.com.getCommandStringResult());
 					}
 					else
@@ -267,13 +291,15 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					if(!parser.script_enabled){
 						//Utility.mf("EXEC");
 						parser.comFind.exec();
+						parser.appendOutput(parser.com.getCommandStringResult());
 						parser.array_file.clear();
 						parser.array_path.clear();
 						parser.array_perm.clear();
 						parser.array_data.clear();
 						parser.array_dim.clear();
 					}
-					//else
+					else
+					parser.list_script.add(parser.com);
 				//SISTEMAREparser.list_script.add(s);
 					
 					
