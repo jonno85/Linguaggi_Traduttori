@@ -25,12 +25,14 @@ import java.util.Set;
 public class LSCommand implements ICommand {
 
         private Path currentPath = null;
+        private CommandEnv currentEnv;
 
         private CommandParameter[] params = null;
         private FileEngine eng = new FileEngine();
         private int n_par = 0;
         private boolean goAsc;
-        private boolean includeFolders;
+        private boolean includeFolders;       
+        private boolean noPath=true;
         private Path paramPath;
         private Path position = null;
         private String pattern = null;
@@ -54,16 +56,16 @@ public class LSCommand implements ICommand {
          */
         
         
-        public LSCommand(String current)
+        public LSCommand(CommandEnv currentEnv)
         {
                 pathResult = new ArrayList<>();       
                 string_result = new ArrayList<>();
-                
-                paramPath = position = currentPath = Paths.get(current);
+                this.currentEnv=currentEnv;
+                paramPath = position = currentPath = this.currentEnv.getCurrentPath();
                 pattern = "*";
                 goAsc=true;
                 includeFolders=true;
-                params = new CommandParameter[6];
+              
                 
         }
         
@@ -71,16 +73,24 @@ public class LSCommand implements ICommand {
 	public boolean exec() throws CommandException {
 			//paramPath=Paths.get(params[2].getValue());
 			//paramPath=currentPath.resolve(paramPath);
-            DirectoryStream<Path> stream = null;
+			currentPath=currentEnv.getCurrentPath();
+			if(noPath)
+				paramPath=currentPath;
+			else
+				paramPath=currentPath.resolve(paramPath);
+			Utility.mf(" parampath: "+paramPath.toString());
+			position = paramPath.getParent();
+			Utility.mf("LS EXEC: currentPath: "+currentPath.toString()+" parampath: "+paramPath.toString());
+			DirectoryStream<Path> stream = null;
             Boolean isDir = false;
             synchronized(this){
                 try{
                     //System.out.printf("lunghezza vetto para "+params.length);
-                    if(params[2]!=null){
+                    //if(params[2]!=null){
                         stream=eng.getStreamFromString(paramPath.toString());
-                    }else{
-                        stream = eng.getStreamFromString(position.toString());
-                    }
+                    //}else{
+                    //    stream = eng.getStreamFromString(position.toString());
+                    //}
                     for (Path file: stream) {
                         PosixFileAttributes attr = Files.readAttributes(file, PosixFileAttributes.class);
                         isDir = attr.isDirectory();
@@ -119,8 +129,14 @@ public class LSCommand implements ICommand {
 
 	@Override
 	public void setCommandParameter(CommandParameter[] cpl) {
-			
-            if (cpl.length == 7)
+			Utility.mf("LS SETCOMMANDPARAMETER:");
+            for(int i=0; i<7;i++)
+            	if(cpl[i]!=null)
+            		Utility.mf("param "+i+" = "+cpl[i].getValue());
+            	else 
+            		Utility.mf("nulllll");
+            
+			if (cpl.length == 7)
             {
                 params = cpl;
                 n_par = cpl.length;
@@ -145,21 +161,25 @@ public class LSCommand implements ICommand {
                 {//estrazione del path
                 	Utility.mf("param[2]: "+params[2].getValue());
                 	paramPath = (Paths.get(params[2].getValue()).normalize());
+                	position = paramPath.getParent();
+                	noPath=false;
                 }
-                else	
-                {
-                	paramPath=Paths.get("");
-                }
-                	paramPath=currentPath.resolve(paramPath);
+               else
+               {
+
+            	   	noPath=true;
+            	   	paramPath=currentEnv.getCurrentPath();
+               }
+                	//paramPath=currentPath.resolve(paramPath);
                     //if(paramPath.getFileName()!=null)
                     	//pattern = paramPath.getFileName().toString();
-                    if(paramPath.getParent()==null)
-                    {	//position = paramPath.getParent();
-                    //else 
-                    	position=Paths.get("/");
-                    	paramPath=Paths.get("/*");
-                    }
-                   Utility.mf("ESTRATTI: "+pattern+" "+position.toString());
+//                    if(paramPath.getParent()==null)
+//                    {	//position = paramPath.getParent();
+//                    //else 
+//                    	position=Paths.get("/");
+//                    	paramPath=Paths.get("/*");
+//                    }
+                   Utility.mf("ESTRATTI: "+pattern+" "+position);
                 
             }
             else

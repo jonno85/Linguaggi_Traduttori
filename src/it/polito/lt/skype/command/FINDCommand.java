@@ -26,6 +26,7 @@ public class FINDCommand implements ICommand {
         int n_file = 1;
         int n_dir=1;
         private boolean doRecursive = false;
+        private CommandEnv env;
         private String position = null;
         private String pattern = null;
         private List<Path> pathList= null;
@@ -52,13 +53,14 @@ public class FINDCommand implements ICommand {
 	        */
         
         
-        public FINDCommand(String current)
+        public FINDCommand(CommandEnv env)
         {
-                pathResult = new ArrayList<>();          
+                this.env=env;
+        		pathResult = new ArrayList<>();          
                 pathList = new ArrayList<>();
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-                position = current;
+                position = env.getCurrentPathString();
                 pattern = "*";
                 eng = new FileEngine();
         }
@@ -73,7 +75,7 @@ public class FINDCommand implements ICommand {
         public void recursive_cmd() throws CommandException, ParserException{
         	int i=1;
         	for(Path curr_path : pathResult){
-        		ICommand rec_cmd=FileEngine.iCommandFromString(params[5][0].getValue(),position);
+        		ICommand rec_cmd=FileEngine.iCommandFromString(params[5][0].getValue(),env);
         		Utility.mf("--------------------"+params[5][0].getValue());
         		CommandParameter[] dyn_param = new CommandParameter[7];
         		dyn_param=params[6].clone();

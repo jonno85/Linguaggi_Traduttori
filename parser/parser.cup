@@ -64,7 +64,7 @@ parser code {:
 	public boolean script_enabled=false;	
 	public CScript csc=null;	
 
-	private String enviroment = "/home/robizz";
+	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
@@ -77,13 +77,13 @@ parser code {:
 
 	public void setEnviroment(String path)
 	{
-		enviroment = path;
-		Utility.mf("CURRENT-PATH now is: " + enviroment);
+		enviroment.setCurrentPathString(path);
+		Utility.mf("CURRENT-PATH now is: " + enviroment.getCurrentPathString());
 	}
 
 	public String getEnviroment()
 	{
-		return enviroment;
+		return enviroment.getCurrentPathString();
 	}
 
 	public void print_el(LinkedList<ICommand> ls)
@@ -112,7 +112,7 @@ non terminal		S;
 
 non terminal		i_conds, bool_exp, _where, cond, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond, cc_permission_cond, cc_dimension_cond ,cc_conds;
 non terminal myVar	i_arg,  logic_stmt;
-non terminal String		arit_arg, commands,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, conf_exp, arit_stmt,for_arg, for_tail;
+non terminal String		arit_arg, commands,commands_double_param,i_Op, i_Op_ps, start_s, throw_s, end_s, bool_op, conf,date_arg, conf_exp, arit_stmt,for_arg, for_tail;
 non terminal Object[]		LS_stmt;
 //non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
@@ -183,7 +183,7 @@ end_s		::= End_S File:s
 i_stmt		::= stmt:s		{://RE-Init
 					parser.todo.add(s);
 					
-					parser.cp = new CommandParameter[7];
+					//parser.cp = new CommandParameter[7];
 					parser.cpm = new CommandParameter[7][];
 					parser.com = null;
 					parser.comFind = null;
@@ -232,6 +232,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					//	else
 					//		Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
+					parser.cp = new CommandParameter[7];						
 					//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
 						parser.com.exec();
@@ -240,7 +241,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					else
 						parser.list_script.add(parser.com);
 					//Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
-
+					//parser.cp=new CommandParameter[7];
 					:}
 		| comm_find_stmt:s EL	{:
 					//System.out.println("raccolto sh stmt = FIND");
@@ -431,18 +432,30 @@ param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 
 // ***************** statement relativi ai comandi
 
-sh_stmt		::= commands:c param:p  {: parser.cp[2]=p; :}
-		| commands i_cc_conds
-		| sh_stmt param:p 	{: parser.cp[3]=p; :}
-		| sh_stmt i_cc_conds
-		| LS_stmt		{::}
+sh_stmt		::= commands_double_param:c param:p param:q  {: parser.cp[2]=p; parser.cp[3]=q;:}
+		| commands param:p	{: parser.cp[2]=p; :}
+		| LS_stmt
+		
+;
+
+commands_double_param	::= Com_Mov	{: 
+					//Utility.mf("MV!");
+					RESULT= "mv";
+					parser.com = new MVCommand(parser.getEnviroment());
+					:}
+			| Com_Cp	{: 
+					//Utility.mf("CP!");
+					RESULT= "cp";
+					parser.com = new CPCommand(parser.getEnviroment());
+					:}
+
 ;
 
 // ***************** comandi standard mv, rm, cp e aggiunti cd, ls
 commands	::= Com_Cd		{: 
 					//Utility.mf("CD!");
 					RESULT= "cd";
-					parser.com = new CDCommand(parser.getEnviroment(),parser);
+					parser.com = new CDCommand(parser.enviroment,parser);
 					:}
 		//| Com_Cd Minor
 		| Com_MKDir		{: 
@@ -451,11 +464,7 @@ commands	::= Com_Cd		{:
 					parser.com = new MKDCommand(parser.getEnviroment());
 					:}
 
-		|Com_Mov		{: 
-					//Utility.mf("MV!");
-					RESULT= "mv";
-					parser.com = new MVCommand(parser.getEnviroment());
-					:}
+		
 
 		| Com_Rm		{: 
 					//Utility.mf("RM!");
@@ -463,17 +472,13 @@ commands	::= Com_Cd		{:
 					parser.com = new RMCommand(parser.getEnviroment());
 					:}
 
-		| Com_Cp		{: 
-					//Utility.mf("CP!");
-					RESULT= "cp";
-					parser.com = new CPCommand(parser.getEnviroment());
-					:}
-		//| LS_stmt		{:RESULT= "ls";:}
+		
+		//|LS_stmt		{:RESULT= "ls";:}
 ;
 
 LS_stmt		::= Com_Ls		{: 
 					//Utility.mf("LS!");
-					parser.com = new LSCommand(parser.getEnviroment());
+					parser.com = new LSCommand(parser.enviroment);
 					:}
 
 		| LS_stmt Order:o	{: 
@@ -483,14 +488,18 @@ LS_stmt		::= Com_Ls		{:
 		
 		| LS_stmt Obj:o		{: 
 					//Utility.mf("LS obj!");
-					parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);
+						parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);
 					:}
+		| LS_stmt param:p 	{: parser.cp[2]=p; :}
+		
+		| LS_stmt i_cc_conds
+		
 ;
 
 // ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
 comm_find_stmt	::= Com_Find param:x	{: 
 					//Utility.mf("_FIND_!");
-					parser.comFind = new FINDCommand(parser.getEnviroment());
+					parser.comFind = new FINDCommand(parser.enviroment);
 
 //					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
 //					parser.counter_path = 0;

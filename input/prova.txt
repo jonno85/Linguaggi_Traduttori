@@ -1,9 +1,10 @@
 start fichero.ss
-	cd lt4/lt5/lt3
+	cd lt4/
 	ls
-	cd e
-	rm c*
+	cd /home/robizz/gitRepo
 	ls
+	
+	
 	
 fine pippo.ss
 lancia scr1.ss
