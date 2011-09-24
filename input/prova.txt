@@ -1,9 +1,8 @@
 start fichero.ss
 	cd lt4/
-	ls
-	cd /home/robizz/gitRepo
-	ls
-	
+	cd lt5/lt3
+	cp e  tre
+	ls tre
 	
 	
 fine pippo.ss

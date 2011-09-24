@@ -269,7 +269,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 					String s = new String(yytext());
 					return symbol(sym.Str,s.substring(1, s.length()-1));}
 //{id}					{Utility.mf("id value: "+yytext());}
-{file}					{Utility.mf("file: "+yytext());
+{file}					{//Utility.mf("file: "+yytext());
 					return symbol(sym.File,new String(yytext()));}
 ({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}

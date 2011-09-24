@@ -35,6 +35,7 @@ public class CPCommand implements ICommand{
 	private CommandParameter[] params = null;
     private int tot_elem = 0;
     
+    private CommandEnv env;
     private Path paramPath_src;
     private Path position_src = null;
     private String pattern_src = null;
@@ -63,15 +64,16 @@ public class CPCommand implements ICommand{
      *          6 = dimensione
      */
     
-    public CPCommand(String current)
+    public CPCommand(CommandEnv currentEnv)
     {
+    		env=currentEnv;
             result = new ArrayList<>();       
            /* position_src = Paths.get(".");
             pattern_src = "";
             target = Paths.get(".");
             */
-            target=Paths.get(current);
-            position_src = currentPath = Paths.get(current);
+            target=env.getCurrentPath();
+            position_src = currentPath = env.getCurrentPath();
             pattern_src = "";
     }
     
@@ -102,6 +104,16 @@ public class CPCommand implements ICommand{
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();*/
+        currentPath=env.getCurrentPath();
+        target = Paths.get(params[3].getValue()).normalize();
+        target= currentPath.resolve(target);
+        
+        paramPath_src = Paths.get(params[2].getValue()).normalize();
+        paramPath_src= currentPath.resolve(paramPath_src);
+        pattern_src = paramPath_src.getFileName().toString();
+        position_src = paramPath_src.getParent();
+        
+        Utility.mf("CP: da "+paramPath_src.toString()+" a "+target.toString());
         
         isRegFolder_src = false;
         isFile_src = false;
@@ -153,6 +165,15 @@ public class CPCommand implements ICommand{
     	 if (cpl.length==7||params[2]!=null)
          {
               params = cpl;
+              
+              Utility.mf("CP SETCOMMANDPARAMETER:");
+              for(int i=0; i<7;i++)
+              	if(cpl[i]!=null)
+              		Utility.mf("param "+i+" = "+cpl[i].getValue());
+              	else 
+              		Utility.mf("nulllll");
+              
+              target= currentPath.resolve(target);
               if(params[3]!=null)
                   target = Paths.get(params[3].getValue()).normalize();
               target= currentPath.resolve(target);

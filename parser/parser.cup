@@ -446,7 +446,7 @@ commands_double_param	::= Com_Mov	{:
 			| Com_Cp	{: 
 					//Utility.mf("CP!");
 					RESULT= "cp";
-					parser.com = new CPCommand(parser.getEnviroment());
+					parser.com = new CPCommand(parser.enviroment);
 					:}
 
 ;

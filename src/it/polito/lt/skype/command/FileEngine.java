@@ -23,7 +23,7 @@ public class FileEngine {
 	public static ICommand iCommandFromString(String c, CommandEnv current)
 	{
 		ICommand ret= null;
-//		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand(current);
+		if(c.compareToIgnoreCase("cp")==0) ret=new CPCommand(current);
 //		if(c.compareToIgnoreCase("mv")==0) ret=new MVCommand(current);
 		if(c.compareToIgnoreCase("ls")==0) ret=new LSCommand(current);
 //                if(c.compareToIgnoreCase("rm")==0) ret=new RMCommand(current);
@@ -42,11 +42,11 @@ public class FileEngine {
 		Path position = Paths.get("/");
 		String pattern = "*";
 		
-		Utility.mf("GETSTREAM paramPath "+paramPath.toString());
+		//Utility.mf("GETSTREAM paramPath "+paramPath.toString());
     	pattern = paramPath.getFileName().toString();
-    	Utility.mf("GETSTREAM pattern "+pattern);
+    	//Utility.mf("GETSTREAM pattern "+pattern);
         position = paramPath.getParent();
-        Utility.mf("GETSTREAM position "+position.toString());
+        //Utility.mf("GETSTREAM position "+position.toString());
         BasicFileAttributes b_attr = null;
         			
                     if(param!=null) //presenza del nome del file
