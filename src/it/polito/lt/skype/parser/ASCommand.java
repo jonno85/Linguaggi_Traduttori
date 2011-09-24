@@ -23,6 +23,7 @@ public class ASCommand implements ICommand {
         private boolean declaration = false;
         private Operation oper = null;
         private Resolver res = null;
+        myVar result = null;
         
 	/*
 	public ASCommand(VarManager vm,String var, String dst){
@@ -112,7 +113,7 @@ public class ASCommand implements ICommand {
         
 	@Override
 	public boolean exec() throws CommandException {
-            myVar result = null;
+           result = null;
             /*
             myVar op1 = null;
             myVar op2 = null;
@@ -187,7 +188,7 @@ public class ASCommand implements ICommand {
 	@Override
 	public void setCommandParameter(CommandParameter[][] cpl)
 			throws ParserException {
-		// TODO Auto-generated method stub
+		//  myVar TODO Auto-generated method stub
 
 	}
 
@@ -200,7 +201,7 @@ public class ASCommand implements ICommand {
 	@Override
 	public String getCommandStringResult() {
 		// TODO Auto-generated method stub
-		return null;
+		return result.getValue().toString();
 	}
 
 	@Override

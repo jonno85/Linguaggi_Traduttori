@@ -24,6 +24,7 @@ package it.polito.lt.skype.bot;
 
 
 
+import it.polito.lt.skype.command.CommandEnv;
 import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.generated.parser.*;
 
@@ -44,7 +45,18 @@ import com.skype.SkypeException;
 
 
 public class SkyBot {
-    public static void main(String[] args) throws Exception {
+	
+	private CommandEnv env=new CommandEnv("/home/robizz/lt2");
+	
+    public CommandEnv getEnv() {
+		return env;
+	}
+
+	public void setEnv(CommandEnv env) {
+		this.env = env;
+	}
+
+	public static void main(String[] args) throws Exception {
     	final Profile profilo = Skype.getProfile();
     	Skype.setDeamon(false); // to prevent exiting from this program
         profilo.setMoodMessage("SHELL MODE: ON");
@@ -53,9 +65,10 @@ public class SkyBot {
         
         ChatMessageAdapter meslis= new ChatMessageAdapter()  {
     	  
-        	//ChatMessageAdapter class begin
+//-----------------------------ChatMessageAdapter class begin-------------------------------------------------------------------
         	public void chatMessageReceived(ChatMessage received) throws SkypeException {
 				       
+        				
 				       	Utility.mf("\n"+received.getType());
 				       	if (received.getType().equals(ChatMessage.Type.SAID)) {
 				       		CommandMessage cm=new CommandMessage(received);
@@ -68,12 +81,7 @@ public class SkyBot {
 				       		 *Utility.mf("messaggio ricevuto: "+mes);
 				       		 *received.getSender().send(">>>hai detto: "+mes);
 				       		 *received.getSender().send("risultati comando:\n");
-				       		 **/
-//				       		InputStream is = parseStringToIS(mes);
-//				       		
-//				       		InputStreamReader reader = new InputStreamReader (is);
-//				            BufferedReader myInput = new BufferedReader (reader);
-				       		
+				       		 **/				       		
 				           
 
 				       		Lexer l = new Lexer(new java.io.StringReader(mes+"\n")  );
@@ -108,21 +116,8 @@ public class SkyBot {
 				           }
 				       }
         	
-			        	 //from string to input stream
-			    public java.io.InputStream parseStringToIS(String str){
-			    	  if(str==null) return null;
-			    	  //str = str.trim();
-			    	  java.io.InputStream in = null;
-			    	  try{
-			    		  in = new java.io.ByteArrayInputStream(str.getBytes("UTF-8"));
-			    	  }catch(Exception ex){}
-			    	  return in;      
-			    	 }
         	
-        	
-        	
-        	
-				   };//fine chatmessage adapter;
+/*-----------*/};//fine chatmessage adapter;------------------------------------------------------------------
 				   
 				   
         Skype.addChatMessageListener(meslis);

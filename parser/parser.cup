@@ -77,15 +77,15 @@ parser code {:
 			array_file.add(x);
 	}
 
-	public void setEnviroment(String path)
+	public void setEnviroment(CommandEnv e)
 	{
-		enviroment.setCurrentPathString(path);
+		enviroment=e;
 		Utility.mf("CURRENT-PATH now is: " + enviroment.getCurrentPathString());
 	}
 
-	public String getEnviroment()
+	public CommandEnv getEnviroment()
 	{
-		return enviroment.getCurrentPathString();
+		return enviroment;
 	}
 
 	public void print_el(LinkedList<ICommand> ls)
@@ -224,8 +224,9 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						parser.appendOutput(parser.com.getCommandStringResult());
 						//Utility.mf(parser.com.getCommandStringResult());
 					}
-					else
+					else{
 						parser.list_script.add(parser.com);
+					}
 					//Utility.mf("AGGIUNGO ASSIST STMT: "+((s==null)?"null ":"no "+s.toString())); 
 					//if(parser.vm.extractVar(s.getName())!=null){
 					//	parser.vm.assig(s);
@@ -347,7 +348,11 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//y.setVM(parser.vm);
 						//parser.vm.add_var(y);						
 						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list);
-						
+						if(!parser.script_enabled){
+							ac.setDeclaration(true);
+							parser.com=ac;
+						}
+							
 						//Utility.mf("assig_stmt raccolto: "+x+"<--"+parser.token_list.toString());
 						parser.token_list = new ArrayList<String>();
 						RESULT = ac;
