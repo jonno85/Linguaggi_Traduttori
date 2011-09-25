@@ -113,41 +113,8 @@ public class ASCommand implements ICommand {
         
 	@Override
 	public boolean exec() throws CommandException {
-           result = null;
-            /*
-            myVar op1 = null;
-            myVar op2 = null;
-            
-                for(String s : exps){
-                    if(!isOperator(s))
-                        stack.push(s);
-                    else
-                    {
-                        op1 = tmp_manager.extractVar(stack.pop());
-                        if(!isUnaryOperator(s))
-                        {
-                            //operazione con 2 operandi
-                            try {
-                                op2 = tmp_manager.extractVar(stack.pop());
-                                result = tmp_manager.makeOper(op1, op2, s);
-                                tmp_manager.add_var(result);
-                                stack.push(result.getName());
-                            } catch (ParserException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                        else
-                        { 
-                            //operazione con 1 operando
-                            result = tmp_manager.makeSOper(op1, s);
-                            tmp_manager.add_var(result);
-                            stack.push(result.getName());
-                        }
-                        
-                    }
-                }
-                result= tmp_manager.extractVar(stack.pop());
-                */
+			result = null;
+
             res = new Resolver(manager, exps, "AS_tmp");
             result = res.exec();
             result.setName(var);
@@ -201,7 +168,10 @@ public class ASCommand implements ICommand {
 	@Override
 	public String getCommandStringResult() {
 		// TODO Auto-generated method stub
-		return result.getValue().toString();
+		if(declaration)
+			return result.getValue().toString()+"\n";
+		else
+			return "";
 	}
 
 	@Override

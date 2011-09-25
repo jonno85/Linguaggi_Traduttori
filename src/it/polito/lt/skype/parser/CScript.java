@@ -45,7 +45,7 @@ public class CScript implements ICommand {
 		{
 			Utility.mf("elemento: "+c.toString());
 			c.exec();
-			stringResult=stringResult+"\n"+c.getCommandStringResult();
+			stringResult=stringResult+""+c.getCommandStringResult();
 		}
 		return true;
 	}

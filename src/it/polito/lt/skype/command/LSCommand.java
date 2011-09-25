@@ -202,7 +202,7 @@ public class LSCommand implements ICommand {
     @Override
     public String getCommandStringResult() {
     	string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
-    	return string_result.toString();
+    	return string_result.toString()+"\n";
     }
 
     @Override

@@ -180,7 +180,7 @@ public class RMCommand implements ICommand{
     public String getCommandStringResult() {
         string_result = result.toString();
         string_result += "\nElementi eliminati: "+tot_elem;
-        return string_result;
+        return string_result+"\n";
     }
 
     @Override

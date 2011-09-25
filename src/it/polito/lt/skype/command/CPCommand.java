@@ -200,7 +200,7 @@ public class CPCommand implements ICommand{
     public String getCommandStringResult() {
         string_result = result.toString();
         string_result += "\nElementi copiati: "+tot_elem;
-        return string_result;
+        return string_result+"\n";
     }
 
     @Override

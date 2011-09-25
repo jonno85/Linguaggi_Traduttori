@@ -208,7 +208,7 @@ public class FINDCommand implements ICommand {
     public String getCommandStringResult() {
         
         /*  VERIFICARE  se creare il risultato al momento: necessita ordinare?*/
-        return string_result.toString();
+        return string_result.toString()+"\n";
     }
 
     @Override

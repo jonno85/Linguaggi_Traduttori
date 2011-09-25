@@ -117,7 +117,7 @@ public class PCommand implements ICommand {
 
 	@Override
 	public String getCommandStringResult() {
-		return result.getStringValue();
+		return result.getStringValue()+"\n";
 	}
 
 	@Override

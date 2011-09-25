@@ -181,7 +181,7 @@ public class MVCommand implements ICommand{
     public String getCommandStringResult() {
         string_result = Collections.synchronizedList(result).toString();
         string_result += "\nElementi spostati: "+tot_elem;
-        return string_result;
+        return string_result+"\n";
     }
 
     @Override

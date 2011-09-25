@@ -103,7 +103,7 @@ parser code {:
 	}
 	
 	public void appendOutput(String output){
-		this.output=this.output+"\n"+output;
+		this.output=this.output+""+output;
 	}
 	
 	public String getOutput(){

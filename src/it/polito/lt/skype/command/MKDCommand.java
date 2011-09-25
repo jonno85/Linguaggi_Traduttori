@@ -93,7 +93,7 @@ public class MKDCommand implements ICommand {
 
     @Override
     public String getCommandStringResult() {
-        return Collections.synchronizedList(pathResult).toString();
+        return Collections.synchronizedList(pathResult).toString()+"\n";
     }
 
     @Override
