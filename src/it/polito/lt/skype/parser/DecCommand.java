@@ -65,7 +65,7 @@ public class DecCommand implements ICommand {
 	@Override
 	public String getCommandStringResult() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override

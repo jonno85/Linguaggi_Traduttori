@@ -14,6 +14,7 @@ public class CScript implements ICommand {
 	private LinkedList<ICommand> list=null;
         private VarManager myVm = null;
 	private VarManager bak_myVm = null;
+	private String stringResult="";
 	
 	public CScript(LinkedList<ICommand> l, VarManager bak_vm)
 	{
@@ -44,6 +45,7 @@ public class CScript implements ICommand {
 		{
 			Utility.mf("elemento: "+c.toString());
 			c.exec();
+			stringResult=stringResult+"\n"+c.getCommandStringResult();
 		}
 		return true;
 	}
@@ -70,6 +72,7 @@ public class CScript implements ICommand {
 	}
 
 	@Override
+
 	public List<Path> getCommandResult() {
 		// TODO Auto-generated method stub
 		return null;
@@ -78,7 +81,7 @@ public class CScript implements ICommand {
 	@Override
 	public String getCommandStringResult() {
 		// TODO Auto-generated method stub
-		return null;
+		return stringResult;
 	}
 
 	@Override

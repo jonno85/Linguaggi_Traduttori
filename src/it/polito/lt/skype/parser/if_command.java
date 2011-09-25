@@ -69,12 +69,12 @@ public class if_command implements ICommand, IFlowCommandControl{
 //        Utility.mf("BLOCCO COMANDI IF: "+ inside_command.toString());
 //        Utility.mf("LISTA IF ELSE vuota?: "+((inside_command_else!=null)?"no":"si"));
 //        Utility.mf("BLOCCO COMANDI ELSE: "+ inside_command_else.toString());
-        Iterator it = inside_command.iterator();
-        while (it.hasNext()) {
-            ICommand c = (ICommand) it.next();
-            c.toString();
-            
-        }
+//        Iterator it = inside_command.iterator();
+//        while (it.hasNext()) {
+//            ICommand c = (ICommand) it.next();
+//            c.toString();
+//            
+//        }
     }
 
     // IF EXEC
@@ -107,48 +107,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 }
             }
         }
-    /*	if(condition.getType()==1){
-    		if((Integer)condition.getValue()==0){
-    			for(ICommand c : inside_command){
-    	            try {
-    	                c.exec();
-    	            } catch (CommandException ex) {
-    	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-    	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-    	                        "IF recursive Exception: "+ex.getMessage(), null);
-    	            }
-    	        }
-    		}else
-    			exec_alter_flow_command();
-    	}
-    	if(condition.getType()==2){
-    		if((Float)condition.getValue()==0.0){
-                    for(ICommand c : inside_command){
-                        try {
-                            c.exec();
-                        } catch (CommandException ex) {
-                            throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-                                    Thread.currentThread().getStackTrace()[2].getMethodName(),
-                                    "IF recursive Exception: "+ex.getMessage(), null);
-                        }
-                    }
-    		}else
-    			exec_alter_flow_command();
-    	}
-    	if(condition.getType()==5){
-    		if((Boolean)condition.getValue()){
-    			for(ICommand c : inside_command){
-    	            try {
-    	                c.exec();
-    	            } catch (CommandException ex) {
-    	                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-    	                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-    	                        "IF recursive Exception: "+ex.getMessage(), null);
-    	            }
-    	        }
-    		}else
-    			exec_alter_flow_command();
-    	}*/
+  
     	return true;
     }
 
@@ -174,7 +133,7 @@ public class if_command implements ICommand, IFlowCommandControl{
 
     @Override
     public String getCommandStringResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "";
     }
 
     @Override

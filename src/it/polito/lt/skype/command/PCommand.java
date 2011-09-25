@@ -18,6 +18,7 @@ public class PCommand implements ICommand {
     private ArrayList<String> exps=null;
 	private VarManager tmp_manager;
 	private Stack<String> stack;
+	private myVar result = null;	
         
         public PCommand(ArrayList<String> token_list, VarManager vm){
 		
@@ -34,7 +35,7 @@ public class PCommand implements ICommand {
 	
 	@Override
 	public boolean exec() throws CommandException {
-            myVar result = null;	
+            
             myVar op1 = null;
             myVar op2 = null;
         
@@ -116,7 +117,7 @@ public class PCommand implements ICommand {
 
 	@Override
 	public String getCommandStringResult() {
-		return null;
+		return result.getStringValue();
 	}
 
 	@Override

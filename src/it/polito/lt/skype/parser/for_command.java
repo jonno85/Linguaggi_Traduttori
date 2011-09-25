@@ -76,7 +76,7 @@ public class for_command implements ICommand, IFlowCommandControl{
 
     @Override
     public void print_parameters() {
-        /*Utility.mf("print PARAMETERS");
+        Utility.mf("print PARAMETERS");
         Utility.mf("start: "+
                 ((start!=null)?start.getStringValue():"null")+
                 "\nend: "+
@@ -88,7 +88,7 @@ public class for_command implements ICommand, IFlowCommandControl{
             ICommand c = (ICommand) it.next();
             c.toString();
             
-        }*/
+        }
     }
 
     @Override
@@ -154,7 +154,7 @@ public class for_command implements ICommand, IFlowCommandControl{
 
     @Override
     public String getCommandStringResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return"";
     }
 
     @Override

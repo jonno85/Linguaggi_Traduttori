@@ -103,7 +103,7 @@ parser code {:
 	}
 	
 	public void appendOutput(String output){
-		this.output=this.output+output;
+		this.output=this.output+"\n"+output;
 	}
 	
 	public String getOutput(){
@@ -182,6 +182,7 @@ start_s			::= Start_S File:s EL
 throw_s		::= Throw_S File	{:
 					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
 					parser.csc.exec();
+					parser.appendOutput(parser.csc.getCommandStringResult());
 					//Utility.mf("LANCIA SCRIPT");
 					:}
 ;
@@ -350,9 +351,9 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list);
 						if(!parser.script_enabled){
 							ac.setDeclaration(true);
-							parser.com=ac;
-						}
 							
+						}
+						parser.com=ac;	
 						//Utility.mf("assig_stmt raccolto: "+x+"<--"+parser.token_list.toString());
 						parser.token_list = new ArrayList<String>();
 						RESULT = ac;
