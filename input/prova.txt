@@ -6,7 +6,7 @@ print $b
 
 foreach $a 1 21 do
 	$b=$a/2
-$resto = $a-2*$b   
+	$resto = $a-2*$b   
 	print 'ora resto è: '+$resto
 	print 'ora a è: '+$a
 	mkdir lt
