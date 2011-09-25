@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserException;
@@ -44,24 +45,37 @@ public class PCommand implements ICommand {
                      stack.push(s);
                  else
                  {
-                     op2 = tmp_manager.extractVar(stack.pop());
-                     op1 = tmp_manager.extractVar(stack.pop());
+                     try {
+						op2 = tmp_manager.extractVar(stack.pop());
+					} catch (ManagerException e) {
+						throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
+	                            Thread.currentThread().getStackTrace()[2].getMethodName(),
+	                            "PCommand FAIL: "+e.getMessage(), e);
+					}
+                     try {
+						op1 = tmp_manager.extractVar(stack.pop());
+					} catch (ManagerException e) {
+						throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
+	                            Thread.currentThread().getStackTrace()[2].getMethodName(),
+	                            "PCommand FAIL: "+e.getMessage(), e);
+					}
                      //Utility.mf("print: "+op1+" "+op2); 
                      //operazione con 2 operandi
-                         try {
+
                              result = tmp_manager.makeOper(op1, op2, s);
                             // Utility.mf("print: "+op1+" "+op2);
                              //Utility.mf("print: "+result);
                              tmp_manager.add_var(result);
                              stack.push(result.getName());
-                         } catch (ParserException ex) {
-                             ex.printStackTrace();
-                         }
-                     }
-                     
-                       
+                     }    
              }
-             result= tmp_manager.extractVar(stack.pop());
+             try {
+				result= tmp_manager.extractVar(stack.pop());
+			} catch (ManagerException e) {
+				throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
+                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+                        "PCommand FAIL: "+e.getMessage(), e);
+			}
              Utility.mf("# "+result.getStringValue());
              
              return true;

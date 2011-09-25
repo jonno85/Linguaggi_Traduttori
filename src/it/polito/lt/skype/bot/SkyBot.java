@@ -25,6 +25,7 @@ package it.polito.lt.skype.bot;
 
 
 import it.polito.lt.skype.command.CommandEnv;
+import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.generated.parser.*;
 
@@ -71,11 +72,10 @@ public class SkyBot {
         				
 				       	Utility.mf("\n"+received.getType());
 				       	if (received.getType().equals(ChatMessage.Type.SAID)) {
-				       		CommandMessage cm=new CommandMessage(received);
+				       		//CommandMessage cm=new CommandMessage(received);
 				       		
 				       		String mes=received.getContent();
-				      		  Utility.mf("messaggio ricevuto: "+mes);
-				       		Utility.mf("messaggio ricevuto da"+cm.getChatMessage().getSenderId());
+				       		Utility.mf("messaggio ricevuto da"+received.getSenderId()+"\n"+mes);
 				       		
 				       		/*String mes=received.getContent();
 				       		 *Utility.mf("messaggio ricevuto: "+mes);
@@ -94,18 +94,25 @@ public class SkyBot {
 							/* Avvio il parser */
 							try {
 								Object result = p.parse();
-								received.getSender().send(p.getOutput());
+								received.getSender().send(":)\n" + p.getOutput());
 							} 
+							catch (CommandException e) 
+							{
+								received.getSender().send("(blush) "+e.getMessage());
+								// TODO Auto-generated catch block
+								Utility.mf("COMMAND FAIL->"+e.getMessage());
+								//System.out.println(myInput.toString());
+								e.printStackTrace();
+							
+							}
 							catch (Exception e) 
 							{
-								
 								// TODO Auto-generated catch block
-								Utility.mf("FALLITO: "+e.getMessage());
-								//System.out.println(myInput.toString());
+								Utility.mf("FAIL: "+e.getMessage()+" "+e.getLocalizedMessage());
 								e.printStackTrace();
 							}
 							//p.debug_parse();
-							Utility.mf("finito");
+							Utility.mf("DONE");
 				      	     
 				           	
 				           	//parsing comando

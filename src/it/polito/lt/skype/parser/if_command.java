@@ -5,6 +5,7 @@ import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 
@@ -81,7 +82,13 @@ public class if_command implements ICommand, IFlowCommandControl{
     @Override
     public boolean exec() throws CommandException {
         ris = new Resolver(manager, token_list, "if_tmp_");
-        condition = ris.exec();
+        try {
+			condition = ris.exec();
+		} catch (ManagerException e) {
+			throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+                    "IFCommand FAIL: " +e.getMessage(),e);
+		}
         //Utility.mf("CONDIZIONE IF: "+condition);
         if(((Boolean)condition.getValue()).booleanValue()){
             for(ICommand c : inside_command){
@@ -91,7 +98,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),
-                            "IF recursive Exception: "+ex.getMessage(), null);
+                            "IF recursive Exception: "+ex.getMessage());
                 }
             }
         }
@@ -103,7 +110,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),
-                            "IF recursive Exception: "+ex.getMessage(), null);
+                            "IF recursive Exception: "+ex.getMessage());
                 }
             }
         }

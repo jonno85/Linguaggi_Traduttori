@@ -5,6 +5,7 @@ import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 
@@ -91,44 +92,62 @@ public class for_command implements ICommand, IFlowCommandControl{
         }
     }
 
-    @Override
-    public boolean exec() throws CommandException {
-    	//fissiamo gli estremi
-     	index = common_vm.extractVar(index_name);
+    public void extractVars() throws ManagerException
+    {
+    	index = common_vm.extractVar(index_name);
     	index.setValue(common_vm.extractVar(start_name).getValue());
         start = common_vm.extractVar(start_name);
         end = common_vm.extractVar(end_name);
         step=common_vm.extractVar(step_name);
-        if(common_vm.isPos(step_name)){
-           //Utility.mf("for exec: "+index+" "+end+" "+step);
-           //Utility.mf("FOR COMMAND LIST: "+inside_command.toString());
-            while(((Boolean)common_vm.makeLogicOper(index, end, "!=").getValue()).booleanValue())
-            {
-            	index = common_vm.extractVar(index_name);
-            	start = common_vm.extractVar(start_name);
-                end = common_vm.extractVar(end_name);
-                step=common_vm.extractVar(step_name);
-                
-                for(ICommand c : inside_command){
-                    try {
-                    	//Utility.mf("step: "+ common_vm.extractVar(index_name));
-                        c.exec();
-                    } catch (CommandException ex) {
-                        throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
-                                Thread.currentThread().getStackTrace()[2].getMethodName(),
-                                "FOR recursive Exception: "+ex.getMessage(), null);
-                    }
-                }
-                //aggiornamento indice
-                try {
-					index.setValue(common_vm.makeOper(index, step,"+").getValue());
-					common_vm.assig(index);
-				} catch (ParserException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-        }
+    }
+    
+    @Override
+    public boolean exec() throws CommandException {
+    	//fissiamo gli estremi
+     	try {
+			extractVars();
+		} catch (ManagerException e1) {
+			throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
+                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+                    "ForCommand FAIL: "+e1.getMessage(), e1);
+		}
+        try {
+			if(common_vm.isPos(step_name)){
+			   //Utility.mf("for exec: "+index+" "+end+" "+step);
+			   //Utility.mf("FOR COMMAND LIST: "+inside_command.toString());
+			    while(((Boolean)common_vm.makeLogicOper(index, end, "!=").getValue()).booleanValue())
+			    {
+			    	index = common_vm.extractVar(index_name);
+			    	start = common_vm.extractVar(start_name);
+			        end = common_vm.extractVar(end_name);
+			        step=common_vm.extractVar(step_name);
+			        
+			        for(ICommand c : inside_command){
+			            try {
+			            	//Utility.mf("step: "+ common_vm.extractVar(index_name));
+			                c.exec();
+			            } catch (CommandException ex) {
+			                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+			                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+			                        "FOR recursive Exception: "+ex.getMessage(), ex);
+			            }
+			        }
+			        //aggiornamento indice
+			        try {
+						index.setValue(common_vm.makeOper(index, step,"+").getValue());
+						common_vm.assig(index);
+					} catch (ManagerException e) {
+						throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
+			                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+			                    "FOR recursive Exception: "+e.getMessage(), e);
+					}
+			    }
+			}
+		} catch (ManagerException e) {
+			throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
+                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+                    "ForCommand FAIL: "+e.getMessage(), e);
+		}
         return true;
     }
 

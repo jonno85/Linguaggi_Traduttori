@@ -152,7 +152,7 @@ public class CPCommand implements ICommand{
                 
                 CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
-                		ex.getMessage(), null);
+                		ex.getMessage());
                 Utility.mf(ce);
               throw ce;
             }

@@ -150,7 +150,7 @@ public class MVCommand implements ICommand{
     }
 
     @Override
-    public void setCommandParameter(CommandParameter[] cpl) {
+    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
        Utility.mf("dentro setcommandparameter" );
        if (cpl.length==7||params[2]!=null)
        {
@@ -167,9 +167,12 @@ public class MVCommand implements ICommand{
     } 
 
 
-       else
-           Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
-                   Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception"));
+       else{
+    	   ParserException pe=new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
+                   Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception");
+    	   Utility.mf(pe);
+    	   throw pe;
+       }
     } 
 
     @Override
@@ -220,7 +223,9 @@ public class MVCommand implements ICommand{
                         tot_elem++;
                     }
                 } catch (IOException ex) {
-                    throw new CommandException(CommandErrorType.MOVE_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "MV recursive Exception: "+ex.getMessage(), null);
+                    throw new CommandException(CommandErrorType.MOVE_ERROR,this.getClass().getName(),
+                    		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                    		"MV recursive Exception: "+ex.getMessage(), ex);
                 }
             }
         }

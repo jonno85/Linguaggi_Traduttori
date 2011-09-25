@@ -49,7 +49,7 @@ public class VarManager{
     }
 	
 	public void add_var(myVar var){
-                //if(var_tb.get(var.getName())!=null)
+                
                 //    Utility.mf("valore PRIMA di aggiornare " + (var_tb.get(var.getName())).getStringValue());
 		var_tb.put(var.getName(),var);	
                 //if(var_tb.get(var.getName())!=null)
@@ -60,22 +60,7 @@ public class VarManager{
             //var_tb.put(var.getName(),var);	
             //Utility.mf("add_var(): "+var.getName()+" = "+var.getStringValue());
             
-            /*
-                myVar tmpOp1, tmpOp2;
-                if(var.getOperation()!=null){
-                    tmpOp1 = var.getOperation().getOp(1);
-                    tmpOp2 = var.getOperation().getOp(2);
-                    if("".equals(tmpOp1.getName())){
-                        tmpOp1.setName(getTempName());
-                        add_var(tmpOp1);
-                    }
-                    if("".equals(tmpOp2.getName())){
-                        tmpOp2.setName(getTempName());
-                        add_var(tmpOp2);
-                    }
-                }
-                 
-                 */
+            
             //***************************************************/
                 //Utility.mf(var.getName()+" stored"); 
 	}
@@ -89,35 +74,49 @@ public class VarManager{
 			//Utility.mf("Variabile " +app.getName()+" Tipo " +app.getType());
 		}
 	}
-	public void assig(myVar var){
+	public void assig(myVar var) throws ManagerException{
 		if((app = extractVar(var.getName()))!=null){
                     if(chkType(app,var)||app.getType()==myVar._notInit){
                             add_var(var);
                             //Utility.mf("Assegnazione: "+var.getName()+" = "+var.getStringValue());
                     }
                     else{
-                        Utility.mf("operazione interna trovta: ");
-                            //Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
+                        Utility.mf("variabile: "+var.getName()+" DICHIARATA MA TIPO NON CORRISPONDENTE");
+                        throw new ManagerException(ManagerErrorType.TYPE_MISMATCH, this.getClass().getName(),
+                                Thread.currentThread().getStackTrace()[2].getMethodName(),
+                                "["+var.getName()+"]: RIGHT MEMBER TYPE MISMATCH", null);
                     }
                 }
                 else{    //variabile non dichiarata o senza nome
-			Utility.mf("variabile: "+var.getName()+" NON DICHIARATA");
+				Utility.mf("variabile: "+var.getName()+" NON DICHIARATA");
+				throw new ManagerException(ManagerErrorType.UNDECLARED, this.getClass().getName(),
+	                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+	                    "["+var.getName()+"]: UNDECLARED", null);
                 }
 	}
 
-	public myVar extractVar(String name){
+	public myVar extractVar(String name) throws ManagerException{
 		//Utility.mf("ExctractVar(): "+name);
 		//restituisce la variabile che contiene il risultato intermedio
 		//if(name.compareToIgnoreCase("")==0)
 		//	return ris_inter;			
 		//restituisce la variabile se definita nella tabella delle variabili
-		if(mainManager!=null)
-			if(mainManager.extractVar(name)!=null)
-               return mainManager.extractVar(name);
-        return ((myVar)var_tb.get(name));
+		myVar e =null;
+		e=var_tb.get(name);
+		if(e==null){
+			if(mainManager!=null){
+	              e = mainManager.extractVar(name);
+				}
+				else
+					throw new ManagerException(ManagerErrorType.UNDECLARED, this.getClass().getName(),
+		                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+		                    "["+name+"]: UNDECLARED",null);
+		}
+		return e;
+         
 	}
 
-        public boolean isPos(String name){
+        public boolean isPos(String name) throws ManagerException{
              myVar a = extractVar(name);
         	if(a.getType()==1){
                     if((Integer)a.getValue()>=0)  
@@ -139,10 +138,15 @@ public class VarManager{
 	public boolean chkVar(myVar a){
 		boolean c = true;
 		if(a.getName()!=null)
-			if(extractVar(a.getName())==null)
-				if(mainManager!=null)
-					if(mainManager.extractVar(a.getName())==null)
-						c = false;
+			try {
+				if(extractVar(a.getName())==null)
+					if(mainManager!=null)
+						if(mainManager.extractVar(a.getName())==null)
+							c = false;
+			} catch (ManagerException e) {
+				Utility.mf("Check var failed");
+				c=false;
+			}
 		return c;
 	}
 
@@ -159,7 +163,7 @@ public class VarManager{
             return ris_inter;
 	}
 
-	public myVar makeOper(myVar a, myVar b, String segno) throws ParserException{
+	public myVar makeOper(myVar a, myVar b, String segno) {
             myVar x = new myVar();
 			myVar y = new myVar();
 			x.set(a);
@@ -179,7 +183,7 @@ public class VarManager{
             return ris_inter;
 	}
         
-        public String Auto_Neg(String name,String segno){
+        public String Auto_Neg(String name,String segno) throws ManagerException{
                 myVar a =extractVar(name);                		
         		
                 if(segno.equalsIgnoreCase("-"))

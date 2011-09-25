@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 
-public class Operation implements ICommand{
+public class Operation {
 	private myVar result;
 	private boolean bool_result;
         private myVar op1 = null;
@@ -50,17 +50,15 @@ public class Operation implements ICommand{
                         ||sign.equalsIgnoreCase("==")||sign.equalsIgnoreCase("!="))
         		return makeLogicOper(a, b, sign);
         	else {
-                    try {
+                   
                         return makeNumOper(a, b, sign);
-                    } catch (ParserException ex) {
-                        ex.printStackTrace();
-                    }
+                    
         	}
-                return null;
+                
         }
         
        
-        public myVar makeNumOper(myVar a, myVar b, String segno) throws ParserException{
+        public myVar makeNumOper(myVar a, myVar b, String segno) {
         	//Utility.mf("MAKE NUM OPERATION "+a.toString()+" "+segno+" "+b.toString() );
 				switch(a.getType()){
                                     case 1: {
@@ -88,9 +86,9 @@ public class Operation implements ICommand{
                                     default: return null;
 				
 			}
-			if(result==null)
-				throw new ParserException(ParserErrorType.INVALID_PARAMETER, this.getClass().getName(),
-                   Thread.currentThread().getStackTrace()[2].getMethodName(), "Opeation problem");
+//			if(result==null)
+//				throw new ParserException(ParserErrorType.INVALID_PARAMETER, this.getClass().getName(),
+//                   Thread.currentThread().getStackTrace()[2].getMethodName(), "Opeation problem");
 				//result.setOperation(new Operation(a,b,segno,this.myVm));
 			return result;
         }
@@ -290,62 +288,5 @@ public class Operation implements ICommand{
 	}
 	
 
-    @Override
-    public boolean exec() throws CommandException {
-       /*
-        if(myVm==null){
-            Utility.mf("CUIDADO varmanager nullo");     
-        }
-        else{
-            op1 = myVm.extractVar(op1.getName());
-        }
-        Utility.mf("op1: "+op2.getName()+" op1 value: "+op1.getStringValue());
-       if(op2==null){
-    	   Utility.mf("EXEC: valori "+op1.toString());
-    	   result=BNoper();
-       }
-       else{
-           Utility.mf("op2: "+op2.getName()+" op2 value: "+op2.getStringValue());
-           op2 = myVm.extractVar(op2.getName());
-           Utility.mf("EXEC2op: valori "+op1.toString()+" "+op2.toString());
-    	   
-		result = makeOper();
-            
-       }
-        * 
-        */
-       return true;
-    	   
-    }
-
-    @Override
-    public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCommandParameter(CommandParameter[][] cpl) throws ParserException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Path> getCommandResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String getCommandStringResult() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void usage() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
         
 }

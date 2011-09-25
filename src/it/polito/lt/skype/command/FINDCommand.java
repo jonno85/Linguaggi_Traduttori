@@ -72,7 +72,7 @@ public class FINDCommand implements ICommand {
          *          6 = []parametri
          */
         
-        public void recursive_cmd() throws CommandException, ParserException{
+        public void recursive_cmd() throws CommandException{
         	int i=1;
         	for(Path curr_path : pathResult){
         		ICommand rec_cmd=FileEngine.iCommandFromString(params[5][0].getValue(),env);
@@ -81,7 +81,12 @@ public class FINDCommand implements ICommand {
         		dyn_param=params[6].clone();
         		dyn_param[2]=new CommandParameter(ParamType.PATH, curr_path.toString(), null) ;
         		//dyn_param[3]=params[6][3];
-        		rec_cmd.setCommandParameter(dyn_param);
+        		try {
+					rec_cmd.setCommandParameter(dyn_param);
+				} catch (ParserException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
         		rec_cmd.exec();
         		//controllare la stampa
         		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
@@ -133,16 +138,15 @@ public class FINDCommand implements ICommand {
             catch (IOException | DirectoryIteratorException ex) {
                 //IOException can never be thrown by the iteration.
                 //In this snippet, it can only be thrown by newDirectoryStream.
-                throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "FIND recursive Exception: "+ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		"FIND recursive Exception: "+ex.getMessage());
             }
             //sorting risultati
             Collections.sort(string_result);
-            try {
+            
                 if(doRecursive)
                 	recursive_cmd();
-            } catch (ParserException ex) {
-                Utility.mf(ex);
-            }
             return true;
             
 	}

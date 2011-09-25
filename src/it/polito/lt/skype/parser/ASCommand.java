@@ -5,7 +5,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import it.polito.lt.skype.command.*;
-import it.polito.lt.skype.command.ICommand;
+import it.polito.lt.skype.manager.ManagerErrorType;
+import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.Operation;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
@@ -112,18 +113,25 @@ public class ASCommand implements ICommand {
 	
         
 	@Override
-	public boolean exec() throws CommandException {
+	public boolean exec() throws CommandException{
 			result = null;
-
-            res = new Resolver(manager, exps, "AS_tmp");
-            result = res.exec();
-            result.setName(var);
-           // Utility.mf("nome "+result.getName()+" valore finale: "+result.getStringValue());
-
-            if(declaration)
-                manager.add_var(result);
-            else
-                manager.assig(result);
+			try {
+	            res = new Resolver(manager, exps, "AS_tmp");
+	            result = res.exec();
+	            result.setName(var);
+	           // Utility.mf("nome "+result.getName()+" valore finale: "+result.getStringValue());
+	
+	            if(declaration)
+	                manager.add_var(result);
+				else
+					manager.assig(result);
+	            
+			} catch (ManagerException e) {
+				// TODO Auto-generated catch block
+				throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
+                        Thread.currentThread().getStackTrace()[2].getMethodName(),
+                        "ASCommand FAIL: "+e.getMessage(), e);
+			}
 
             return true;
 	}

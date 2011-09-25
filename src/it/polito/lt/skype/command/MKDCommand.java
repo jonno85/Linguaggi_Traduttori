@@ -59,7 +59,7 @@ public class MKDCommand implements ICommand {
                 } catch (IOException ex) {
                     throw new CommandException(CommandErrorType.MAKE_DIR_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),
-                            "MKD recursive Exception: "+ex.getMessage(), null);
+                            "MKD Exception: "+ex.getMessage(),ex);
                 }
             }
 

@@ -102,7 +102,9 @@ public class LSCommand implements ICommand {
         	    }          
 		} 
 		catch (IOException | DirectoryIteratorException ex) {
-		    throw new CommandException(CommandErrorType.LIST_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "LS recursive Exception: "+ex.getMessage(), null);
+		    throw new CommandException(CommandErrorType.LIST_ERROR,this.getClass().getName(),
+		    		Thread.currentThread().getStackTrace()[2].getMethodName(),
+		    		"LS recursive Exception: "+ex.getMessage(),ex);
 		}
 		//sorting risultati
                 Collections.sort(string_result);
@@ -128,7 +130,7 @@ public class LSCommand implements ICommand {
 	}
 
 	@Override
-	public void setCommandParameter(CommandParameter[] cpl) {
+	public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
 			Utility.mf("LS SETCOMMANDPARAMETER:");
             for(int i=0; i<7;i++)
             	if(cpl[i]!=null)
@@ -182,9 +184,13 @@ public class LSCommand implements ICommand {
                    Utility.mf("ESTRATTI: "+pattern+" "+position);
                 
             }
-            else
-                Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
-                   Thread.currentThread().getStackTrace()[2].getMethodName(), "LS Parameter Exception"));
+            else{
+            ParserException pe= 	new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
+                        Thread.currentThread().getStackTrace()[2].getMethodName(), "LS Parameter Exception");
+             Utility.mf(pe);
+            throw pe;    
+           
+            }
 	}
 	
 	
@@ -222,7 +228,7 @@ public class LSCommand implements ICommand {
                     filterAddResult(file);
                 }
             } catch (IOException ex) {
-                throw new CommandException(CommandErrorType.LIST_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.LIST_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), ex.getMessage());
             }
         }
         Collections.sort(string_result);

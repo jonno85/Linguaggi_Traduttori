@@ -5,6 +5,7 @@
 package it.polito.lt.skype.parser;
 
 import it.polito.lt.skype.command.Utility;
+import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.Operation;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
@@ -86,7 +87,7 @@ public class Resolver {
             return false;
         }
 
-	public myVar exec(){
+	public myVar exec() throws ManagerException{
             myVar op1 = null;
             myVar op2 = null;
             myVar result = null;
@@ -103,16 +104,14 @@ public class Resolver {
                         if(!isUnaryOperator(s))
                         {
                             //operazione con 2 operandi
-                            try {
+                            
                             	
                                 op2 = tmp_manager.extractVar(stack.pop());
                                // Utility.mf("RESOLVE: OP2: "+op2);
                                 result = tmp_manager.makeOper(op1, op2, s);
                                 tmp_manager.add_var(result);
                                 stack.push(result.getName());
-                            } catch (ParserException ex) {
-                                ex.printStackTrace();
-                            }
+                            
                         }
                         else
                         { 

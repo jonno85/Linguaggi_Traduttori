@@ -7,7 +7,8 @@ public enum CommandErrorType {
 	MOVE_ERROR(3),
 	REMOVE_ERROR(4),
 	MAKE_DIR_ERROR(5),
-        STATEMENT_ERROR(6);
+    STATEMENT_ERROR(6),
+    ASSIG_ERROR(7);
 	
 	private int code;
 	private CommandErrorType(int a)

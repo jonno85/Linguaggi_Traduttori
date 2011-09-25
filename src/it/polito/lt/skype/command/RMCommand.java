@@ -134,7 +134,9 @@ public class RMCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 //File permission problems are caught here.
-                throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),Thread.currentThread().getStackTrace()[2].getMethodName(), "RM recursive Exception: "+ex.getMessage(), null);
+                throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
+                		Thread.currentThread().getStackTrace()[2].getMethodName(),
+                		"RM recursive Exception: "+ex.getMessage(), ex);
             }
         }
         
@@ -164,11 +166,13 @@ public class RMCommand implements ICommand{
             	paramPath=Paths.get("/*");
             }
        }
-       else
-           System.err.println("Missing parameter");
-       Utility.mf(new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
+       else{
+    	   	
+        	CommandException ce=new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
     		   Thread.currentThread().getStackTrace()[2].getMethodName(),
-    		   	"Missing parameter", null));
+    		   	"Missing parameter");
+        	Utility.mf(ce);
+       }
     } 
 
     @Override

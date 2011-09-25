@@ -66,7 +66,7 @@ parser code {:
 
 	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
 
-	public String output="#\n";	
+	public String output="";	
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
