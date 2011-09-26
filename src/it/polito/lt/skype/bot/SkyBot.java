@@ -81,7 +81,14 @@ public class SkyBot {
 				       		 *Utility.mf("messaggio ricevuto: "+mes);
 				       		 *received.getSender().send(">>>hai detto: "+mes);
 				       		 *received.getSender().send("risultati comando:\n");
-				       		 **/				       		
+				       		 **/	
+				       		if(mes.equalsIgnoreCase("QUIT")){
+				       			Skype.removeChatMessageListener(this);
+				       			received.getSender().send("(wave) BOT CLOSED!");
+				       			System.out.println("bot eliminato");
+				       			System.exit(0);
+				       		}
+				       			
 				           
 
 				       		Lexer l = new Lexer(new java.io.StringReader(mes+"\n")  );
@@ -109,6 +116,7 @@ public class SkyBot {
 							{
 								// TODO Auto-generated catch block
 								Utility.mf("FAIL: "+e.getMessage()+" "+e.getLocalizedMessage());
+								received.getSender().send("(blush) "+e.getMessage());
 								e.printStackTrace();
 							}
 							//p.debug_parse();
