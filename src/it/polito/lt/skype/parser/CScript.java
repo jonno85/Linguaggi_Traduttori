@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.lt.skype.command.CommandErrorType;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
 import it.polito.lt.skype.command.ICommand;
@@ -41,13 +42,20 @@ public class CScript implements ICommand {
 	@Override
 	public boolean exec() throws CommandException {
 		Utility.mf("lista exec: "+list.toString());
-		for(ICommand c: list)
-		{
-			Utility.mf("elemento: "+c.toString());
-			c.exec();
-			stringResult=stringResult+""+c.getCommandStringResult();
+		try {
+			for(ICommand c: list)
+			{
+				Utility.mf("elemento: "+c.toString());
+				c.exec();
+				stringResult=stringResult+""+c.getCommandStringResult();
+			}
+			return true;
+		} catch (NullPointerException ex) {
+			// TODO Auto-generated catch block
+			throw new CommandException (CommandErrorType.LIST_ERROR,this.getClass().getName(),
+		    		Thread.currentThread().getStackTrace()[2].getMethodName(),
+		    		"CScript recursive Exception: "+ex.getMessage(),ex);
 		}
-		return true;
 	}
 
 	@Override

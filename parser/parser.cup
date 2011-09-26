@@ -109,6 +109,18 @@ parser code {:
 	public String getOutput(){
 		return this.output;
 	}
+
+	public void syntax_error(Symbol simbolo_attuale){
+		StringBuffer m = new StringBuffer("Syntax Error: ");	
+		if(simbolo_attuale.left!=-1){
+			m.append((simbolo_attuale.left+1));	
+			m.append("("+(simbolo_attuale.right+1)+")");	
+		}
+		m.append(", symbol: " + (simbolo_attuale));
+		appendOutput("(wait) "+m.toString());
+	}
+	
+	
 				
 	
 :}
@@ -364,7 +376,11 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//RESULT = vx;
 						//Utility.mf("fine da arit_stmt a assig_stmt");
 						:}
-//		| Var:x				{:RESULT = new myVar(x,parser.vm);:}
+		| Var:x	C_Ug error		{:
+						parser.appendOutput(" syntax error in assig_stmt\n");
+						parser.report_error(" syntax error in assig_stmt\n",null);
+
+						:}
 ;
 
 
@@ -391,6 +407,11 @@ init_stmt	::=  Com_Str assig_stmt:x
 		| init_stmt Var:x
 						{:
 						parser.vm.add_var(new myVar(x,parser.vm)); //Utility.mf("var: "+x.toString());
+						:}
+		| init_stmt error		{:
+						parser.appendOutput(" syntax error in init_stmt\n");
+						parser.report_error(" syntax error in init_stmt\n",null);
+						
 						:}
 ;
 
@@ -424,17 +445,19 @@ arit_stmt	::= Minus:s arit_stmt:x
 		{:
 			parser.token_list.add(s);
 		:}
-		| arit_arg:x
-		{:
-		parser.token_list.add(x);
-		RESULT = x;
-			//System.out.println("da arit_arg a arit_stmt");
-		:}
+		| arit_arg:x		{:
+					parser.token_list.add(x);
+					RESULT = x;
+						//System.out.println("da arit_arg a arit_stmt");
+					:}
 		| RO arit_stmt:x RC
-		| C_Not:s arit_stmt:x
-		{:
-		parser.token_list.add("!!");
-		:}%prec C_Not
+		| C_Not:s arit_stmt:x		{:
+						parser.token_list.add("!!");
+						:}%prec C_Not
+		| RO error RC		{:
+						parser.appendOutput(" syntax error in arit_stmt\n");
+						parser.report_error(" syntax error in arit_stmt\n",null);
+					:}
 ;
 //qui logic erano
 // ***************** argomenti che subiscono un'operazione 
@@ -465,7 +488,21 @@ param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 // ***************** statement relativi ai comandi
 
 sh_stmt		::= commands_double_param:c param:p param:q  {: parser.cp[2]=p; parser.cp[3]=q;:}
+		|commands_double_param error param:q	{:
+							parser.appendOutput(" parameter 0 error in sh_stmt\n");
+							parser.report_error(" parameter 0 error in sh_stmt\n",null);
+							:}	
+		|commands_double_param  param:p error	{:
+							parser.appendOutput(" parameter 1 error in sh_stmt\n");
+							parser.report_error(" parameter 1 error in sh_stmt\n",null);
+							:}	
+
 		| commands param:p	{: parser.cp[2]=p; :}
+		| commands error	{:
+					parser.appendOutput(" parameter error in sh_stmt\n");
+					parser.report_error(" parameter error in sh_stmt\n",null);
+					:}	
+
 		| LS_stmt
 		
 ;
@@ -525,6 +562,12 @@ LS_stmt		::= Com_Ls		{:
 		| LS_stmt param:p 	{: parser.cp[2]=p; :}
 		
 		| LS_stmt i_cc_conds
+		
+		| LS_stmt error		{:
+					parser.appendOutput(" parameter  error in LS_stmt\n");
+					parser.report_error(" parameter  error in LS_stmt\n",null);
+					:}	
+
 		
 ;
 

@@ -105,6 +105,7 @@ public class SkyBot {
 							} 
 							catch (CommandException e) 
 							{
+								received.getSender().send("\n" + p.getOutput());
 								received.getSender().send("(blush) "+e.getMessage());
 								// TODO Auto-generated catch block
 								Utility.mf("COMMAND FAIL->"+e.getMessage());
@@ -116,6 +117,7 @@ public class SkyBot {
 							{
 								// TODO Auto-generated catch block
 								Utility.mf("FAIL: "+e.getMessage()+" "+e.getLocalizedMessage());
+								received.getSender().send("\n" + p.getOutput());
 								received.getSender().send("(blush) "+e.getMessage());
 								e.printStackTrace();
 							}
