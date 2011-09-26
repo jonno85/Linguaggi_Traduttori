@@ -30,6 +30,7 @@ public class if_command implements ICommand, IFlowCommandControl{
     private Resolver ris = null;
     private VarManager manager = null;
     private ArrayList<String> token_list = null;
+	private String stringResult="";
     
     
     public if_command(VarManager manager, ArrayList token_list)
@@ -95,6 +96,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 try {
                     //Utility.mf("Command if exec() iterator: "+c.toString());
                     c.exec();
+                    stringResult=stringResult+""+c.getCommandStringResult();
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),
@@ -107,6 +109,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 try {
                     //Utility.mf("Command if exec() iterator: "+c.toString());
                     c.exec();
+                    stringResult=stringResult+""+c.getCommandStringResult();
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),
@@ -140,7 +143,7 @@ public class if_command implements ICommand, IFlowCommandControl{
 
     @Override
     public String getCommandStringResult() {
-        return "";
+        return stringResult;
     }
 
     @Override

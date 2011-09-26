@@ -38,6 +38,7 @@ public class for_command implements ICommand, IFlowCommandControl{
  
 
 	private VarManager common_vm = null;
+	private String stringResult="";
     
     
     public for_command(String index, String start, String end, VarManager vm/*, ArrayList token_list*/)
@@ -126,6 +127,7 @@ public class for_command implements ICommand, IFlowCommandControl{
 			            try {
 			            	//Utility.mf("step: "+ common_vm.extractVar(index_name));
 			                c.exec();
+			                stringResult=stringResult+""+c.getCommandStringResult();
 			            } catch (CommandException ex) {
 			                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
 			                        Thread.currentThread().getStackTrace()[2].getMethodName(),
@@ -173,7 +175,7 @@ public class for_command implements ICommand, IFlowCommandControl{
 
     @Override
     public String getCommandStringResult() {
-        return"";
+        return stringResult;
     }
 
     @Override

@@ -590,6 +590,10 @@ comm_find_stmt	::= Com_Find param:x	{:
 					:}
 		| comm_find_stmt i_cc_conds
 		| comm_find_stmt Com_Ex comm_find_stmt_2 Pv
+		| comm_find_stmt error		{:
+					parser.appendOutput(" parameter  error in comm_find_stmt\n");
+					parser.report_error(" parameter  error in comm_find_stmt\n",null);
+					:}
 ;
 
 comm_find_stmt_2
@@ -605,6 +609,10 @@ comm_find_stmt_2
 		| comm_find_stmt_2 Name {:
 					//Utility.mf("COMANDO RECURSIVO! rilevato: SENZA PARAM!"); 
 					:}
+		| comm_find_stmt_2 error		{:
+					parser.appendOutput(" parameter  error in comm_find_stmt_2\n");
+					parser.report_error(" parameter  error in comm_find_stmt_2\n",null);
+					:}
 ;
 // ***************** condizioni per i comandi
 _where		::= 
@@ -613,6 +621,10 @@ _where		::=
 
 i_cc_conds	::= cc_conds
 		| i_cc_conds bool_op cc_conds
+		| i_cc_conds bool_op error		{:
+							parser.appendOutput(" error in i_cc_conds\n");
+							parser.report_error(" error in i_cc_conds\n",null);
+							:}	
 ;
 		
 
@@ -758,6 +770,11 @@ conf_exp	::= logic_stmt:s
 				{:
 				parser.token_list.add(s);
 				:}%prec C_Not
+		//| RO error RC		{:
+		//			parser.appendOutput(" syntax error in conf_exp\n");
+		//			parser.report_error(" syntax error in conf_exp\n",null);
+		//			
+		//			:}
 ;
 
 
@@ -817,6 +834,11 @@ if_head		::= Com_If conf_exp Com_If_2 EL
 				//Utility.mf("associata lista interna if");
 				RESULT = ic;
 				:}
+		|Com_If error Com_If_2 EL	{:
+						parser.appendOutput(" syntax error in if_head conf_exp\n");
+						parser.report_error(" syntax error in if_head conf_exp\n",null);
+					
+						:}
 ;
 
 if_else		::= if_head_half:x Com_If_m EL
@@ -824,6 +846,11 @@ if_else		::= if_head_half:x Com_If_m EL
 				parser.list_script = x.getElseCommand();
 				RESULT = x;
 				:}
+		|if_head_half error Com_If_m EL	{:
+						parser.appendOutput(" syntax error in if_else, maybe miss the ENDIF ?\n");
+						parser.report_error(" syntax error in if_else, maybe miss the ENDIF ?\n",null);
+					
+						:}
 ;
 
 if_head_half	::= if_head:x i_stmt:l

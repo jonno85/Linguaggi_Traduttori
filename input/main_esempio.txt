@@ -85,11 +85,11 @@ next +1
 
 create $p='pippo.pdf'
 find *.pdf /home
-foreach $a 0 $result do
-    if $name[$a] = $p then
-     mv $name[$i] 'trovato' + $i + '.pdf'
+foreach $a 0 $lenght do
+    if $result[$a] = $p then
+     mv $result[$i] 'trovato' + $i + '.pdf'
 else
-    mv $name[$a] $i + '.pdf'
+    mv $result[$a] $i + '.pdf'
     print 'elemento n:' + $i ' \n'
 endif
 next +1
