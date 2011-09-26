@@ -128,7 +128,7 @@ parser code {:
 
 
 terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
-terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Name, Result, Throw_S, Start_S, End_S, Str, FileScript, EL;
+terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Length, Result, Name, Throw_S, Start_S, End_S, Str, FileScript, EL;
 terminal Integer	Int;
 terminal Float		Vint;
 terminal 		UMINUS;
@@ -150,6 +150,7 @@ non terminal LinkedList		i_stmt;
 non terminal CScript		script;
 non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt,print_stmt;
 non terminal ASCommand		assig_stmt;
+non terminal			result_stmt, com_group;
 
 
 precedence left Minus, Plus, C_Or, C_Orr;
@@ -228,7 +229,6 @@ i_stmt		::= stmt:s		{://RE-Init
 stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+parser.dec_list.toString());
 					DecCommand dc = new DecCommand(parser.dec_list);
 					parser.list_script.add(dc);
-					
 					:}
 		| assig_stmt:s EL	{:
 						//ESECUZIONE SOLO IN SCRIPT O SHELL
@@ -269,12 +269,14 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					//	else
 					//		Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
+					Utility.mf("setCommandParameter(parser.cp)");
 					parser.cp = new CommandParameter[7];						
 					//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
 						parser.com.exec();
+						Utility.mf("exec");
 						parser.appendOutput(parser.com.getCommandStringResult());
-						//Utility.mf(parser.com.getCommandStringResult());
+						Utility.mf("stampato risultato COMANDO");
 					}
 					else
 						parser.list_script.add(parser.com);
@@ -305,7 +307,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					if(!parser.script_enabled){
 						//Utility.mf("EXEC");
 						parser.comFind.exec();
-						parser.appendOutput(parser.com.getCommandStringResult());
+						parser.appendOutput(parser.comFind.getCommandStringResult());
 						parser.array_file.clear();
 						parser.array_path.clear();
 						parser.array_perm.clear();
@@ -313,7 +315,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						parser.array_dim.clear();
 					}
 					else
-					parser.list_script.add(parser.com);
+					parser.list_script.add(parser.comFind);
 				//SISTEMAREparser.list_script.add(s);
 					
 					
@@ -458,6 +460,11 @@ arit_stmt	::= Minus:s arit_stmt:x
 						parser.appendOutput(" syntax error in arit_stmt\n");
 						parser.report_error(" syntax error in arit_stmt\n",null);
 					:}
+		| Result SO arit_stmt:x SC
+					{:
+					parser.token_list.add("[]");
+					Utility.mf("raccolto [variabile ]");
+					:}
 ;
 //qui logic erano
 // ***************** argomenti che subiscono un'operazione 
@@ -466,12 +473,14 @@ arit_stmt	::= Minus:s arit_stmt:x
 arit_arg	::= Var:x			{: RESULT = x;
 							//System.out.println("Var a arit_arg "+x); 
 						:}
-		| i_arg:x			{: 
+		| i_arg:x			{:
 						parser.vm.add_var(x);
 						RESULT = x.getName();
-		//System.out.println("i_arg a arit_arg: "+x.toString());
 						:}
 ;
+
+
+
 
 //i_Op		::= bool_op:x	{: RESULT = x; :}
 //		| C_Not:x	{: RESULT = x; :}
@@ -483,41 +492,18 @@ arit_arg	::= Var:x			{: RESULT = x;
 param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 		| File:x	{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 		| Ext:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
+		| arit_stmt	{: RESULT = new CommandParameter(ParamType.COMPOSITO,null,null); :}
 ;
 
 // ***************** statement relativi ai comandi
 
-sh_stmt		::= commands_double_param:c param:p param:q  {: parser.cp[2]=p; parser.cp[3]=q;:}
-		|commands_double_param error param:q	{:
-							parser.appendOutput(" parameter 0 error in sh_stmt\n");
-							parser.report_error(" parameter 0 error in sh_stmt\n",null);
-							:}	
-		|commands_double_param  param:p error	{:
-							parser.appendOutput(" parameter 1 error in sh_stmt\n");
-							parser.report_error(" parameter 1 error in sh_stmt\n",null);
-							:}	
-
-		| commands param:p	{: parser.cp[2]=p; :}
+sh_stmt		::= commands param:p	{: parser.cp[2]=p; :}
 		| commands error	{:
 					parser.appendOutput(" parameter error in sh_stmt\n");
 					parser.report_error(" parameter error in sh_stmt\n",null);
-					:}	
-
+					:}
+		| commands_double_param
 		| LS_stmt
-		
-;
-
-commands_double_param	::= Com_Mov	{: 
-					//Utility.mf("MV!");
-					RESULT= "mv";
-					parser.com = new MVCommand(parser.enviroment);
-					:}
-			| Com_Cp	{: 
-					//Utility.mf("CP!");
-					RESULT= "cp";
-					parser.com = new CPCommand(parser.enviroment);
-					:}
-
 ;
 
 // ***************** comandi standard mv, rm, cp e aggiunti cd, ls
@@ -532,24 +518,60 @@ commands	::= Com_Cd		{:
 					RESULT= "mkdir";
 					parser.com = new MKDCommand(parser.enviroment);
 					:}
-
-		
-
 		| Com_Rm		{: 
 					//Utility.mf("RM!");
 					RESULT= "rm";
 					parser.com = new RMCommand(parser.enviroment);
 					:}
+;
 
-		
-		//|LS_stmt		{:RESULT= "ls";:}
+com_group		::= Com_Mov:x
+					{:
+					parser.com = new MVCommand(parser.enviroment);
+					Utility.mf("MV");
+					:}
+			| Com_Cp:x
+					{:
+					parser.com = new CPCommand(parser.enviroment);
+					Utility.mf("CP");
+					:}
+;
+
+
+//se il parametro p deriva da un arit_stmt sarà null e lo ricaviamo dal token_list che gli passiamo
+commands_double_param	::= com_group param:p
+							{: 
+//							parser.com = new MVCommand(parser.enviroment);
+							Utility.mf("tipo param "+p.getParamType()+" value "+p);
+							if(p.getParamType()==ParamType.COMPOSITO){
+								parser.com.setAdditionalParameters(parser.vm, parser.token_list);
+								parser.token_list = new ArrayList<String>();
+								Utility.mf("Impostato parametri addizionali 1°p");
+							}
+							parser.cp[2]=p;
+							//RESULT= "mv";
+							:}
+			| commands_double_param:c param:p 
+							{:
+							Utility.mf("tipo 2 param "+p.getParamType());
+							if(p.getParamType()==ParamType.COMPOSITO){
+								parser.com.setAdditionalParameters(parser.vm, parser.token_list);
+								parser.token_list = new ArrayList<String>();
+								Utility.mf("Impostato parametri addizionali 2°p");
+							}
+							parser.cp[3]=p;
+							:}
+			| commands_double_param error param:q
+							{:
+							parser.appendOutput(" parameter 0 error in sh_stmt\n");
+							parser.report_error(" parameter 0 error in sh_stmt\n",null);
+							:}
 ;
 
 LS_stmt		::= Com_Ls		{: 
 					//Utility.mf("LS!");
 					parser.com = new LSCommand(parser.enviroment);
 					:}
-
 		| LS_stmt Order:o	{: 
 					//Utility.mf("LS Order!");
 					parser.cp[0]=new CommandParameter(ParamType.BINARIO,o,null);
@@ -567,14 +589,12 @@ LS_stmt		::= Com_Ls		{:
 					parser.appendOutput(" parameter  error in LS_stmt\n");
 					parser.report_error(" parameter  error in LS_stmt\n",null);
 					:}	
-
-		
 ;
 
 // ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
 comm_find_stmt	::= Com_Find param:x	{: 
 					//Utility.mf("_FIND_!");
-					parser.comFind = new FINDCommand(parser.enviroment);
+					parser.comFind = new FINDCommand(parser.enviroment, parser.vm);
 
 //					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
 //					parser.counter_path = 0;
@@ -582,7 +602,6 @@ comm_find_stmt	::= Com_Find param:x	{:
 					parser.add_param(x);
 					:}
 		| Com_Find i_cc_conds
-		
 		| comm_find_stmt param:x
 					{:
 					//Utility.mf("passo dentro comm_find_stmt");
@@ -601,7 +620,7 @@ comm_find_stmt_2
 					//Utility.mf("COMANDO RICORSIVO! rilevato: "+sc);
 					parser.cpm[5] = new CommandParameter[]{new CommandParameter(null,sc,null)};
 					:}
-		| comm_find_stmt_2 Name param:p  
+		| comm_find_stmt_2 Name param:p
 					{:
 					//Utility.mf("COMANDO RECURSIVO! rilevato:  CON PARAM"); 
 					parser.cp[3]=p; 

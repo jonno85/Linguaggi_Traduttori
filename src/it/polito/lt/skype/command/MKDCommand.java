@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.VarManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,5 +100,10 @@ public class MKDCommand implements ICommand {
     @Override
     public void usage() {
         Utility.mf("mkdir <path>");
+    }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -45,6 +45,8 @@ public class Resolver {
                         return true;
                     case "!!":
                         return true;
+                    case "[]":
+                        return true;
             }
             return false;
         }
@@ -82,6 +84,8 @@ public class Resolver {
                     case "--":
                         return true;
                     case "!!":
+                        return true;
+                    case "[]":
                         return true;
             }
             return false;

@@ -140,4 +140,9 @@ public class PCommand implements ICommand {
 
 	}
 
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

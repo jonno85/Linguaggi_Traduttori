@@ -1,5 +1,6 @@
 package it.polito.lt.skype.parser;
 
+import it.polito.lt.skype.manager.VarManager;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,5 +74,10 @@ public class DecCommand implements ICommand {
 		// TODO Auto-generated method stub
 
 	}
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

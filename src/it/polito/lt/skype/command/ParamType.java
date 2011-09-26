@@ -8,5 +8,6 @@ public enum ParamType {
 	FILE,
         PATH,
 	DIMENSIONE,
-        BINARIO;
+        BINARIO,
+        COMPOSITO;  // $RESULT
 }

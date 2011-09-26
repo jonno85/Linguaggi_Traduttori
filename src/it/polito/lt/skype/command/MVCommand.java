@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.attribute.FileTime;
@@ -230,6 +231,11 @@ public class MVCommand implements ICommand{
             }
         }
         return true;
+    }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     public static class TreeMover implements FileVisitor<Path>

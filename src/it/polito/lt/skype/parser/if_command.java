@@ -176,5 +176,10 @@ public class if_command implements ICommand, IFlowCommandControl{
     public LinkedList<ICommand> getElseCommand() {
         return inside_command_else;
     }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

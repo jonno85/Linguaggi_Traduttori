@@ -148,7 +148,7 @@ unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 digit=[0-9]
 float = {digit}+("."{digit}+)
 int = {digit}+ 
-name = NAME
+length = LENGTH
 result = RESULT
 
 
@@ -167,7 +167,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 <YYINITIAL>{
 //regole che saranno escluse se non nello stato script
 
-"$"{result}				{;}
+"$"{result}				{return symbol(sym.Result);}
 
 
 
@@ -240,7 +240,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {com_p}					{return symbol(sym.Com_P);}
 {min}{min}				{return symbol(sym.Minor);}
 
-"$"{name}				{return symbol(sym.Name);}
+"$"{length}				{return symbol(sym.Length);}
 
 "$"{id}					{
 					//System.out.println("invio una myVar");

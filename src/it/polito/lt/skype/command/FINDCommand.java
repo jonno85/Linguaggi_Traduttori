@@ -1,5 +1,7 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.VarManager;
+import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.FileSystems;
@@ -32,7 +34,8 @@ public class FINDCommand implements ICommand {
         private List<Path> pathList= null;
         private List<Path> pathResult = null;
         private List<Path> pathResult_rec = null;
-        private List<String> string_result = null;
+        private ArrayList<String> string_result = null;
+        private VarManager manager = null;
       
         
 	        /*
@@ -44,19 +47,32 @@ public class FINDCommand implements ICommand {
 	         *          4 = [] dimensione
 	         *          5 = [1] esegui = comando
 	         *          6 = [] parametri (esegui)  	->	0 = asc|desc
-	        *          									1 = file|directory|tutto
-	        *          									2 = path src | rm target | ls target
-	        *      										3 = path dst cp | mv
-	        *      										4 =	data ls
-	        *          									5 = permessi ls
-	        *          									6 = dimensione ls
+*          									1 = file|directory|tutto
+*          									2 = path src | rm target | ls target
+*      										3 = path dst cp | mv
+*      										4 =	data ls
+*          									5 = permessi ls
+*          									6 = dimensione ls
 	        */
         
+        
+        public FINDCommand(CommandEnv env, VarManager manager)
+        {
+                this.env=env;
+        	pathResult = new ArrayList<>();          
+                pathList = new ArrayList<>();
+                string_result = new ArrayList<>();
+                string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
+                position = env.getCurrentPathString();
+                pattern = "*";
+                eng = new FileEngine();
+                this.manager = manager;
+        }
         
         public FINDCommand(CommandEnv env)
         {
                 this.env=env;
-        		pathResult = new ArrayList<>();          
+        	pathResult = new ArrayList<>();          
                 pathList = new ArrayList<>();
                 string_result = new ArrayList<>();
                 string_result.add(0,"Name\t\t\tPermissions\tSize\tLast Modified\n");
@@ -91,8 +107,9 @@ public class FINDCommand implements ICommand {
         		//controllare la stampa
         		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
         	}
-        	
-                }
+        
+                
+        }
         
 	@Override
 	public boolean exec() throws CommandException {
@@ -145,12 +162,24 @@ public class FINDCommand implements ICommand {
             //sorting risultati
             Collections.sort(string_result);
             
-                if(doRecursive)
-                	recursive_cmd();
+            //riempimento vettore $RESULT[i]
+            int index = 0;
+            for(Path s : pathResult){
+                manager.add_var(new myVar("result_"+index++,myVar._string,s));
+            }
+            Utility.mf("manager aggiunto lista var: ");
+            manager.getListVar();
+            if(doRecursive)
+               	recursive_cmd();
+            
+            
             return true;
             
 	}
 	
+        public int getLenght(){
+            return string_result.size();
+        }
 	
 	private void filterAddResult(Path path) throws IOException
 	{
@@ -184,8 +213,7 @@ public class FINDCommand implements ICommand {
                 }
                 
                 pathResult.add(path);
-    			//add di tutto il percorso nello string_result
-                //string_result.add(path.getFileName()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
+
                 string_result.add(path.toString()+"\t\t\t"+((pathAttributes.isDirectory())?"d":"-")+PosixFilePermissions.toString(pathAttributes.permissions())+"\t"+pathAttributes.size()+"\t"+pathAttributes.lastModifiedTime()+"\n");
 	}
 
@@ -211,8 +239,9 @@ public class FINDCommand implements ICommand {
     @Override
     public String getCommandStringResult() {
         
-        /*  VERIFICARE  se creare il risultato al momento: necessita ordinare?*/
-        return string_result.toString()+"\n";
+        /*  VERIFICARE  se creare 
+         * il risultato al momento: necessita ordinare?*/
+        return string_result+"\n";
     }
 
     @Override
@@ -244,6 +273,11 @@ public class FINDCommand implements ICommand {
     @Override
     public boolean exec_from_prev_result(List<Path> stream) throws CommandException {
         return false;
+    }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     
