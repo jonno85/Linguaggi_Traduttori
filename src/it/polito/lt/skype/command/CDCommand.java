@@ -1,9 +1,8 @@
 package it.polito.lt.skype.command;
 
 import it.polito.lt.skype.generated.parser.parser;
+import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.parser.ParserException;
-
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -109,5 +108,10 @@ public class CDCommand implements ICommand {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

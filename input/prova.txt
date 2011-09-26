@@ -1,4 +1,19 @@
 start fichero.ss
+create $a=0
+
+find *.htm /home/jo/lt
+cp $result[$a] /home/jo/lt2
+cp /home/jo/lt $result[$a] 
+fine pippo.ss
+lancia scr1.ss
+
+
+/*
+cp $result[$i] /home
+cp $result[$i+2] /home
+cp $result[$i] $result[$i+2]
+
+start fichero.ss
 create $pari='' $dispari='' $a=0 $b=1 $x=10 $resto=0
 
 $b=10-2

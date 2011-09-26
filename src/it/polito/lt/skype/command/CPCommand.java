@@ -4,9 +4,13 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.ManagerException;
+import it.polito.lt.skype.manager.VarManager;
+import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 
+import it.polito.lt.skype.parser.Resolver;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
 import java.io.IOException;
@@ -32,7 +36,7 @@ import static java.nio.file.StandardCopyOption.*;
 public class CPCommand implements ICommand{
     
     private Path currentPath=null;
-	private CommandParameter[] params = null;
+    private CommandParameter[] params = null;
     private int tot_elem = 0;
     
     private CommandEnv env;
@@ -46,6 +50,9 @@ public class CPCommand implements ICommand{
     private Boolean dir = null;
     private boolean isFile_src;
     private boolean isRegFolder_src;
+    private Resolver ris = null;
+    private VarManager manager = null;
+    private ArrayList<ArrayList<String>> token_list = null;
 
     /*
          * vettore Params: 
@@ -66,15 +73,18 @@ public class CPCommand implements ICommand{
     
     public CPCommand(CommandEnv currentEnv)
     {
-    		env=currentEnv;
+            env = currentEnv;
             result = new ArrayList<>();       
-           /* position_src = Paths.get(".");
-            pattern_src = "";
-            target = Paths.get(".");
-            */
             target=env.getCurrentPath();
             position_src = currentPath = env.getCurrentPath();
             pattern_src = "";
+            token_list = new ArrayList<ArrayList<String>>();
+    }
+    
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list){
+        this.manager = manager;
+        Utility.mf("primo polish " + token_list.toString());
+        this.token_list.add(token_list);
     }
     
     public static void copyFile(Path source, Path target)throws IOException, UnsupportedOperationException{
@@ -99,20 +109,64 @@ public class CPCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        /*if(params[3]!=null)
-            target = Paths.get(params[3].getValue()).normalize();
-        paramPath_src = Paths.get(params[2].getValue()).normalize();
-        pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();*/
+        
+        //dobbiamo estrarre il parametro dal vettore $RESULT
+        Utility.mf("EXEC");
+        if(manager!=null){
+            Utility.mf("dentro manager manager "+manager.toString());
+            Utility.mf("token list prima di exec "+token_list.toString());
+            myVar p1 = null;
+            myVar p2 = null;
+            if(params[2] == null){
+                Utility.mf("token list el 0 "+token_list.get(0));
+                ris = new Resolver(manager, token_list.get(0), "result_");
+                try {
+                    p1 = ris.exec();
+                    params[2] = new CommandParameter(ParamType.COMPOSITO, p1.getStringValue(), null);
+                    Utility.mf("params_2: "+params[2].getValue());
+                    paramPath_src = Paths.get(params[2].getValue()).normalize();
+                    paramPath_src= currentPath.resolve(paramPath_src);
+                } catch (ManagerException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            paramPath_src = Paths.get(params[2].getValue()).normalize();
+            paramPath_src= currentPath.resolve(paramPath_src);
+            pattern_src = paramPath_src.getFileName().toString();
+            position_src = paramPath_src.getParent();
+            
+            Utility.mf("inizio gestione secondo parametro");
+            
+            if(params[3]==null){
+                Utility.mf("token list el 1 "+token_list.get(1));
+                ris = new Resolver(manager, token_list.get(1), "result_");
+                try {
+                    params[3] = new CommandParameter(ParamType.NULL, ris.exec().getStringValue(), null);
+                    Utility.mf("params_3: "+params[3].getValue());
+                    target = Paths.get(params[3].getValue()).normalize();
+                } catch (ManagerException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                target = Paths.get(params[3].getValue()).normalize();
+            }
+              //target = currentPath.resolve(target); 
+         }
+        Utility.mf("params[2] "+params[2].getValue());
+        Utility.mf("params[3] "+params[3].getValue());
+        Utility.mf("paramspath_src "+paramPath_src);
+        Utility.mf("target "+target);
+/*
+        target= currentPath.resolve(target);
         currentPath=env.getCurrentPath();
         target = Paths.get(params[3].getValue()).normalize();
-        target= currentPath.resolve(target);
         
+
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         paramPath_src= currentPath.resolve(paramPath_src);
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();
-        
+        */
         Utility.mf("CP: da "+paramPath_src.toString()+" a "+target.toString());
         
         isRegFolder_src = false;
@@ -147,7 +201,7 @@ public class CPCommand implements ICommand{
                     result.add(file);
                     tot_elem++;
                 }
-            } catch (IOException| UnsupportedOperationException ex) {
+            } catch (IOException | UnsupportedOperationException ex) {
                 //File permission problems are caught here.
                 
                 CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
@@ -162,31 +216,20 @@ public class CPCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
-    	 if (cpl.length==7||params[2]!=null)
-         {
-              params = cpl;
-              
-              Utility.mf("CP SETCOMMANDPARAMETER:");
+        params = cpl;
+        if(params.length!=7)
+            Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
+                 Thread.currentThread().getStackTrace()[2].getMethodName(), "CP Parameter Exception"));
+        
+         Utility.mf("CP SETCOMMANDPARAMETER:");
               for(int i=0; i<7;i++)
               	if(cpl[i]!=null)
               		Utility.mf("param "+i+" = "+cpl[i].getValue());
               	else 
               		Utility.mf("nulllll");
               
-              target= currentPath.resolve(target);
-              if(params[3]!=null)
-                  target = Paths.get(params[3].getValue()).normalize();
-              target= currentPath.resolve(target);
-              
-              paramPath_src = Paths.get(params[2].getValue()).normalize();
-              paramPath_src= currentPath.resolve(paramPath_src);
-              pattern_src = paramPath_src.getFileName().toString();
-              position_src = paramPath_src.getParent();
-         }
-         else
-             
-    	 Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
-                 Thread.currentThread().getStackTrace()[2].getMethodName(), "CP Parameter Exception"));
+    	 
+         
       } 
 
     

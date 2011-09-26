@@ -4,6 +4,7 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.VarManager;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
@@ -225,6 +226,11 @@ public class RMCommand implements ICommand{
             }
         }
         return true;
+    }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     public static class Treefinder implements FileVisitor<Path>

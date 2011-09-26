@@ -4,8 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CommandEnv {
-	private String currentPathString=null;
-	private Path currentPath=null;
+	private String currentPathString = null;
+	private Path currentPath = null;
 	
 	public CommandEnv(String path){
 		currentPathString=path;
@@ -29,5 +29,6 @@ public class CommandEnv {
 		this.currentPathString = currentPathString;
 		currentPath=Paths.get(currentPathString);
 	}
+
 	
 }

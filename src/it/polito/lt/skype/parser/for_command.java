@@ -203,6 +203,11 @@ public class for_command implements ICommand, IFlowCommandControl{
  		this.inside_command = inside_command;
  	}
 
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
  	
  	
     

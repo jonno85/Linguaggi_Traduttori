@@ -1,6 +1,7 @@
 package it.polito.lt.skype.parser;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -97,5 +98,10 @@ public class CScript implements ICommand {
 		// TODO Auto-generated method stub
 
 	}
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

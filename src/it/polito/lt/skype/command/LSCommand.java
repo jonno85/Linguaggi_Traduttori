@@ -1,5 +1,6 @@
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.DirectoryStream;
@@ -235,6 +236,11 @@ public class LSCommand implements ICommand {
         if(!goAsc)
             Collections.reverse(string_result);
         return true;
+    }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
    

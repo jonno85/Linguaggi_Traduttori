@@ -6,6 +6,7 @@ import it.polito.lt.skype.command.ICommand;
 import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.parser.ParserException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -143,6 +144,11 @@ public static final int _bool = 5;
 
     @Override
     public void usage() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

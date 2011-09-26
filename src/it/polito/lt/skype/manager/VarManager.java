@@ -71,7 +71,7 @@ public class VarManager{
 		myVar app;
 		while(itr.hasNext()){
 			app=(myVar)itr.next();
-			//Utility.mf("Variabile " +app.getName()+" Tipo " +app.getType());
+			Utility.mf("Variabile " +app.getName()+" Tipo " +app.getType()+" value: "+app.getStringValue());
 		}
 	}
 	public void assig(myVar var) throws ManagerException{
@@ -149,11 +149,19 @@ public class VarManager{
 			}
 		return c;
 	}
+        
+        public myVar getIndexResult(myVar a) throws ManagerException{
+            return extractVar("result_"+a.getValue());
+        }
 
-	public myVar makeSOper(myVar a, String segno){
+	public myVar makeSOper(myVar a, String segno) throws ManagerException{
             if(chkVar(a)){
                 switch(a.getType()){
-                    case 1: return ris_inter = mkOper.Neg(a);
+                    case 1: 
+                            if(segno.equalsIgnoreCase("[]"))
+                                return ris_inter = getIndexResult(a);
+                            if(segno.equalsIgnoreCase("--"))
+                                return ris_inter = mkOper.Neg(a);
                     case 2: return ris_inter = mkOper.Neg(a);
                     case 5: ris_inter = mkOper.BNoper(a,segno);
                             break;
