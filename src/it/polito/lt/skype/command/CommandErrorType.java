@@ -8,7 +8,8 @@ public enum CommandErrorType {
 	REMOVE_ERROR(4),
 	MAKE_DIR_ERROR(5),
     STATEMENT_ERROR(6),
-    ASSIG_ERROR(7);
+    ASSIG_ERROR(7), 
+    PRINT_ERROR(8);
 	
 	private int code;
 	private CommandErrorType(int a)

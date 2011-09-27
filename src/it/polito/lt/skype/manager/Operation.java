@@ -182,7 +182,7 @@ public class Operation {
 	}
 	public myVar Soper(myVar a, myVar b, String segno){
 		result = null;
-		String ris = new String(""+a.getValue().toString()+b.getValue().toString());
+		String ris = new String(""+b.getValue().toString()+a.getValue().toString());
 		if(segno.compareTo("+")==0) //rimosso costruttore String - check
 			result = new myVar(myVm.getTempName(),3,ris);	
 		return result;

@@ -1,17 +1,42 @@
-start fichero.ss
-create $a=0
+create $a = 0, $d = '/home/jo/lt2'
+find *.pdf /home/jo/lt/
+foreach $a 0 $length do
+	print 'a'+$a
+	mv $result[$a] $d
 
-find *.htm /home/robizz/lt
-cp /home/robizz/lt/d.htm /home/robizz/lt2/
-cp /home/jo/lt $result[$a] 
+next +1
+
+
+
+start fichero.ss
+create $a=0, $b=0, $d='/home/jo/lt2/'
+
+find *.htm /home/jo/lt
+
+print 'Risultato n elementi '+$length
+
+foreach $a 0 5 do
+	print $result[$a+1] + 'caccamo'
+next +1
+
 fine pippo.ss
 lancia scr1.ss
 
 
 /*
+/* cp $result[$a] /home/jo/lt2/ */
+cp /home/jo/lt/ /home/jo/lt2/lt3
+cp /home/jo/lt $result[$a] 
 cp $result[$i] /home
 cp $result[$i+2] /home
 cp $result[$i] $result[$i+2]
+
+foreach $a 0 4 do
+	if(($a/2)==0)then
+		cp $result[$a] $d
+		$b = $b+1
+	endif
+next +1
 
 start fichero.ss
 create $pari='' $dispari='' $a=0 $b=1 $x=10 $resto=0

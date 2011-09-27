@@ -53,13 +53,7 @@ public class CPCommand implements ICommand{
     private Resolver ris = null;
     private VarManager manager = null;
     private ArrayList<ArrayList<String>> token_list = null;
-
-    /*
-         * vettore Params: 
-         *          0 = file|directory|tutto src
-         *          1 = file|directory|tutto dst
-         */
-        
+ 
     /*
      * vettore Params: 
      *          0 = asc|desc
@@ -122,7 +116,7 @@ public class CPCommand implements ICommand{
                 ris = new Resolver(manager, token_list.get(0), "result_");
                 try {
                     p1 = ris.exec();
-                    params[2] = new CommandParameter(ParamType.NULL, p1.getStringValue(), null);
+                    params[2] = new CommandParameter(ParamType.COMPOSITO, p1.getStringValue(), null);
                     Utility.mf("params_2: "+params[2].getValue());
                     paramPath_src = Paths.get(params[2].getValue()).normalize();
                     paramPath_src= currentPath.resolve(paramPath_src);
@@ -134,21 +128,22 @@ public class CPCommand implements ICommand{
             
             Utility.mf("inizio gestione secondo parametro");
             
-            if(params[3].getParamType().equals(ParamType.COMPOSITO)){
-                Utility.mf("token list el 1 "+token_list.get(1));
-                ris = new Resolver(manager, token_list.get(1), "result_");
-                try {
-                    params[3] = new CommandParameter(ParamType.NULL, ris.exec().getStringValue(), null);
-                    Utility.mf("params_3: "+params[3].getValue());
-                    target = Paths.get(params[3].getValue()).normalize();
-                } catch (ManagerException ex) {
-                    ex.printStackTrace();
-                }
-            }else{
-                target = Paths.get(params[3].getValue()).normalize();
-            }
+            
               //target = currentPath.resolve(target); 
          }
+        if(params[3].getParamType().equals(ParamType.COMPOSITO)){
+            Utility.mf("token list el 1 "+token_list.get(1));
+            ris = new Resolver(manager, token_list.get(1), "result_");
+            try {
+                params[3] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
+                Utility.mf("params_3: "+params[3].getValue());
+                target = Paths.get(params[3].getValue()).normalize();
+            } catch (ManagerException ex) {
+                ex.printStackTrace();
+            }
+        }else{
+            target = Paths.get(params[3].getValue()).normalize();
+        }
         paramPath_src = Paths.get(params[2].getValue()).normalize();
             paramPath_src= currentPath.resolve(paramPath_src);
             pattern_src = paramPath_src.getFileName().toString();
@@ -223,17 +218,13 @@ public class CPCommand implements ICommand{
                  Thread.currentThread().getStackTrace()[2].getMethodName(), "CP Parameter Exception"));
         
          Utility.mf("CP SETCOMMANDPARAMETER:");
-              for(int i=0; i<7;i++)
-              	if(cpl[i]!=null)
-              		Utility.mf("param "+i+" = "+cpl[i].getValue());
-              	else 
-              		Utility.mf("nulllll");
-              
-    	 
-         
+              for(int i=0; i<7;i++){
+				if(cpl[i]!=null)
+					Utility.mf("param "+i+" = "+cpl[i].getValue());
+				else 
+					Utility.mf("nulllll");
+              }
       } 
-
-    
 
     @Override
     public List<Path> getCommandResult() {

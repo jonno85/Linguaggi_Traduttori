@@ -33,8 +33,6 @@ public class FileEngine {
 	
 	public DirectoryStream<Path> getStreamFromString(String param) throws IOException{
 		DirectoryStream<Path> stream = null;
-		DirectoryStream<Path> streamd = null;
-		DirectoryStream<Path> streamp = null;
 		//Path currentPath = Paths.get(current);
 		Path paramPath = (Paths.get(param).normalize());
 		//paramPath=currentPath.resolve(paramPath);
@@ -66,7 +64,7 @@ public class FileEngine {
                          }
                          try 
                          {
-	                        	 if(isRegFolder || isFile){
+	                        	 if(isRegFolder && !isFile){
 	                        		 Utility.mf("file o cartella secchi");
 	                        		 stream = Files.newDirectoryStream(paramPath);       
 	                        	 }

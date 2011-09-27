@@ -62,7 +62,7 @@ public class ASCommand implements ICommand {
         public boolean  getDeclaration(){
             return declaration;
         }
-        
+      /*  
         public boolean isUnaryOperator(String op){
             switch(op){
                     case "--":
@@ -110,7 +110,7 @@ public class ASCommand implements ICommand {
             }
             return false;
         }
-	
+	*/
         
 	@Override
 	public boolean exec() throws CommandException{

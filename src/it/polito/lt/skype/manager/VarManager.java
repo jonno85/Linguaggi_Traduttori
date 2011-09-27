@@ -151,7 +151,16 @@ public class VarManager{
 	}
         
         public myVar getIndexResult(myVar a) throws ManagerException{
-            return extractVar("result_"+a.getStringValue());
+        	myVar var = null;
+        		try {
+					var = extractVar("result_"+a.getStringValue());
+				} catch (ManagerException e) {
+					// TODO Auto-generated catch block
+					throw new ManagerException(ManagerErrorType.OUT_OF_BOUND, this.getClass().getName(),
+		                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+		                    "$result: out of bound exception",null);
+				}
+    		return var;
         }
 
 	public myVar makeSOper(myVar a, String segno) throws ManagerException{

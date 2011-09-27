@@ -27,7 +27,6 @@ import it.polito.lt.skype.bot.*;
 %caseless
 %unicode
 %xstate comment
-%xstate exclude_script_code
 %state script
 
 %{
@@ -52,8 +51,8 @@ sp = " "
 nl = \n|\r|\r\n
 tab = [\t]
 key = (home|etc|usr|var|tmp|root|boot|opt|dev|lib|bin|sbin|var|sys|mnt|media|logs|eclipse|user)
-ac = "/*"
-cc = "*/"
+ac = "##"
+
 RO = "("
 RC = ")"
 SO = "["
@@ -152,7 +151,7 @@ length = LENGTH
 result = RESULT
 
 
-id=[^0-9\$+!.,;:"-"" "'|\\\"%?&/()#\[\]\{\}"\t""\n""\r""\r\n"=\<\>\*][^\$+.,;:"-"" "'|\\\"%?&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>?\*!]*
+id=[^(0-9)\$+!.,;:\-" "'|\\\"%?&/()#\[\]\{\}"\t""\n""\r""\r\n"=\<\>\*][^\$+.,;:\-" "'|\\\"%?&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>?\*!]*
 str= '([^\n\r']+|\\)*'
 //[0-9a-zA-Z+.,;:" "?|\\\"%&/()"\n""\r""\r\n"#\[\]\{\}"\t"=\<\>*]+
 
@@ -171,7 +170,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 
 
-{ac}					{yybegin(comment);} 
+{ac}					{ yybegin(comment); } 
 {com_script_start}			{ 
 					Utility.mf("dentro script");
 					return symbol(sym.Start_S);} 
@@ -240,7 +239,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {com_p}					{return symbol(sym.Com_P);}
 {min}{min}				{return symbol(sym.Minor);}
 
-"$"{length}				{return symbol(sym.Length);}
+//"$"{length}				{return symbol(sym.Length);}
 
 "$"{id}					{
 					//System.out.println("invio una myVar");
@@ -271,11 +270,17 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 //{id}					{Utility.mf("id value: "+yytext());}
 {file}					{//Utility.mf("file: "+yytext());
 					return symbol(sym.File,new String(yytext()));}
-({sep_dir}?{id})+{sep_dir}?		{return symbol(sym.Path,new String(yytext()));}
+
+//modifica importante verificare con tutti i comandi
+({sep_dir}?{id})+({sep_dir}{file})?		{return symbol(sym.Path,new String(yytext()));}
 .					{System.out.println("errore: "+yytext());}
 
 
 
 }
 
-
+<comment>{
+	{ac}			{yybegin(YYINITIAL);}
+	{nl}			{;}
+	.			{;}
+}

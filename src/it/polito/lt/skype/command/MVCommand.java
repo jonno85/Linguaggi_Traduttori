@@ -4,9 +4,13 @@
  */
 package it.polito.lt.skype.command;
 
+import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.VarManager;
+import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserErrorType;
 import it.polito.lt.skype.parser.ParserException;
+import it.polito.lt.skype.parser.Resolver;
+
 import java.nio.file.attribute.FileTime;
 import java.nio.file.FileSystemLoopException;
 import java.io.IOException;
@@ -46,12 +50,9 @@ public class MVCommand implements ICommand{
     private Boolean dir = null;
     private boolean isFile_src;
     private boolean isRegFolder_src;
-
-    /*
-         * vettore Params: 
-         *          0 = file|directory|tutto src
-         *          1 = file|directory|tutto dst
-         */
+    private Resolver ris = null;
+    private VarManager manager = null;
+    private ArrayList<ArrayList<String>> token_list = null;
    
     /*
          * vettore Params:                                          used:
@@ -90,14 +91,66 @@ public class MVCommand implements ICommand{
     
     @Override
     public boolean exec() throws CommandException {
-        
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-       /* if(params[3]!=null)
+        
+        //dobbiamo estrarre il parametro dal vettore $RESULT
+        Utility.mf("EXEC");
+        if(manager!=null){
+            Utility.mf("dentro manager manager "+manager.toString());
+            Utility.mf("token list prima di exec "+token_list.toString());
+            if(params[2].getParamType().equals(ParamType.COMPOSITO)){
+                Utility.mf("token list el 0 "+token_list.get(0));
+                ris = new Resolver(manager, token_list.get(0), "result_");
+                try {
+                    params[2] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
+                    Utility.mf("params_2: "+params[2].getValue());
+                    paramPath_src = Paths.get(params[2].getValue()).normalize();
+                    paramPath_src= currentPath.resolve(paramPath_src);
+                } catch (ManagerException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            Utility.mf("inizio gestione secondo parametro");
+              //target = currentPath.resolve(target); 
+         }
+        if(params[3].getParamType().equals(ParamType.COMPOSITO)){
+            Utility.mf("token list el 1 "+token_list.get(1));
+            ris = new Resolver(manager, token_list.get(1), "result_");
+            try {
+                params[3] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
+                Utility.mf("params_3: "+params[3].getValue());
+                target = Paths.get(params[3].getValue()).normalize();
+            } catch (ManagerException ex) {
+                ex.printStackTrace();
+            }
+        }else{
             target = Paths.get(params[3].getValue()).normalize();
+        }
         paramPath_src = Paths.get(params[2].getValue()).normalize();
+        paramPath_src= currentPath.resolve(paramPath_src);
         pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();*/
+        position_src = paramPath_src.getParent();
+        Utility.mf("params[2] "+params[2].getValue());
+        Utility.mf("params[3] "+params[3].getValue());
+        Utility.mf("paramspath_src "+paramPath_src);
+        Utility.mf("target "+target);
+/*
+        target= currentPath.resolve(target);
+        currentPath=env.getCurrentPath();
+        target = Paths.get(params[3].getValue()).normalize();
+        
+
+        paramPath_src = Paths.get(params[2].getValue()).normalize();
+        paramPath_src= currentPath.resolve(paramPath_src);
+        pattern_src = paramPath_src.getFileName().toString();
+        position_src = paramPath_src.getParent();
+        */
+        Utility.mf("CP: da "+paramPath_src.toString()+" a "+target.toString());
+    	/*
+        DirectoryStream<Path> stream = null;
+        BasicFileAttributes b_attr = null;
+       
         currentPath=env.getCurrentPath();
         if(params[3]!=null)
             target = Paths.get(params[3].getValue()).normalize();
@@ -107,7 +160,7 @@ public class MVCommand implements ICommand{
         paramPath_src= currentPath.resolve(paramPath_src);
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();
-        
+        */
         isRegFolder_src = false;
         isFile_src = false;
         BasicFileAttributes attr = null;
@@ -142,8 +195,11 @@ public class MVCommand implements ICommand{
                         tot_elem++;
                     }
                 } catch (IOException ex) {
-                    //File permission problems are caught here.
-                    Utility.mf(ex);
+                	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                    		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                    		ex.getMessage());
+                    Utility.mf(ce);
+                    throw ce;
                 }
             }
         }
@@ -152,7 +208,19 @@ public class MVCommand implements ICommand{
 
     @Override
     public void setCommandParameter(CommandParameter[] cpl) throws ParserException {
-       Utility.mf("dentro setcommandparameter" );
+    	params = cpl;
+        if(params.length!=7)
+            Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
+                 Thread.currentThread().getStackTrace()[2].getMethodName(), "CP Parameter Exception"));
+        
+         Utility.mf("CP SETCOMMANDPARAMETER:");
+		  for(int i=0; i<7;i++){
+			if(cpl[i]!=null)
+				Utility.mf("param "+i+" = "+cpl[i].getValue());
+			else 
+			Utility.mf("nulllll");
+		  }
+    	/*Utility.mf("dentro setcommandparameter" );
        if (cpl.length==7||params[2]!=null)
        {
             params = cpl;
@@ -173,7 +241,7 @@ public class MVCommand implements ICommand{
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception");
     	   Utility.mf(pe);
     	   throw pe;
-       }
+       }*/
     } 
 
     @Override
@@ -235,7 +303,8 @@ public class MVCommand implements ICommand{
 
     @Override
     public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.manager = manager;
+        this.token_list.add(token_list);
     }
     
     public static class TreeMover implements FileVisitor<Path>

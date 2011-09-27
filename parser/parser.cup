@@ -64,9 +64,9 @@ parser code {:
 	public boolean script_enabled=false;	
 	public CScript csc=null;	
 
-	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
+	public CommandEnv enviroment = new CommandEnv("/home/jo/lt2");
 
-	public String output="";	
+	public String output="";
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
@@ -128,7 +128,7 @@ parser code {:
 
 
 terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P;
-terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Length, Result, Name, Throw_S, Start_S, End_S, Str, FileScript, EL;
+terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Prep_supp, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Minor, Pv, Result, Name, Throw_S, Start_S, End_S, Str, EL;
 terminal Integer	Int;
 terminal Float		Vint;
 terminal 		UMINUS;
@@ -270,7 +270,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					//		Utility.mf("param["+i+"]: "+parser.cp[i].getValue());
 					parser.com.setCommandParameter(parser.cp);
 					Utility.mf("setCommandParameter(parser.cp)");
-					parser.cp = new CommandParameter[7];						
+					parser.cp = new CommandParameter[7];
 					//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
 						parser.com.exec();
@@ -281,7 +281,6 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					else
 						parser.list_script.add(parser.com);
 					//Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
-					//parser.cp=new CommandParameter[7];
 					:}
 		| comm_find_stmt:s EL	{:
 					//System.out.println("raccolto sh stmt = FIND");
@@ -493,6 +492,7 @@ param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 		| File:x	{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 		| Ext:x		{: RESULT = new CommandParameter(ParamType.FILE,x,null); :}
 		| arit_stmt	{: RESULT = new CommandParameter(ParamType.COMPOSITO,null,null); :}
+//		| Path File
 ;
 
 // ***************** statement relativi ai comandi
@@ -540,8 +540,7 @@ com_group		::= Com_Mov:x
 
 //se il parametro p deriva da un arit_stmt sarà null e lo ricaviamo dal token_list che gli passiamo
 commands_double_param	::= com_group param:p
-							{: 
-//							parser.com = new MVCommand(parser.enviroment);
+							{:
 							Utility.mf("tipo param "+p.getParamType()+" value "+p);
 							if(p.getParamType()==ParamType.COMPOSITO){
 								parser.com.setAdditionalParameters(parser.vm, parser.token_list);
@@ -549,7 +548,6 @@ commands_double_param	::= com_group param:p
 								Utility.mf("Impostato parametri addizionali 1°p");
 							}
 							parser.cp[2]=p;
-							//RESULT= "mv";
 							:}
 			| commands_double_param:c param:p 
 							{:

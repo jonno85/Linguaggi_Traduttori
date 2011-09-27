@@ -4,6 +4,7 @@ import it.polito.lt.skype.manager.ManagerException;
 import it.polito.lt.skype.manager.VarManager;
 import it.polito.lt.skype.manager.myVar;
 import it.polito.lt.skype.parser.ParserException;
+import it.polito.lt.skype.parser.Resolver;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class PCommand implements ICommand {
 	private VarManager tmp_manager;
 	private Stack<String> stack;
 	private myVar result = null;	
+	private Resolver res = null;
         
         public PCommand(ArrayList<String> token_list, VarManager vm){
 		
@@ -36,46 +38,19 @@ public class PCommand implements ICommand {
 	
 	@Override
 	public boolean exec() throws CommandException {
-            
-            myVar op1 = null;
-            myVar op2 = null;
-        
-             for(String s : exps){
-                 if(!isOperator(s))
-                     stack.push(s);
-                 else
-                 {
-                     try {
-						op2 = tmp_manager.extractVar(stack.pop());
-					} catch (ManagerException e) {
-						throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
-	                            Thread.currentThread().getStackTrace()[2].getMethodName(),
-	                            "PCommand FAIL: "+e.getMessage(), e);
-					}
-                     try {
-						op1 = tmp_manager.extractVar(stack.pop());
-					} catch (ManagerException e) {
-						throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
-	                            Thread.currentThread().getStackTrace()[2].getMethodName(),
-	                            "PCommand FAIL: "+e.getMessage(), e);
-					}
-                     //Utility.mf("print: "+op1+" "+op2); 
-                     //operazione con 2 operandi
+		result = null;
+		
+        res = new Resolver(manager, exps, "print_tmp");
+        try {
+			result = res.exec();
+		} catch (ManagerException e) {
+			throw new CommandException(CommandErrorType.PRINT_ERROR, this.getClass().getName(),
+                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+                    "PCommand FAIL: "+e.getMessage(), e);
+		}
+		
+		
 
-                             result = tmp_manager.makeOper(op1, op2, s);
-                            // Utility.mf("print: "+op1+" "+op2);
-                             //Utility.mf("print: "+result);
-                             tmp_manager.add_var(result);
-                             stack.push(result.getName());
-                     }    
-             }
-             try {
-				result= tmp_manager.extractVar(stack.pop());
-			} catch (ManagerException e) {
-				throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
-                        Thread.currentThread().getStackTrace()[2].getMethodName(),
-                        "PCommand FAIL: "+e.getMessage(), e);
-			}
              Utility.mf("# "+result.getStringValue());
              
              return true;
@@ -84,13 +59,6 @@ public class PCommand implements ICommand {
 	
 	}
 
-	public boolean isOperator(String op){
-        switch(op){
-                case "+":
-                    return true;
-        }
-        return false;
-    }
 	
 	@Override
 	public boolean exec_from_prev_result(List<Path> stream)

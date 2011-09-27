@@ -101,8 +101,6 @@ public class Resolver {
                         stack.push(s);
                     else
                     {
-                    	 
-                    	
                         op1 = tmp_manager.extractVar(stack.pop());
                         //Utility.mf("RESOLVE: OP1: "+op1);
                         if(!isUnaryOperator(s))
@@ -115,7 +113,6 @@ public class Resolver {
                                 result = tmp_manager.makeOper(op1, op2, s);
                                 tmp_manager.add_var(result);
                                 stack.push(result.getName());
-                            
                         }
                         else
                         { 
