@@ -164,11 +164,14 @@ public class FINDCommand implements ICommand {
             
             //riempimento vettore $RESULT[i]
             int index = 0;
+            myVar pp = null;
             for(Path s : pathResult){
-                manager.add_var(new myVar("result_"+index++,myVar._string,s));
+            	pp = new myVar("result_"+index++,myVar._string,s);
+            	manager.add_var(pp);
+                Utility.mf(pp.toString());
             }
-            Utility.mf("manager aggiunto lista var: ");
-            manager.getListVar();
+            Utility.mf("manager aggiunto lista var: "+manager.toString());
+            //manager.getListVar();
             if(doRecursive)
                	recursive_cmd();
             

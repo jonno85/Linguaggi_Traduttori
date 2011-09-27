@@ -151,7 +151,7 @@ public class VarManager{
 	}
         
         public myVar getIndexResult(myVar a) throws ManagerException{
-            return extractVar("result_"+a.getValue());
+            return extractVar("result_"+a.getStringValue());
         }
 
 	public myVar makeSOper(myVar a, String segno) throws ManagerException{

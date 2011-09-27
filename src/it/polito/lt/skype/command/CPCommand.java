@@ -117,12 +117,12 @@ public class CPCommand implements ICommand{
             Utility.mf("token list prima di exec "+token_list.toString());
             myVar p1 = null;
             myVar p2 = null;
-            if(params[2] == null){
+            if(params[2].getParamType().equals(ParamType.COMPOSITO)){
                 Utility.mf("token list el 0 "+token_list.get(0));
                 ris = new Resolver(manager, token_list.get(0), "result_");
                 try {
                     p1 = ris.exec();
-                    params[2] = new CommandParameter(ParamType.COMPOSITO, p1.getStringValue(), null);
+                    params[2] = new CommandParameter(ParamType.NULL, p1.getStringValue(), null);
                     Utility.mf("params_2: "+params[2].getValue());
                     paramPath_src = Paths.get(params[2].getValue()).normalize();
                     paramPath_src= currentPath.resolve(paramPath_src);
@@ -130,14 +130,11 @@ public class CPCommand implements ICommand{
                     ex.printStackTrace();
                 }
             }
-            paramPath_src = Paths.get(params[2].getValue()).normalize();
-            paramPath_src= currentPath.resolve(paramPath_src);
-            pattern_src = paramPath_src.getFileName().toString();
-            position_src = paramPath_src.getParent();
+            
             
             Utility.mf("inizio gestione secondo parametro");
             
-            if(params[3]==null){
+            if(params[3].getParamType().equals(ParamType.COMPOSITO)){
                 Utility.mf("token list el 1 "+token_list.get(1));
                 ris = new Resolver(manager, token_list.get(1), "result_");
                 try {
@@ -152,6 +149,10 @@ public class CPCommand implements ICommand{
             }
               //target = currentPath.resolve(target); 
          }
+        paramPath_src = Paths.get(params[2].getValue()).normalize();
+            paramPath_src= currentPath.resolve(paramPath_src);
+            pattern_src = paramPath_src.getFileName().toString();
+            position_src = paramPath_src.getParent();
         Utility.mf("params[2] "+params[2].getValue());
         Utility.mf("params[3] "+params[3].getValue());
         Utility.mf("paramspath_src "+paramPath_src);

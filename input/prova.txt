@@ -1,8 +1,8 @@
 start fichero.ss
 create $a=0
 
-find *.htm /home/jo/lt
-cp $result[$a] /home/jo/lt2
+find *.htm /home/robizz/lt
+cp /home/robizz/lt/d.htm /home/robizz/lt2/
 cp /home/jo/lt $result[$a] 
 fine pippo.ss
 lancia scr1.ss
