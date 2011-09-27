@@ -1,11 +1,14 @@
-create $a = 0, $d = '/home/jo/lt2'
-find *.pdf /home/jo/lt/
+start fichero.ss
+create $a = 0, $d = '/home/robizz/lt2'
+cd /home/robizz/lt
+find *.htm /home/robizz/lt/
 foreach $a 0 $length do
 	print 'a'+$a
 	mv $result[$a] $d
 
 next +1
-
+fine pippo.ss
+lancia scr1.ss
 
 
 start fichero.ss

@@ -50,13 +50,14 @@ public class CScript implements ICommand {
 				c.exec();
 				stringResult=stringResult+""+c.getCommandStringResult();
 			}
-			return true;
-		} catch (NullPointerException ex) {
+			
+		} catch (NullPointerException |  CommandException ex) {
 			// TODO Auto-generated catch block
 			throw new CommandException (CommandErrorType.LIST_ERROR,this.getClass().getName(),
 		    		Thread.currentThread().getStackTrace()[2].getMethodName(),
-		    		"CScript recursive Exception: "+ex.getMessage(),ex);
+		    		"CScript recursive Exception: "+ex.getMessage());
 		}
+		return true;
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import it.polito.lt.skype.command.CommandEnv;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.Utility;
 import it.polito.lt.skype.generated.parser.*;
+import it.polito.lt.skype.parser.ParserException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -106,9 +107,13 @@ public class SkyBot {
 							catch (CommandException e) 
 							{
 								received.getSender().send("\n" + p.getOutput());
-								received.getSender().send("(blush) "+e.getMessage());
-								// TODO Auto-generated catch block
 								Utility.mf("COMMAND FAIL->"+e.getMessage());
+								
+								received.getSender().send("/set guidelines "+e.getMessage());
+								received.getSender().send("/get guidelines ");
+								//received.getSender().send("(blush) "+e.getMessage());
+								// TODO Auto-generated catch block
+								
 								//System.out.println(myInput.toString());
 								e.printStackTrace();
 							
@@ -116,9 +121,9 @@ public class SkyBot {
 							catch (Exception e) 
 							{
 								// TODO Auto-generated catch block
-								Utility.mf("FAIL: "+e.getMessage()+" "+e.getLocalizedMessage());
+								Utility.mf("FAIL: "+e.toString()+": "+e.getMessage());
 								received.getSender().send("\n" + p.getOutput());
-								received.getSender().send("(blush) "+e.getMessage());
+								received.getSender().send("(blush) "+e.toString()+": "+e.getMessage());
 								e.printStackTrace();
 							}
 							//p.debug_parse();

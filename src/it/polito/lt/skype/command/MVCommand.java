@@ -71,9 +71,10 @@ public class MVCommand implements ICommand{
     		result = new ArrayList<>();       
             position_src = currentPath = env.getCurrentPath();
             pattern_src = "";
+            token_list = new ArrayList<ArrayList<String>>();
     }
     
-    public static void moveFile(Path source, Path target){
+    public static void moveFile(Path source, Path target) throws IOException  {
         Utility.mf("target"+target.toString());
         Utility.mf("source"+source.toString());
         //if(Files.notExists(target))
@@ -83,10 +84,8 @@ public class MVCommand implements ICommand{
                 Files.move(source, target, REPLACE_EXISTING, ATOMIC_MOVE);
             }catch(  UnsupportedOperationException uoe){
                 Utility.mf(uoe);
-            }catch(IOException ioe){
-                Utility.mf(ioe);
-            }
-        //}
+           
+        }
     }
     
     @Override
@@ -108,7 +107,11 @@ public class MVCommand implements ICommand{
                     paramPath_src = Paths.get(params[2].getValue()).normalize();
                     paramPath_src= currentPath.resolve(paramPath_src);
                 } catch (ManagerException ex) {
-                    ex.printStackTrace();
+                	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                    		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                    		"CPCommand Exception"+ ex.getMessage());
+                    Utility.mf(ce);
+                  throw ce;
                 }
             }
             Utility.mf("inizio gestione secondo parametro");
@@ -122,7 +125,11 @@ public class MVCommand implements ICommand{
                 Utility.mf("params_3: "+params[3].getValue());
                 target = Paths.get(params[3].getValue()).normalize();
             } catch (ManagerException ex) {
-                ex.printStackTrace();
+            	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		"CPCommand Exception"+ ex.getMessage());
+                Utility.mf(ce);
+              throw ce;
             }
         }else{
             target = Paths.get(params[3].getValue()).normalize();
@@ -170,7 +177,11 @@ public class MVCommand implements ICommand{
             try {
                 stream = fe.getStreamFromString(paramPath_src.toString());
             } catch (IOException ex) {
-                Utility.mf(ex);
+            	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		"CPCommand Exception"+ ex.getMessage());
+                Utility.mf(ce);
+              throw ce;
             }  
 
             for (Path file: stream) {
@@ -317,7 +328,7 @@ public class MVCommand implements ICommand{
         private int num_dir = 0;
         private List<Path> internal_result = null;
 
-        public TreeMover(Path source, Path target, List<Path>result){
+        public TreeMover(Path source, Path target, List<Path>result) throws IOException{
             this.source = source;
             this.target = target;
             internal_result = result;
@@ -330,6 +341,7 @@ public class MVCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 Utility.mf(ex);
+                throw ex;
             }
         }
 

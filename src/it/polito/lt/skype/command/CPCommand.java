@@ -121,7 +121,11 @@ public class CPCommand implements ICommand{
                     paramPath_src = Paths.get(params[2].getValue()).normalize();
                     paramPath_src= currentPath.resolve(paramPath_src);
                 } catch (ManagerException ex) {
-                    ex.printStackTrace();
+                	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                    		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                    		"CPCommand Exception"+ ex.getMessage());
+                    Utility.mf(ce);
+                  throw ce;
                 }
             }
             
@@ -139,7 +143,11 @@ public class CPCommand implements ICommand{
                 Utility.mf("params_3: "+params[3].getValue());
                 target = Paths.get(params[3].getValue()).normalize();
             } catch (ManagerException ex) {
-                ex.printStackTrace();
+            	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		"CPCommand Exception"+ ex.getMessage());
+                Utility.mf(ce);
+              throw ce;
             }
         }else{
             target = Paths.get(params[3].getValue()).normalize();
@@ -173,7 +181,11 @@ public class CPCommand implements ICommand{
         try {
             stream = fe.getStreamFromString(paramPath_src.toString());
         } catch (IOException ex) {
-            ex.printStackTrace();
+        	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+            		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+            		"CPCommand Exception"+ ex.getMessage());
+            Utility.mf(ce);
+          throw ce;
         }  
                          
         for (Path file: stream) {
@@ -273,8 +285,11 @@ public class CPCommand implements ICommand{
                     tot_elem++;
                 }
             } catch (IOException ex) {
-                //File permission problems are caught here.
-                System.err.println(ex);
+            	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
+                		Thread.currentThread().getStackTrace()[2].getMethodName(), 
+                		"CPCommand Exception"+ ex.getMessage());
+                Utility.mf(ce);
+              throw ce;
             }
         }
         return true;
@@ -290,7 +305,7 @@ public class CPCommand implements ICommand{
         private int num_dir = 0;
         private List<Path> internal_result = null;
 
-        public TreeCopier(Path source, Path target, List<Path>result){
+        public TreeCopier(Path source, Path target, List<Path>result) throws IOException{
             this.source = source;
             this.target = target;
             internal_result = result;
@@ -304,6 +319,7 @@ public class CPCommand implements ICommand{
                 }
             } catch (IOException ex) {
                 System.err.println(ex.getCause());
+                throw ex;
             }
         }
 

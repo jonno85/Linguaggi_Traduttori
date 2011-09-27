@@ -60,7 +60,7 @@ parser code {:
 	public IFlowCommandControl ifcc;
 	public ICommand ic;
 	public boolean if_control = false;
-	
+	public boolean goScript = true;
 	public boolean script_enabled=false;	
 	public CScript csc=null;	
 
@@ -118,6 +118,7 @@ parser code {:
 		}
 		m.append(", symbol: " + (simbolo_attuale));
 		appendOutput("(wait) "+m.toString());
+		goScript=false;
 	}
 	
 	
@@ -171,12 +172,18 @@ S 		::= 	/* empty */
 script		::= start_s i_stmt:x end_s
 					{:
 					parser.script_enabled=false;					
+					parser.goScript=true;					
 					//Utility.mf("CHIUDO SCRIPT");
 					//salvataggio script
 								
 					//esecuzione script
 					
 					:}
+		|start_s error  end_s	{:
+						parser.appendOutput(" errors in script\n");
+						parser.report_error(" errors in script\n",null);
+					
+						:}
 ;
 
 // ********************* comandi di gestione script
@@ -194,8 +201,10 @@ start_s			::= Start_S File:s EL
 
 throw_s		::= Throw_S File	{:
 					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
-					parser.csc.exec();
-					parser.appendOutput(parser.csc.getCommandStringResult());
+					if(parser.goScript)	{				
+						parser.csc.exec();
+						parser.appendOutput(parser.csc.getCommandStringResult());
+					}
 					//Utility.mf("LANCIA SCRIPT");
 					:}
 ;
@@ -273,7 +282,9 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					parser.cp = new CommandParameter[7];
 					//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
+						
 						parser.com.exec();
+						
 						Utility.mf("exec");
 						parser.appendOutput(parser.com.getCommandStringResult());
 						Utility.mf("stampato risultato COMANDO");
@@ -282,6 +293,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						parser.list_script.add(parser.com);
 					//Utility.mf("AGGIUNGO SH STMT: "+((s==null)?"null ":"no "+s.toString())); 
 					:}
+
 		| comm_find_stmt:s EL	{:
 					//System.out.println("raccolto sh stmt = FIND");
 					parser.cpm[0] = new CommandParameter[parser.array_file.size()];
@@ -320,6 +332,11 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					
 					//Utility.mf(parser.comFind.getCommandStringResult());
 
+					:}
+		| error EL		{:
+						parser.appendOutput(" syntax error in stmt\n");
+						parser.report_error(" syntax error in stmt\n",null);
+						
 					:}
 		| print_stmt:p EL {:parser.list_script.add(p);:}
 		| script EL {:parser.print_el(parser.list_script);:}
@@ -498,10 +515,7 @@ param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 // ***************** statement relativi ai comandi
 
 sh_stmt		::= commands param:p	{: parser.cp[2]=p; :}
-		| commands error	{:
-					parser.appendOutput(" parameter error in sh_stmt\n");
-					parser.report_error(" parameter error in sh_stmt\n",null);
-					:}
+		
 		| commands_double_param
 		| LS_stmt
 ;
@@ -549,6 +563,10 @@ commands_double_param	::= com_group param:p
 							}
 							parser.cp[2]=p;
 							:}
+			|com_group error param:p	{:
+						parser.appendOutput(" syntax error in param 1\n");
+						parser.report_error(" syntax error in param 1\n",null);
+					:}
 			| commands_double_param:c param:p 
 							{:
 							Utility.mf("tipo 2 param "+p.getParamType());
@@ -583,10 +601,7 @@ LS_stmt		::= Com_Ls		{:
 		
 		| LS_stmt i_cc_conds
 		
-		| LS_stmt error		{:
-					parser.appendOutput(" parameter  error in LS_stmt\n");
-					parser.report_error(" parameter  error in LS_stmt\n",null);
-					:}	
+	
 ;
 
 // ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
@@ -607,10 +622,10 @@ comm_find_stmt	::= Com_Find param:x	{:
 					:}
 		| comm_find_stmt i_cc_conds
 		| comm_find_stmt Com_Ex comm_find_stmt_2 Pv
-		| comm_find_stmt error		{:
-					parser.appendOutput(" parameter  error in comm_find_stmt\n");
-					parser.report_error(" parameter  error in comm_find_stmt\n",null);
-					:}
+//		| comm_find_stmt error		{:
+//					parser.appendOutput(" parameter  error in comm_find_stmt\n");
+//					parser.report_error(" parameter  error in comm_find_stmt\n",null);
+//					:}
 ;
 
 comm_find_stmt_2
@@ -854,7 +869,6 @@ if_head		::= Com_If conf_exp Com_If_2 EL
 		|Com_If error Com_If_2 EL	{:
 						parser.appendOutput(" syntax error in if_head conf_exp\n");
 						parser.report_error(" syntax error in if_head conf_exp\n",null);
-					
 						:}
 ;
 
@@ -863,17 +877,27 @@ if_else		::= if_head_half:x Com_If_m EL
 				parser.list_script = x.getElseCommand();
 				RESULT = x;
 				:}
-		|if_head_half error Com_If_m EL	{:
-						parser.appendOutput(" syntax error in if_else, maybe miss the ENDIF ?\n");
-						parser.report_error(" syntax error in if_else, maybe miss the ENDIF ?\n",null);
-					
-						:}
+//		|if_head_half error EL 	{:
+//						parser.appendOutput(" syntax error in if_else, maybe miss the THEN ?\n");
+//						parser.report_error(" syntax error in if_else, maybe miss the THEN ?\n",null);
+//					
+//						:}
 ;
 
 if_head_half	::= if_head:x i_stmt:l
 				{:
 				RESULT = x;
 				:}
+		|if_head error 	{:
+					parser.appendOutput(" syntax error in if, ?\n");
+					parser.report_error(" syntax error in if, ?\n",null);
+		
+					:}
+		|if_head i_stmt error 	{:
+					parser.appendOutput(" syntax error in if,??\n");
+					parser.report_error(" syntax error in if,??\n",null);
+		
+					:}
 ;
 
 if_stmt		::= if_else:x i_stmt:l Com_If_e
@@ -926,6 +950,22 @@ for_head	::= Com_For for_arg:x for_arg:y for_arg:z Com_For_m EL
 				//Utility.mf("\tSUBLEVEL: "+(++parser.sublevel));
 				RESULT = fc;
 				:}
+		|Com_For error for_arg for_arg Com_For_m EL {:
+								parser.appendOutput(" syntax error in foreach, wrong parameter \n");
+								parser.report_error(" syntax error in foreach, wrong parameter\n",null);
+								:}
+		|Com_For for_arg error for_arg Com_For_m EL {:
+								parser.appendOutput(" syntax error in foreach, wrong parameter \n");
+								parser.report_error(" syntax error in foreach, wrong parameter\n",null);
+								:}
+		|Com_For for_arg for_arg error Com_For_m EL {:
+								parser.appendOutput(" syntax error in foreach, wrong parameter \n");
+								parser.report_error(" syntax error in foreach, wrong parameter\n",null);
+								:}
+		Com_For for_arg for_arg  for_arg error EL {:
+								parser.appendOutput(" syntax error in foreach, head not closed \n");
+								parser.report_error(" syntax error in foreach, head not closed\n",null);
+								:}
 ;
 
 i_Op_ps		::= Plus:x	{: RESULT = x; 						:}

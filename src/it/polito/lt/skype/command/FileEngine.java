@@ -77,6 +77,7 @@ public class FileEngine {
                         catch (IOException ex) {
                         	System.out.println("il file non esiste!!");
                         	ex.printStackTrace();
+                        	throw ex;
                         }
                    
                         /* try {

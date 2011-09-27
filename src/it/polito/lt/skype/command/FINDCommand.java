@@ -157,7 +157,7 @@ public class FINDCommand implements ICommand {
                 //In this snippet, it can only be thrown by newDirectoryStream.
                 throw new CommandException(CommandErrorType.FIND_ERROR,this.getClass().getName(),
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
-                		"FIND recursive Exception: "+ex.getMessage());
+                		"FIND exception: "+ex.getMessage());
             }
             //sorting risultati
             Collections.sort(string_result);

@@ -100,7 +100,7 @@ public class CDCommand implements ICommand {
 	@Override
 	public String getCommandStringResult() {
 		// TODO Auto-generated method stub
-		return target.toString()+"\n";
+		return ">"+target.toString()+"\n";
 	}
 
 	@Override
