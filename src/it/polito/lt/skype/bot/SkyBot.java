@@ -101,6 +101,7 @@ public class SkyBot {
 							
 							/* Avvio il parser */
 							try {
+								p.setScriptMessage(mes);
 								Object result = p.parse();
 								received.getSender().send(":)\n" + p.getOutput());
 							} 
@@ -109,9 +110,9 @@ public class SkyBot {
 								received.getSender().send("\n" + p.getOutput());
 								Utility.mf("COMMAND FAIL->"+e.getMessage());
 								
-								received.getSender().send("/set guidelines "+e.getMessage());
-								received.getSender().send("/get guidelines ");
-								//received.getSender().send("(blush) "+e.getMessage());
+								//received.getSender().send("/set guidelines "+e.getMessage());
+								//received.getSender().send("/get guidelines ");
+								received.getSender().send("(blush) "+e.getMessage());
 								// TODO Auto-generated catch block
 								
 								//System.out.println(myInput.toString());
@@ -123,7 +124,7 @@ public class SkyBot {
 								// TODO Auto-generated catch block
 								Utility.mf("FAIL: "+e.toString()+": "+e.getMessage());
 								received.getSender().send("\n" + p.getOutput());
-								received.getSender().send("(blush) "+e.toString()+": "+e.getMessage());
+								received.getSender().send("(blush) "+e.toString());
 								e.printStackTrace();
 							}
 							//p.debug_parse();

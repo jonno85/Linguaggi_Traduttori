@@ -2,6 +2,7 @@ package it.polito.lt.skype.generated.parser;
 
 
 import java_cup.runtime.*;
+import java.io.*;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Collection;
@@ -62,9 +63,10 @@ parser code {:
 	public boolean if_control = false;
 	public boolean goScript = true;
 	public boolean script_enabled=false;	
-	public CScript csc=null;	
+	public CScript csc=null;
+	public String scriptMes =null;	
 
-	public CommandEnv enviroment = new CommandEnv("/home/jo/lt2");
+	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
 
 	public String output="";
 
@@ -75,6 +77,38 @@ parser code {:
 			array_path.add(x);
 		else
 			array_file.add(x);
+	}
+	
+	public void setScriptMessage(String mes)
+	{
+		scriptMes=mes;
+	}
+	public void saveScript(String filename) throws IOException 
+	{
+		if(scriptMes!=null)
+		{
+		String file=enviroment.getCurrentPathString()+filename;
+		BufferedWriter writer = null;
+	        writer = new BufferedWriter(new FileWriter(file));
+	        writer.write(scriptMes);
+	        if (writer != null)
+	            writer.close( );
+		}
+		Utility.mf("salvataggio terminato di "+file);
+		
+	}
+	public void loadScript(String filename) throws IOException
+	{
+		String file=enviroment.getCurrentPathString()+filename;
+		FileReader input = new FileReader(file);
+		BufferedReader bufRead = new BufferedReader(input);
+		String result;    // String that holds current file line
+		String line = bufRead.readLine();
+		while (line != null){
+			System.out.println(line);
+			line = bufRead.readLine()+"\n";
+		 }
+		bufRead.close();
 	}
 
 	public void setEnviroment(CommandEnv e)
@@ -201,6 +235,7 @@ start_s			::= Start_S File:s EL
 
 throw_s		::= Throw_S File	{:
 					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
+					
 					if(parser.goScript)	{				
 						parser.csc.exec();
 						parser.appendOutput(parser.csc.getCommandStringResult());
@@ -213,6 +248,7 @@ end_s		::= End_S File:s
 					{:
 					//ripristino vm originale
 					parser.vm = parser.csc.getBakVm();
+					parser.saveScript(s);
 					//Utility.mf("VARMANAGER: "+parser.vm);
 					:}
 ;
