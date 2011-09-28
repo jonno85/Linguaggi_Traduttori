@@ -142,6 +142,7 @@ public class CPCommand implements ICommand{
                 params[3] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
                 Utility.mf("params_3: "+params[3].getValue());
                 target = Paths.get(params[3].getValue()).normalize();
+                target= currentPath.resolve(target);
             } catch (ManagerException ex) {
             	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
@@ -220,10 +221,19 @@ public class CPCommand implements ICommand{
               throw ce;
             }
         }
+        env.appOutputString(getCommandStringResult());
         return true;
     }
 
-    @Override
+    public ArrayList<ArrayList<String>> getToken_list() {
+		return token_list;
+	}
+
+	public void setToken_list(ArrayList<ArrayList<String>> token_list) {
+		this.token_list = token_list;
+	}
+
+	@Override
     public void setCommandParameter(CommandParameter[] cpl) {
         params = cpl;
         if(params.length!=7)

@@ -215,6 +215,7 @@ public class MVCommand implements ICommand{
                 }
             }
         }
+        env.appOutputString(getCommandStringResult());
         return true;
     }
 

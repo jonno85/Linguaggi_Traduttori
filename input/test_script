@@ -17,7 +17,7 @@ for i in `seq 10`
 do
 	touch prova$i.htm
 	touch prova$i.pdf
-	touch $i.word$i.c
+	touch word$i.c
 	if [ $i%3=0 ]; then
 		echo $P0 > prova$i.htm
 		touch config$1.conf

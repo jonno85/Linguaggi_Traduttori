@@ -166,6 +166,7 @@ public class RMCommand implements ICommand{
 	        		Thread.currentThread().getStackTrace()[2].getMethodName(),
 	        		"RM senza parametro");
         }
+        env.appOutputString(getCommandStringResult());
         return true;
     }
 

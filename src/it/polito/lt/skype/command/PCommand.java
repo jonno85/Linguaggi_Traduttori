@@ -22,9 +22,10 @@ public class PCommand implements ICommand {
 	private Stack<String> stack;
 	private myVar result = null;	
 	private Resolver res = null;
+	private CommandEnv env =null;
         
-        public PCommand(ArrayList<String> token_list, VarManager vm){
-		
+        public PCommand(ArrayList<String> token_list, VarManager vm, CommandEnv env){
+		this.env=env;
         manager = vm;
         tmp_manager = new VarManager();
         tmp_manager.setTmpName("pr_tmp_");
@@ -59,11 +60,9 @@ public class PCommand implements ICommand {
                     Thread.currentThread().getStackTrace()[2].getMethodName(),
                     "PCommand FAIL: "+e.getMessage(), e);
 		}
-		
-		
-
-             Utility.mf("# "+result.getStringValue());
-             
+		 Utility.mf("# "+result.getStringValue());
+          env.appOutputString(getCommandStringResult());
+          
              return true;
 		
 		

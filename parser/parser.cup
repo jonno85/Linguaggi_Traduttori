@@ -66,7 +66,7 @@ parser code {:
 
 	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
 
-	public String output="";
+	//public String output="";
 
 	public void add_param(CommandParameter x) throws ParserException
 	{
@@ -137,16 +137,16 @@ parser code {:
 		//}
 	}
 
-	public void setOutput(String output){
-		this.output=output;
-	}
+	//public void setOutput(String output){
+	//	this.output=output;
+	//}
 	
 	public void appendOutput(String output){
-		this.output=this.output+""+output;
+		this.enviroment.appOutputString(output);
 	}
 	
 	public String getOutput(){
-		return this.output;
+		return this.enviroment.getOutputString();
 	}
 
 	public void syntax_error(Symbol simbolo_attuale){
@@ -232,7 +232,7 @@ start_s			::= Start_S File:s EL
 					//Utility.mf("INIZIO SCRIPT");
 					parser.script_enabled=true;					
 					parser.list_script = new LinkedList<ICommand>();
-					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm);							
+					parser.csc=new CScript((LinkedList<ICommand>)parser.list_script, parser.vm,parser.enviroment);							
 					parser.vm=parser.csc.getScriptVM();
 					//parser.list_script.add(s);
 					:}
@@ -244,7 +244,7 @@ throw_s		::= Throw_S File:s	{:
 					if(parser.goScript)	{
 //						parser.loadScript(s);				
 						parser.csc.exec();
-						parser.appendOutput(parser.csc.getCommandStringResult());
+						//parser.appendOutput(parser.csc.getCommandStringResult());
 					}
 					//Utility.mf("LANCIA SCRIPT");
 					:}
@@ -281,7 +281,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					DecCommand dc = new DecCommand(parser.dec_list);
 					if(!parser.script_enabled){
 						dc.exec();
-						parser.appendOutput(dc.getCommandStringResult());
+						//parser.appendOutput(dc.getCommandStringResult());
 						//Utility.mf(parser.com.getCommandStringResult());						
 					}else{
 						parser.list_script.add(dc);
@@ -291,7 +291,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
 						parser.com.exec();
-						parser.appendOutput(parser.com.getCommandStringResult());
+						//parser.appendOutput(parser.com.getCommandStringResult());
 						//Utility.mf(parser.com.getCommandStringResult());
 					}
 					else{
@@ -334,7 +334,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						parser.com.exec();
 						
 						Utility.mf("exec");
-						parser.appendOutput(parser.com.getCommandStringResult());
+						//parser.appendOutput(parser.com.getCommandStringResult());
 						Utility.mf("stampato risultato COMANDO");
 					}
 					else
@@ -366,7 +366,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 					if(!parser.script_enabled){
 						//Utility.mf("EXEC");
 						parser.comFind.exec();
-						parser.appendOutput(parser.comFind.getCommandStringResult());
+						//parser.appendOutput(parser.comFind.getCommandStringResult());
 						parser.array_file.clear();
 						parser.array_path.clear();
 						parser.array_perm.clear();
@@ -395,7 +395,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 
 
 print_stmt		::= Com_P arit_stmt:s {:
-					PCommand pcom = new PCommand(parser.token_list, parser.vm);
+					PCommand pcom = new PCommand(parser.token_list, parser.vm, parser.enviroment);
 					parser.token_list = new ArrayList<String>();
 					RESULT =pcom;
 					//RESULT = pcom;
@@ -426,7 +426,7 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						//y.setName(parser.vm.getTempName());
 						//y.setVM(parser.vm);
 						//parser.vm.add_var(y);						
-						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list);
+						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list,parser.enviroment);
 						if(!parser.script_enabled){
 							ac.setDeclaration(true);
 							
@@ -555,7 +555,7 @@ param		::= Path:x	{: RESULT = new CommandParameter(ParamType.PATH,x,null); :}
 // ***************** statement relativi ai comandi
 
 sh_stmt		::= commands param:p	{: parser.cp[2]=p; :}
-		
+		| commands
 		| commands_double_param 
 		| LS_stmt
 		| CD_stmt

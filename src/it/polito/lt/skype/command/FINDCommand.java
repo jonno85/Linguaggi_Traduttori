@@ -93,6 +93,7 @@ public class FINDCommand implements ICommand {
         public void recursive_cmd() throws CommandException{
         	int i=1;
         	rec_cmd.setCommandParameterAt(3,rec_cmd.getCommandParameterAt(2));
+        	env.appOutputString("FIND EXEC: ");
         	for(Path curr_path : pathResult){
         		//ICommand rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),env);
         		//Utility.mf("--------------------"+params[5][0].getValue());
@@ -107,10 +108,9 @@ public class FINDCommand implements ICommand {
 					e.printStackTrace();
 				}*/
         		
-        		rec_cmd.setCommandParameterAt(2,new CommandParameter(null, curr_path.toString(),null));
+        		rec_cmd.setCommandParameterAt(2,new CommandParameter(ParamType.FILE, curr_path.toString(),null));
         		rec_cmd.exec();
-        		//controllare la stampa
-        		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
+        		
         	}
         
                 
@@ -175,10 +175,9 @@ public class FINDCommand implements ICommand {
             manager.add_var(new myVar("$length",myVar._int,pathResult.size()));
             Utility.mf("manager aggiunto lista var: "+manager.toString());
             //manager.getListVar();
+            env.appOutputString(string_result+"\n");
             if(doRecursive)
                	recursive_cmd();
-            
-            
             return true;
             
 	}

@@ -25,7 +25,7 @@ public class ASCommand implements ICommand {
         private Operation oper = null;
         private Resolver res = null;
         myVar result = null;
-        
+        private CommandEnv env =null;
 	/*
 	public ASCommand(VarManager vm,String var, String dst){
 		this.dst=dst;
@@ -40,8 +40,9 @@ public class ASCommand implements ICommand {
                 this.exps = new ArrayList();
 	}*/
         
-        public ASCommand(VarManager vm, String var, ArrayList<String> exps){
-		this.exps = exps;
+        public ASCommand(VarManager vm, String var, ArrayList<String> exps, CommandEnv env){
+		this.env=env;
+        this.exps = exps;
 		this.var = var;
 		manager = vm;
                 tmp_manager = new VarManager();
@@ -132,7 +133,7 @@ public class ASCommand implements ICommand {
                         Thread.currentThread().getStackTrace()[2].getMethodName(),
                         "ASCommand FAIL: "+e.getMessage(), e);
 			}
-
+			env.appOutputString(getCommandStringResult());
             return true;
 	}
 	

@@ -96,7 +96,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 try {
                     //Utility.mf("Command if exec() iterator: "+c.toString());
                     c.exec();
-                    stringResult=stringResult+""+c.getCommandStringResult();
+                    //stringResult=stringResult+""+c.getCommandStringResult();
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),
@@ -109,7 +109,7 @@ public class if_command implements ICommand, IFlowCommandControl{
                 try {
                     //Utility.mf("Command if exec() iterator: "+c.toString());
                     c.exec();
-                    stringResult=stringResult+""+c.getCommandStringResult();
+                   // stringResult=stringResult+""+c.getCommandStringResult();
                 } catch (CommandException ex) {
                     throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
                             Thread.currentThread().getStackTrace()[2].getMethodName(),

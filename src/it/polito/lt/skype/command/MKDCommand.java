@@ -63,7 +63,7 @@ public class MKDCommand implements ICommand {
                             "MKD Exception: "+ex.getMessage(),ex);
                 }
             }
-
+        env.appOutputString(pathResult.toString()+"\n");
         return true;
     }
 

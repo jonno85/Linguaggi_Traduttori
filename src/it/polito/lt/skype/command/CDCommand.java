@@ -79,6 +79,7 @@ public class CDCommand implements ICommand {
 			else
 				return false;
 		}
+		currentEnv.appOutputString(">"+target.toString()+"\n");
 		return true;
 		
 	}

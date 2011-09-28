@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.lt.skype.command.CommandEnv;
 import it.polito.lt.skype.command.CommandErrorType;
 import it.polito.lt.skype.command.CommandException;
 import it.polito.lt.skype.command.CommandParameter;
@@ -17,9 +18,11 @@ public class CScript implements ICommand {
         private VarManager myVm = null;
 	private VarManager bak_myVm = null;
 	private String stringResult="";
+	private CommandEnv env=null;
 	
-	public CScript(LinkedList<ICommand> l, VarManager bak_vm)
+	public CScript(LinkedList<ICommand> l, VarManager bak_vm, CommandEnv env)
 	{
+		this.env=env;
 		list=l;
                 myVm = new VarManager();
                 bak_myVm = bak_vm;
@@ -48,7 +51,7 @@ public class CScript implements ICommand {
 			{
 				Utility.mf("elemento: "+c.toString());
 				c.exec();
-				stringResult=stringResult+""+c.getCommandStringResult();
+				//stringResult=stringResult+""+c.getCommandStringResult();
 			}
 			
 		} catch (NullPointerException |  CommandException ex) {

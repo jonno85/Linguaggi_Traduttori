@@ -205,6 +205,7 @@ public class VarManager{
         		
                 if(segno.equalsIgnoreCase("-"))
                  a=   mkOper.Neg(extractVar(name));
+                a.setName(name);
                 add_var(a);
                 return name;
         }

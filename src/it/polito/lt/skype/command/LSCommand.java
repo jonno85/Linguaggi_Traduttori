@@ -127,6 +127,7 @@ public class LSCommand implements ICommand {
                 }
             }
             Utility.mf("LSRESULT: "+string_result);
+           currentEnv.appOutputString(string_result.toString()+"\n");
             return true;
 	}
 	

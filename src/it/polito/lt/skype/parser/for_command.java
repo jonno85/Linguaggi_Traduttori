@@ -113,7 +113,7 @@ public class for_command implements ICommand, IFlowCommandControl{
                     "ForCommand FAIL: "+e1.getMessage(), e1);
 		}
         try {
-			if(common_vm.isPos(step_name)){
+			//if(common_vm.isPos(step_name)){
 			   //Utility.mf("for exec: "+index+" "+end+" "+step);
 			   //Utility.mf("FOR COMMAND LIST: "+inside_command.toString());
 			    while(((Boolean)common_vm.makeLogicOper(index, end, "!=").getValue()).booleanValue())
@@ -127,7 +127,7 @@ public class for_command implements ICommand, IFlowCommandControl{
 			            try {
 			            	//Utility.mf("step: "+ common_vm.extractVar(index_name));
 			                c.exec();
-			                stringResult=stringResult+""+c.getCommandStringResult();
+			               // stringResult=stringResult+""+c.getCommandStringResult();
 			            } catch (CommandException ex) {
 			                throw new CommandException(CommandErrorType.STATEMENT_ERROR,this.getClass().getName(),
 			                        Thread.currentThread().getStackTrace()[2].getMethodName(),
@@ -144,7 +144,7 @@ public class for_command implements ICommand, IFlowCommandControl{
 			                    "FOR recursive Exception: "+e.getMessage(), e);
 					}
 			    }
-			}
+			//}
 		} catch (ManagerException e) {
 			throw new CommandException(CommandErrorType.ASSIG_ERROR, this.getClass().getName(),
                     Thread.currentThread().getStackTrace()[2].getMethodName(),
