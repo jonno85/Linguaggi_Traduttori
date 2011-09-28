@@ -87,28 +87,35 @@ parser code {:
 	{
 		if(scriptMes!=null)
 		{
-		String file=enviroment.getCurrentPathString()+filename;
+		
 		BufferedWriter writer = null;
-	        writer = new BufferedWriter(new FileWriter(file));
+	        writer = new BufferedWriter(new FileWriter(enviroment.getCurrentPathString()+"/"+filename));
 	        writer.write(scriptMes);
 	        if (writer != null)
 	            writer.close( );
 		}
-		Utility.mf("salvataggio terminato di "+file);
-		
+		Utility.mf("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename);
+		appendOutput("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename);
 	}
-	public void loadScript(String filename) throws IOException
+	public void loadScript(String filename) throws Exception
 	{
-		String file=enviroment.getCurrentPathString()+filename;
+		
+		String file=enviroment.getCurrentPathString()+"/"+filename;
 		FileReader input = new FileReader(file);
-		BufferedReader bufRead = new BufferedReader(input);
-		String result;    // String that holds current file line
-		String line = bufRead.readLine();
-		while (line != null){
-			System.out.println(line);
-			line = bufRead.readLine()+"\n";
-		 }
-		bufRead.close();
+		Lexer l = new Lexer(input);
+		parser p = new parser(l);
+		p.setEnviroment(new CommandEnv("/home/robizz/lt"));		
+		p.setScanner(l);
+		try {
+			
+			Object result = p.debug_parse();
+			appendOutput(p.getOutput());
+		} 
+		catch (Exception e) 
+		{
+			throw new Exception("Launch Script Error: "+e.toString());
+		}
+		Utility.mf("DONE");
 	}
 
 	public void setEnviroment(CommandEnv e)
@@ -233,10 +240,11 @@ start_s			::= Start_S File:s EL
 					:}
 ;
 
-throw_s		::= Throw_S File	{:
+throw_s		::= Throw_S File:s	{:
 					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
 					
-					if(parser.goScript)	{				
+					if(parser.goScript)	{
+//						parser.loadScript(s);				
 						parser.csc.exec();
 						parser.appendOutput(parser.csc.getCommandStringResult());
 					}
@@ -257,7 +265,7 @@ end_s		::= End_S File:s
 
 i_stmt		::= stmt:s		{://RE-Init
 					parser.todo.add(s);
-					
+					Utility.mf(parser.todo.toArray().toString());
 					//parser.cp = new CommandParameter[7];
 					parser.cpm = new CommandParameter[7][];
 					parser.com = null;
