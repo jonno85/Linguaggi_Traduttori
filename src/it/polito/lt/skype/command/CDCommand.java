@@ -35,6 +35,7 @@ public class CDCommand implements ICommand {
     
     private List<Path> result = null;
     private String string_result = null;
+	private boolean goBack = false;
 
     
 	 public CDCommand(CommandEnv currentEnv, parser p)
@@ -52,15 +53,20 @@ public class CDCommand implements ICommand {
 	@Override
 	public boolean exec() throws CommandException {
 		current=currentEnv.getCurrentPath();
-		target=current.resolve(target);
-		Utility.mf("CD: "+target.toString());
-		if(Files.exists(target)){
-			currentEnv.setCurrentPath(target);
-			//p.setEnviroment(target.toString());
-			return true;
+		if(goBack)
+				currentEnv.setCurrentPath(currentEnv.getCurrentPath().getParent());
+		else{
+			target=current.resolve(target);
+			Utility.mf("CD: "+target.toString());
+			if(Files.exists(target)){
+					currentEnv.setCurrentPath(target);
+				//p.setEnviroment(target.toString());
+				return true;
+			}
+			else
+				return false;
 		}
-		else
-			return false;
+		return true;
 		
 	}
 
@@ -76,8 +82,11 @@ public class CDCommand implements ICommand {
 			throws ParserException {
 		params=cpl;
 		Utility.mf("CD SETCOMMANDPARAMETER: "+params.toString());
-		if(cpl[2]!=null)
+		if(cpl[2]!=null){
+			if(cpl[2].getValue().equals("<<"))
+				goBack  = true;
 			target= Paths.get(cpl[2].getValue()).normalize();
+		}
 		else
 			target=current;
 		// TODO Auto-generated method stub

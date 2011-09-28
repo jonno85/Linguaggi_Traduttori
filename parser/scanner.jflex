@@ -119,7 +119,7 @@ diver = ("!="|"<>")
 
 c_quan = (all|only|just)
 
-
+back = "<<"
 
 c_or = (or|"|")
 c_and = (and|"&")
@@ -237,8 +237,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {com_mv}				{return symbol(sym.Com_Mov);}
 {com_mkdir}				{return symbol(sym.Com_MKDir);}
 {com_p}					{return symbol(sym.Com_P);}
-{min}{min}				{return symbol(sym.Minor);}
-
+{back}					{return symbol(sym.Back);}
 //"$"{length}				{return symbol(sym.Length);}
 
 "$"{id}					{
