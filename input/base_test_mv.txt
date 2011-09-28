@@ -1,0 +1,13 @@
+create $home = '/home/robizz/lt/'
+create $home2 = '/home/robizz/lt2/'
+create $tmp = '/home/robizz/lt/tmp'
+
+##MV##
+##rename##
+muovi casa.pdf edificio.pdf
+mv /home/robizz/lt/1.pdf /home/robizz/lt/2.pdf
+mv /home/robizz/lt/tmp /home/robizz/lt/
+
+mv *.pdf /home/robizz/lt/tmp
+mv /tmp/ /home/user
+mv /home/robizz/lt/tmp/*.conf /home/robizz/lt

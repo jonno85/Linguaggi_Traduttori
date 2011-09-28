@@ -1,0 +1,6 @@
+##CD##
+vai /home/robizz/lt/tmp
+ls
+
+vai <<
+ls

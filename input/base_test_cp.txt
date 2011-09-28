@@ -1,0 +1,8 @@
+create $home = '/home/robizz/lt/'
+create $home2 = '/home/robizz/lt2/'
+create $tmp = '/home/robizz/lt/tmp'
+
+##CP##
+cp *.* /home/robizz/lt
+cp /home/robizz/lt/tmp/*.conf /home/robizz/lt
+cp /home/robizz/lt/tmp/ciccio.txt /home/robizz/lt/tmp/ciccio2.txt

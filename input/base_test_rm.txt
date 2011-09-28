@@ -1,0 +1,7 @@
+##RM##
+cd /home/robizz/lt
+
+elimina pippo.c
+delete *.conf
+cancel /home/robizz/lt/file.conf
+rm /home/robizz/lt/tmp2/

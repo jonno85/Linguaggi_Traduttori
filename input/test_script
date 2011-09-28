@@ -1,0 +1,66 @@
+#!/bin/bash
+
+P0="lt/"
+P1="lt/tmp"
+P2="lt2/"
+cd ~
+rm -r $P0
+rm -r $P2
+
+mkdir $P0
+mkdir $P1
+mkdir $P2
+
+echo "generazione file cartella "$P0
+cd ~/$P0
+for i in `seq 10`
+do
+	touch prova$i.htm
+	touch prova$i.pdf
+	touch $i.word$i.c
+	if [ $i%3=0 ]; then
+		echo $P0 > prova$i.htm
+		touch config$1.conf
+	fi
+	if [ $i%3=1 ]; then
+		echo $P0$P1 > prova$i.pdf
+	fi
+done
+
+
+echo "generazione file cartella "$P2
+cd ~/$P2
+for i in `seq 10`
+do
+	touch sda$i.htm
+	touch main$i.pdf
+	touch lib$i.c
+	touch skenz.$i
+	if [ $i%4=0 ]; then
+		echo $P0 > main$i.pdf
+		chmod 131 skenz.$i
+	fi
+	if [ $i%4=1 ]; then
+		echo $P0$P1 > sda$i.htm
+		mv skenz.$i sEEnz.dll
+		touch ss$1.conf
+	fi
+done
+
+chmod 123 *4*
+chmod 766 *6*
+chmod 600 *1*
+
+echo "generazione file cartella "$P
+cd ~/$P1
+for i in `seq 10`
+do
+	touch f$i.cpp
+	touch h$i.zip
+	touch config$1.conf2
+done
+
+exit
+
+
+

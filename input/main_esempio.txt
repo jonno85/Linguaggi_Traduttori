@@ -1,14 +1,17 @@
-/*FIND nn è prevista lo spostamento di variabili*/
-trova *.html esegui muovi $name /home ;  
-find *.c /home esegui mv $name *.cpp ;
-seek ?word.c 
-trova S??nz.* /root permessi=131 esegui delete $name ;
-cerca  *.htm home/doc 
-seek  *.htm /home/root data < 12/12/2010 and dimensione < 1mb
-trova /home where dimension > 2 mb and dimension < 5mb
+create $home = '/home/robizz/lt/'
+create $home2 = '/home/robizz/lt2/'
+create $tmp = '/home/robizz/lt/tmp'
 
-/*LS*/
-mostra cartelle dove nome != *er*   <--?
+##FIND nn è prevista lo spostamento di variabili##
+trova *.html esegui muovi $name $home2 ;  
+find *.c $home esegui mv $ *.cpp ;
+seek ?word.c 
+trova S??nz.* $home2 permessi=131 esegui delete $name ;
+cerca  *.htm $home2
+seek  *.htm $home data < 12/12/2010 and dimensione < 1mb
+trova $home where dimension > 2 mb and dimension < 5mb
+
+##LS##
 mostra file permessi = 777
 mostra cartelle permessi = 644
 mostra asc *.htm
@@ -17,31 +20,33 @@ mostra /tmp
 show file /home permessi < 777 & data > 25-02-2010 
 show file where data < 20 feb 2010
 
-/*RM*/
+##RM##
 elimina pippo.c
 delete *.conf
-cancel /opt/eclipse/*.conf
+cancel /opt/eclipse##.conf
 rm /home/user/logs/
 
-/*CD*/
-vai /home
+##CD##
+vai /home/robizz/lt
 cd 
 vai <<
 
-/*MV*/
-muovi casa.pdf edificio.pdf		/*rename*/
-mv /home/1.pdf /home/2.pdf		/*rename*/
-mv /home/user/ /home/utente/		/*rename*/
-mv *.pdf /tmp
-mv /tmp/ /home/user
-mv /home/*.conf /opt
+##MV##
+##rename##
+muovi casa.pdf edificio.pdf
+mv /home/robizz/lt/1.pdf /home/robizz/lt/2.pdf
+mv /home/robizz/lt/tmp /home/robizz/lt/
 
- /*CP*/
+mv *.pdf /home/robizz/lt/tmp
+mv /tmp/ /home/user
+mv /home/robizz/lt/tmp/*.conf /home/robizz/lt
+
+ ##CP##
 cp *.* /home/user
 cp /tmp/*.conf /home/user
 cp /home/ciccio.txt /home 
 
-/**/
+####
 create $a=2, $c, $d=3.2
 create $w=false
 create $mio = 'stringa'
