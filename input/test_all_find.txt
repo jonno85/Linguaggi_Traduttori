@@ -1,0 +1,21 @@
+
+inizio scr1.ss
+
+create $a=2,$c=true,$d=5,$B,$w=true
+create $mio = 'cartella', $g
+if $a = 0 then $B=false endif
+if $c=true then $c=false else $a=0 endif
+
+create $p='pippo.pdf'
+find *.pdf /home
+foreach $a 0 $lenght do
+    if $result[$a] = $p then
+     mv $result[$i] 'trovato' + $i + '.pdf'
+else
+    mv $result[$a] $i + '.pdf'
+    print 'elemento n:' + $i ' \n'
+endif
+next +1
+
+fine scr1.ss
+lancia scr1.ss

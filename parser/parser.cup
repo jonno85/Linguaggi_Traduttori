@@ -92,8 +92,8 @@ parser code {:
 	        if (writer != null)
 	            writer.close( );
 		}
-		Utility.mf("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename);
-		appendOutput("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename);
+		Utility.mf("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename+"\n");
+		appendOutput("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename+"\n");
 	}
 	public void loadScript(String filename) throws Exception
 	{
@@ -291,7 +291,7 @@ stmt 		::= init_stmt:s EL	{://Utility.mf("stmt: init_stmt: lista dichiar: "+pars
 						//ESECUZIONE SOLO IN SCRIPT O SHELL
 					if(!parser.script_enabled){
 						parser.com.exec();
-						//parser.appendOutput(parser.com.getCommandStringResult());
+						parser.appendOutput(parser.com.getCommandStringResult());
 						//Utility.mf(parser.com.getCommandStringResult());
 					}
 					else{
@@ -462,7 +462,7 @@ init_stmt	::=  Com_Str assig_stmt:x
 		| Com_Str Var:x
 						{:
 						parser.dec_list = new ArrayList<ASCommand>();
-						parser.vm.add_var(new myVar(x,parser.vm));// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());
+						parser.vm.add_var(new myVar(x));// Utility.mf("DICHIARAZIONI\nvar: "+x.toString());
 						:}
 		| init_stmt assig_stmt:x
 						{:
@@ -472,7 +472,7 @@ init_stmt	::=  Com_Str assig_stmt:x
 						:}
 		| init_stmt Var:x
 						{:
-						parser.vm.add_var(new myVar(x,parser.vm)); //Utility.mf("var: "+x.toString());
+						parser.vm.add_var(new myVar(x)); //Utility.mf("var: "+x.toString());
 						:}
 		| init_stmt error		{:
 						parser.appendOutput(" syntax error in init_stmt\n");

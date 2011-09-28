@@ -133,7 +133,7 @@ public class ASCommand implements ICommand {
                         Thread.currentThread().getStackTrace()[2].getMethodName(),
                         "ASCommand FAIL: "+e.getMessage(), e);
 			}
-			env.appOutputString(getCommandStringResult());
+			//env.appOutputString(getCommandStringResult());
             return true;
 	}
 	

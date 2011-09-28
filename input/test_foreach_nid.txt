@@ -1,0 +1,15 @@
+ inizio scr1.ss
+
+create $a=2,$c=0,$w=true,$p=13
+
+print $w
+if $w==true then
+    foreach $a 10 $p do
+        foreach $c 2 0 do
+            stampa 'ciclo nidificato, elemento' + $a + '-' + $c
+        next -1
+    next +1
+endif
+
+fine scr1.ss
+lancia scr1.ss

@@ -1,0 +1,19 @@
+ inizio scr1.ss
+
+create $a=2,$c=true,$d=5,$B,$w=true $mio = 'si',  $q=false
+
+
+if $d<4 || $c==true && $w==false || $a>=1 then 
+        if $c==true then
+            $q=false
+               stampa 'THEN'+$mio
+        endif
+else
+        if $w==true then
+            stampa 'ELSE'+$mio
+        endif
+        $q=true
+endif
+stampa '$q= '+$q
+fine scr1.ss
+lancia scr1.ss
