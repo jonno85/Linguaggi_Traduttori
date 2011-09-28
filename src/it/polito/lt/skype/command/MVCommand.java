@@ -109,7 +109,7 @@ public class MVCommand implements ICommand{
                 } catch (ManagerException ex) {
                 	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                     		Thread.currentThread().getStackTrace()[2].getMethodName(), 
-                    		"CPCommand Exception"+ ex.getMessage());
+                    		"MVCommand Exception"+ ex.getMessage());
                     Utility.mf(ce);
                   throw ce;
                 }
@@ -127,12 +127,13 @@ public class MVCommand implements ICommand{
             } catch (ManagerException ex) {
             	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
-                		"CPCommand Exception"+ ex.getMessage());
+                		"MVCommand Exception"+ ex.getMessage());
                 Utility.mf(ce);
               throw ce;
             }
         }else{
             target = Paths.get(params[3].getValue()).normalize();
+            target= currentPath.resolve(target);
         }
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         paramPath_src= currentPath.resolve(paramPath_src);
@@ -153,7 +154,7 @@ public class MVCommand implements ICommand{
         pattern_src = paramPath_src.getFileName().toString();
         position_src = paramPath_src.getParent();
         */
-        Utility.mf("CP: da "+paramPath_src.toString()+" a "+target.toString());
+        Utility.mf("MV: da "+paramPath_src.toString()+" a "+target.toString());
     	/*
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
@@ -179,7 +180,7 @@ public class MVCommand implements ICommand{
             } catch (IOException ex) {
             	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
-                		"CPCommand Exception"+ ex.getMessage());
+                		"MVCommand Exception"+ ex.getMessage());
                 Utility.mf(ce);
               throw ce;
             }  
@@ -222,9 +223,9 @@ public class MVCommand implements ICommand{
     	params = cpl;
         if(params.length!=7)
             Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
-                 Thread.currentThread().getStackTrace()[2].getMethodName(), "CP Parameter Exception"));
+                 Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception"));
         
-         Utility.mf("CP SETCOMMANDPARAMETER:");
+         Utility.mf("MV SETCOMMANDPARAMETER:");
 		  for(int i=0; i<7;i++){
 			if(cpl[i]!=null)
 				Utility.mf("param "+i+" = "+cpl[i].getValue());
@@ -269,7 +270,7 @@ public class MVCommand implements ICommand{
 
     @Override
     public void usage() {
-        Utility.mf("cp <source> <destination>");
+        Utility.mf("mv <source> <destination>");
     }
 
     @Override
@@ -312,6 +313,19 @@ public class MVCommand implements ICommand{
         return true;
     }
 
+	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+		if(index<=params.length)
+			params[index]=cp;
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+		if(index<=params.length)
+			return params[index];
+		return null;
+	}
+    
     @Override
     public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
         this.manager = manager;

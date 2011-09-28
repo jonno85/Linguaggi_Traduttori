@@ -1,0 +1,9 @@
+create $home = '/home/robizz/lt/'
+create $home2 = '/home/robizz/lt2/'
+create $tmp = '/home/robizz/lt/tmp'
+
+##FIND nn è prevista lo spostamento di variabili##
+cd /home/robizz/lt
+ls
+trova *.htm esegui muovi /home/robizz/lt2 ;
+

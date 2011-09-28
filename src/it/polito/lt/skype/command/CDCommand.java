@@ -50,6 +50,19 @@ public class CDCommand implements ICommand {
 	            this.p=p;
 	    }
 	
+		@Override
+		public void setCommandParameterAt(int index, CommandParameter cp) {
+			if(index<=params.length)
+				params[index]=cp;
+		}
+
+		@Override
+		public CommandParameter getCommandParameterAt(int index) {
+			if(index<=params.length)
+				return params[index];
+			return null;
+		} 
+	 
 	@Override
 	public boolean exec() throws CommandException {
 		current=currentEnv.getCurrentPath();

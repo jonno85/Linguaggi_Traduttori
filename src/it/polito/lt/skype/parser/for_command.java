@@ -210,6 +210,18 @@ public class for_command implements ICommand, IFlowCommandControl{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
  	
  	
     

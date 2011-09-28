@@ -70,6 +70,19 @@ public class LSCommand implements ICommand {
                 
         }
         
+    	@Override
+    	public void setCommandParameterAt(int index, CommandParameter cp) {
+    		if(index<=params.length)
+    			params[index]=cp;
+    	}
+
+    	@Override
+    	public CommandParameter getCommandParameterAt(int index) {
+    		if(index<=params.length)
+    			return params[index];
+    		return null;
+    	}
+        
 	@Override
 	public boolean exec() throws CommandException {
 			//paramPath=Paths.get(params[2].getValue());

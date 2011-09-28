@@ -193,5 +193,17 @@ public class ASCommand implements ICommand {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 

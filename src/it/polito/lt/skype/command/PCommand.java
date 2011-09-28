@@ -37,6 +37,17 @@ public class PCommand implements ICommand {
 	}
 	
 	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+
+		return null;
+	}
+	
+	@Override
 	public boolean exec() throws CommandException {
 		result = null;
 		

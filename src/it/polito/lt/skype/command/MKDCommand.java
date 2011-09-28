@@ -72,6 +72,19 @@ public class MKDCommand implements ICommand {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+		if(index<=params.length)
+			params[index]=cp;
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+		if(index<=params.length)
+			return params[index];
+		return null;
+	}
+    
     @Override
     public void setCommandParameter(CommandParameter[] cpl) {
        if (cpl.length>=1)

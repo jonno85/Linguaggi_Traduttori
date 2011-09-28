@@ -27,4 +27,8 @@ public interface ICommand {
 	public void usage();
         
         public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list);
+        
+        public void setCommandParameterAt(int index, CommandParameter cp);
+        
+        public CommandParameter getCommandParameterAt(int index);
 }

@@ -151,6 +151,7 @@ public class CPCommand implements ICommand{
             }
         }else{
             target = Paths.get(params[3].getValue()).normalize();
+            target= currentPath.resolve(target);
         }
         paramPath_src = Paths.get(params[2].getValue()).normalize();
             paramPath_src= currentPath.resolve(paramPath_src);
@@ -390,4 +391,17 @@ public class CPCommand implements ICommand{
         }
         
     }
+
+	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+		if(index<=params.length)
+			params[index]=cp;
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+		if(index<=params.length)
+			return params[index];
+		return null;
+	}
 }

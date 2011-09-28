@@ -50,7 +50,7 @@ sp = " "
 
 nl = \n|\r|\r\n
 tab = [\t]
-key = (home|etc|usr|var|tmp|root|boot|opt|dev|lib|bin|sbin|var|sys|mnt|media|logs|eclipse|user)
+//key = (home|etc|usr|var|tmp|root|boot|opt|dev|lib|bin|sbin|var|sys|mnt|media|logs|eclipse|user)
 ac = "##"
 
 RO = "("
@@ -78,7 +78,7 @@ day	= 0[1-9]|[1-2][0-9]|3[0-1]//|{Day}
 month	= 0[1-9]|1[0-2]|{Month}
 year	= [0-9]{4}
 
-conf = (i|a|e)
+//conf = (i|a|e)
 
 com_ex = (esegui|exec)
 com_script_start = (start|inizio)
@@ -103,12 +103,12 @@ com_p = (print|stampa)
 
 where = (dove|where) 
 
-prep_supporto = ("più"|piu|meno|to|for) //da rivedere
+//prep_supporto = ("più"|piu|meno|to|for) //da rivedere
 
 c_ug = (uguale|equal|like|=)
 c_ugg = (==)
 
-c_dis = (min|max|"?"|diverso|include)
+//c_dis = (min|max|"?"|diverso|include)
 
 min = ("<")
 magg = (">")
@@ -117,7 +117,7 @@ maggug = (">=")
 diver = ("!="|"<>")
 
 
-c_quan = (all|only|just)
+//c_quan = (all|only|just)
 
 back = "<<"
 
@@ -147,7 +147,6 @@ unit = (byte|kb|kbyte|kilobyte|mb|mbyte|megabyte|gb|gbyte|gigabyte)
 digit=[0-9]
 float = {digit}+("."{digit}+)
 int = {digit}+ 
-length = LENGTH
 result = RESULT
 
 
@@ -209,8 +208,6 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 
 {obj}					{return symbol(sym.Obj,new String(yytext()));}
 
-{prep_supporto}				{return symbol(sym.Prep_supp);}
-
 {order}					{return symbol(sym.Order,new String(yytext()));}
 
 {min}					{return symbol(sym.Min,new String(yytext()));}
@@ -229,7 +226,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {com_ex}				{return symbol(sym.Com_Ex);}
 //{com_script}				{return symbol(sym.Com_Scr);}
 {com_rm}				{return symbol(sym.Com_Rm);}
-{com_find}{prep_supporto}?		{return symbol(sym.Com_Find);}
+{com_find}				{return symbol(sym.Com_Find);}
 {com_cp}				{return symbol(sym.Com_Cp);}
 {com_cd}				{return symbol(sym.Com_Cd);}
 {com_ls}				{System.out.println("LS: "+ yytext());return symbol(sym.Com_Ls);}
@@ -238,7 +235,6 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 {com_mkdir}				{return symbol(sym.Com_MKDir);}
 {com_p}					{return symbol(sym.Com_P);}
 {back}					{return symbol(sym.Back);}
-//"$"{length}				{return symbol(sym.Length);}
 
 "$"{id}					{
 					//System.out.println("invio una myVar");

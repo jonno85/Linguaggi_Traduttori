@@ -36,6 +36,8 @@ public class FINDCommand implements ICommand {
         private List<Path> pathResult_rec = null;
         private ArrayList<String> string_result = null;
         private VarManager manager = null;
+        private ICommand rec_cmd = null;
+        
       
         
 	        /*
@@ -90,10 +92,11 @@ public class FINDCommand implements ICommand {
         
         public void recursive_cmd() throws CommandException{
         	int i=1;
+        	rec_cmd.setCommandParameterAt(3,rec_cmd.getCommandParameterAt(2));
         	for(Path curr_path : pathResult){
-        		ICommand rec_cmd=FileEngine.iCommandFromString(params[5][0].getValue(),env);
-        		Utility.mf("--------------------"+params[5][0].getValue());
-        		CommandParameter[] dyn_param = new CommandParameter[7];
+        		//ICommand rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),env);
+        		//Utility.mf("--------------------"+params[5][0].getValue());
+        		/*CommandParameter[] dyn_param = new CommandParameter[7];
         		dyn_param=params[6].clone();
         		dyn_param[2]=new CommandParameter(ParamType.PATH, curr_path.toString(), null) ;
         		//dyn_param[3]=params[6][3];
@@ -102,7 +105,9 @@ public class FINDCommand implements ICommand {
 				} catch (ParserException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
+        		
+        		rec_cmd.setCommandParameterAt(2,new CommandParameter(null, curr_path.toString(),null));
         		rec_cmd.exec();
         		//controllare la stampa
         		string_result.set(i,string_result.get(i)+" EXEC-> "+rec_cmd.getCommandStringResult());
@@ -249,24 +254,23 @@ public class FINDCommand implements ICommand {
     public void setCommandParameter(CommandParameter[][] cpl) {
     	
         params=cpl;
-        if(params[5]!=null)
-        	doRecursive=true;
-        
-        if(params[0]!=null) {
+        //estensioni
+        if(params[0].length>0) {
         	Utility.mf("params[0] NON vuoto \n"+params[0][0].getValue());
         	n_file=params[0].length;
         }
         else
         	params[0]=new CommandParameter[]{new CommandParameter(null,pattern,null)};
         
-        if(params[1]!=null){ 
+        //percorsi
+        if(params[1].length>0){ 
         	Utility.mf("params[1] NON vuoto\n"+params[1][0].getValue());
         	n_dir=params[1].length;	
         }
         else
         	params[1]=new CommandParameter[]{new CommandParameter(null,position,null)};
         
-        if(params[1]==null && params[0]==null)
+        if(params[1].length==0 && params[0].length==0)
             Utility.mf(new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
                    Thread.currentThread().getStackTrace()[2].getMethodName(), "Find Parameter Exception"));
     }
@@ -281,7 +285,11 @@ public class FINDCommand implements ICommand {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    
+    //imposta il secondo comando
+    public void set2Command(ICommand cmd){
+    	rec_cmd = cmd;
+    	doRecursive = true;
+    }
     
     
     /**
@@ -339,6 +347,19 @@ public class FINDCommand implements ICommand {
             return FileVisitResult.CONTINUE;
         }
     }
+
+
+	@Override
+	public void setCommandParameterAt(int index, CommandParameter cp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public CommandParameter getCommandParameterAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     
 

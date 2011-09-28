@@ -4,8 +4,8 @@ P0="lt/"
 P1="lt/tmp"
 P2="lt2/"
 cd ~
-rm -r $P0
-rm -r $P2
+rm -r -f $P0
+rm -r -f $P2
 
 mkdir $P0
 mkdir $P1
@@ -26,7 +26,7 @@ do
 		echo $P0$P1 > prova$i.pdf
 	fi
 done
-
+touch temp1.pdf casa.pdf file.conf
 
 echo "generazione file cartella "$P2
 cd ~/$P2
@@ -42,7 +42,7 @@ do
 	fi
 	if [ $i%4=1 ]; then
 		echo $P0$P1 > sda$i.htm
-		mv skenz.$i sEEnz.dll
+		mv -f skenz.$i sEEnz.dll
 		touch ss$1.conf
 	fi
 done
