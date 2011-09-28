@@ -94,73 +94,78 @@ public class RMCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        
-        paramPath = (Paths.get(params[2].getValue()).normalize());
-        paramPath= env.getCurrentPath().resolve(paramPath);
-        
-        pattern = paramPath.getFileName().toString();
-        position = paramPath.getParent();
-        Utility.mf("PARAMPATH: "+paramPath.toString());
-        Utility.mf("PATTERN: "+pattern.toString());
-        Utility.mf("POSITION: "+position.toString());
-       
-        boolean finalDeleteDir=false;
-        
-        isRegFolder = false;
-        isFile = false;
-        
-        finalDeleteDir=Files.isDirectory(paramPath); //se il parametro è una directory secca la cancello alla fine
-        	
-        
-        FileEngine fe = new FileEngine();
-        try {
-            stream = fe.getStreamFromString(paramPath.toString());
-        } catch (IOException ex) {
-        	Utility.mf(ex);
-        	return false;
+        if(params[2]!=null){
+	        paramPath = (Paths.get(params[2].getValue()).normalize());
+	        paramPath= env.getCurrentPath().resolve(paramPath);
+	        
+	        pattern = paramPath.getFileName().toString();
+	        position = paramPath.getParent();
+	        Utility.mf("PARAMPATH: "+paramPath.toString());
+	        Utility.mf("PATTERN: "+pattern.toString());
+	        Utility.mf("POSITION: "+position.toString());
+	       
+	        boolean finalDeleteDir=false;
+	        
+	        isRegFolder = false;
+	        isFile = false;
+	        
+	        finalDeleteDir=Files.isDirectory(paramPath); //se il parametro è una directory secca la cancello alla fine
+	        	
+	        
+	        FileEngine fe = new FileEngine();
+	        try {
+	            stream = fe.getStreamFromString(paramPath.toString());
+	        } catch (IOException ex) {
+	        	Utility.mf(ex);
+	        	return false;
+	        }
+	        
+	        for (Path file: stream) {
+	            
+	        	Utility.mf("stream LISTA: "+file.toString());
+	        	//Path listPosition =null;
+	        	//listPosition=file.getParent();
+	        	PosixFileAttributes attr;
+	            try {
+	                attr = Files.readAttributes(file, PosixFileAttributes.class);
+	                if(attr.isDirectory())
+	                    throw new DirectoryNotEmptyException(file.toString());
+	                Utility.mf("ELIMINAZIONE FILE DALLA LISTA STREAM "+file.toString());
+	                result.add(file);
+	                removeFile(file);
+	                tot_elem++;
+	                
+	            } catch (NoSuchFileException x) {
+	                Utility.mf(x);
+	            } catch (DirectoryNotEmptyException x) {
+	                Utility.mf(x);
+	                try {
+	                    Treefinder tf = new Treefinder(file,result,position);
+	                    Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
+	                    tot_elem += tf.get_matches_dir()+tf.get_matches_file();
+	                }catch(IOException ex){
+	                    Utility.mf(ex);
+	                }
+	            } catch (IOException ex) {
+	                //File permission problems are caught here.
+	                throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
+	                		Thread.currentThread().getStackTrace()[2].getMethodName(),
+	                		"RM recursive Exception: "+ex.getMessage(), ex);
+	            }
+	        }
+	        
+	        if(finalDeleteDir)
+	        {
+	        	   result.add(paramPath);
+	               removeFile(paramPath);
+	               tot_elem++;
+	        }
         }
-        
-        for (Path file: stream) {
-            
-        	Utility.mf("stream LISTA: "+file.toString());
-        	//Path listPosition =null;
-        	//listPosition=file.getParent();
-        	PosixFileAttributes attr;
-            try {
-                attr = Files.readAttributes(file, PosixFileAttributes.class);
-                if(attr.isDirectory())
-                    throw new DirectoryNotEmptyException(file.toString());
-                Utility.mf("ELIMINAZIONE FILE DALLA LISTA STREAM "+file.toString());
-                result.add(file);
-                removeFile(file);
-                tot_elem++;
-                
-            } catch (NoSuchFileException x) {
-                Utility.mf(x);
-            } catch (DirectoryNotEmptyException x) {
-                Utility.mf(x);
-                try {
-                    Treefinder tf = new Treefinder(file,result,position);
-                    Files.walkFileTree(file, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,tf);                    
-                    tot_elem += tf.get_matches_dir()+tf.get_matches_file();
-                }catch(IOException ex){
-                    Utility.mf(ex);
-                }
-            } catch (IOException ex) {
-                //File permission problems are caught here.
-                throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
-                		Thread.currentThread().getStackTrace()[2].getMethodName(),
-                		"RM recursive Exception: "+ex.getMessage(), ex);
-            }
+        else{
+	        throw new CommandException(CommandErrorType.REMOVE_ERROR,this.getClass().getName(),
+	        		Thread.currentThread().getStackTrace()[2].getMethodName(),
+	        		"RM senza parametro");
         }
-        
-        if(finalDeleteDir)
-        {
-        	   result.add(paramPath);
-               removeFile(paramPath);
-               tot_elem++;
-        }
-        
         return true;
     }
 
