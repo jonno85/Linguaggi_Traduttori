@@ -1,6 +1,7 @@
 ##CD##
 vai /home/robizz/lt/tmp
 ls
-
+mkdir mond/olfo
+ls
 vai <<
 ls
