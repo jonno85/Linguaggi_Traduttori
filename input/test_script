@@ -27,6 +27,7 @@ do
 	fi
 done
 touch temp1.pdf casa.pdf file.conf
+chmod 777 temp1.pdf file.conf
 
 echo "generazione file cartella "$P2
 cd ~/$P2
@@ -57,8 +58,9 @@ for i in `seq 10`
 do
 	touch f$i.cpp
 	touch h$i.zip
-	touch config$1.conf2
+	touch config$1.conf
 done
+touch ciccio.txt
 
 exit
 

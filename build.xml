@@ -106,6 +106,13 @@
 		<echo>REWRITE DONE!</echo>
 	</target>
 
+	<target name="create-test-file" description="tests files">
+		<exec dir="${input.dir}" executable="/bin/sh">
+	  		<arg line="test_script"/>
+		</exec>
+	</target>
+
+	
 	<target name="fix-lexer" description="fix lexer.java public issues">
 		<echo>Running REWRITE Lexer.java</echo>
 			<replaceregexp file="${generated.package}/Lexer.java" match="Lexer\(java." replace="public Lexer\(java." byline="true"/>
@@ -210,7 +217,7 @@
 		        </java>
 		    </target>
 	
-	<target name="run.skypeBot" depends="build" description="launch skype daemon">
+	<target name="run.skypeBot" depends="build,create-test-file" description="launch skype daemon">
 			        <echo>Running SKYPE DAEMON...</echo>
 			        <java classname="it.polito.lt.skype.bot.SkyBot" failonerror="true" fork="yes">
 			               

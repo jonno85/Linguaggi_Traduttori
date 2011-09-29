@@ -59,7 +59,7 @@ parser code {:
 	public IFlowCommandControl ifcc;
 	public ICommand ic;
 	public boolean if_control = false;
-	public boolean goScript = true;
+	public boolean goScript = false;
 	public boolean script_enabled=false;	
 	public CScript csc=null;
 	public String scriptMes =null;	
@@ -81,6 +81,11 @@ parser code {:
 	{
 		scriptMes=mes;
 	}
+
+	public void setLaunch(boolean value){
+		goScript = value;
+	}
+
 	public void saveScript(String filename) throws IOException 
 	{
 		if(scriptMes!=null)
@@ -88,10 +93,11 @@ parser code {:
 		
 		BufferedWriter writer = null;
 	        writer = new BufferedWriter(new FileWriter(enviroment.getCurrentPathString()+"/"+filename));
-	        writer.write(scriptMes);
+	        writer.write(scriptMes+"\n");
 	        if (writer != null)
 	            writer.close( );
 		}
+
 		Utility.mf("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename+"\n");
 		appendOutput("salvataggio terminato di "+enviroment.getCurrentPathString()+"/"+filename+"\n");
 	}
@@ -102,12 +108,13 @@ parser code {:
 		FileReader input = new FileReader(file);
 		Lexer l = new Lexer(input);
 		parser p = new parser(l);
-		p.setEnviroment(new CommandEnv("/home/robizz/lt"));		
+		p.setLaunch(true);
+		p.setEnviroment(enviroment);		
 		p.setScanner(l);
 		try {
 			
-			Object result = p.debug_parse();
-			appendOutput(p.getOutput());
+			Object result = p.parse();
+			//appendOutput(p.getOutput());
 		} 
 		catch (Exception e) 
 		{
@@ -168,7 +175,7 @@ parser code {:
 
 
 terminal String		Com_Ex, Com_Find, Com_Rm, Com_MKDir, Com_Cp, Com_Cd, Com_If, Com_If_2, Com_If_m, Com_If_e, Com_For, Com_For_e, Com_For_m, Com_Ls, Com_Str, Com_Mov, Com_P, Back;
-terminal String		Ext, ID, File, Path, Order,Data ,Month, Day, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Pv, Result, Name, Throw_S, Start_S, End_S, Str, EL;
+terminal String		Ext, ID, File, Path, Order, Data, Date_Criteria,Permission_Criteria,Dimension_Criteria, Obj, Where, Min,Magg,Minug,Maggug,Diver, C_Ug, C_And, C_Or, C_Ugg, C_Andd, C_Orr, C_Not, SO, SC, RO, RC, Minus, Plus, Times,Div, FUnit, IUnit, Pv, Result, Name, Throw_S, Start_S, End_S, Str, EL;
 terminal Integer	Int;
 terminal Float		Vint;
 terminal 		UMINUS;
@@ -182,7 +189,6 @@ non terminal		_where, comm_find_stmt, comm_find_stmt_2, i_cc_conds,cc_date_cond,
 non terminal myVar	i_arg,  logic_stmt;
 non terminal String		arit_arg, commands,commands_double_param, i_Op_ps, start_s, throw_s, end_s, bool_op, date_arg, conf_exp, arit_stmt,for_arg, for_tail;
 non terminal Object[]		LS_stmt, CD_stmt;
-//non terminal Calendar		date_arg;
 non terminal CommandParameter	param;
 non terminal for_command	for_stmt, for_head;
 non terminal if_command		if_stmt, if_head, if_head_half, if_else;
@@ -190,7 +196,7 @@ non terminal LinkedList		i_stmt;
 non terminal CScript		script;
 non terminal ICommand		sh_stmt, init_stmt, stmt, str_stmt,print_stmt;
 non terminal ASCommand		assig_stmt;
-non terminal			result_stmt, com_group;
+non terminal			com_group;
 
 
 precedence left Minus, Plus, C_Or, C_Orr;
@@ -211,10 +217,13 @@ S 		::= 	/* empty */
 script		::= start_s i_stmt:x end_s
 					{:
 					parser.script_enabled=false;					
-					parser.goScript=true;					
 					//Utility.mf("CHIUDO SCRIPT");
 					//salvataggio script
-								
+					if(parser.goScript){
+						parser.csc.exec();
+						parser.appendOutput(parser.csc.getCommandStringResult());	
+						parser.setLaunch(false);		
+					}
 					//esecuzione script
 					
 					:}
@@ -240,12 +249,12 @@ start_s			::= Start_S File:s EL
 
 throw_s		::= Throw_S File:s	{:
 					Utility.mf("LANCIA SCRIPT---------------------------------------------------------------------------------");
-					
-					if(parser.goScript)	{
-//						parser.loadScript(s);				
-						parser.csc.exec();
-						//parser.appendOutput(parser.csc.getCommandStringResult());
-					}
+					parser.loadScript(s);
+					//if(parser.goScript)	{
+										
+						//parser.csc.exec();
+						
+					//}
 					//Utility.mf("LANCIA SCRIPT");
 					:}
 ;
@@ -664,11 +673,6 @@ comm_find_stmt	::= Com_Find param:x	{:
 						Utility.mf(parser.cp.toString());						
 						parser.comFind.set2Command(parser.com); 
 						parser.cp=new CommandParameter[7]; 
-					:}
-		| comm_find_stmt Com_Ex comm_find_stmt_2 error
-					{:
-					parser.appendOutput(" parameter error in comm_find_stmt not closed\n");
-					parser.report_error(" parameter error in comm_find_stmt not closed\n",null);
 					:}
 //		| comm_find_stmt error		{:
 //					parser.appendOutput(" parameter  error in comm_find_stmt\n");

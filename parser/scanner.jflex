@@ -66,16 +66,11 @@ pv = ";"
 sep_dir = "/"
 //sep = {sep_dir}|{minus}|{sp}
 
-//des_mont = (naio|braio|zo|ile|gio|gno|lio|sto|tembre|obre|embre|uary|ruary|ch|il|e|y|tember|ober|ember)
-//des_day = ((t|col|v)?edi|erdi|ato|enica|(s|nes|rs|ur)?day)
-Month = jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec
-//Day = (lun|mar|mer|gio|ven|sab|dom|sun|mon|tue|wed|thu|fri|sat){des_day}?
-//g = (01|02|03|04|05|06|07|08|09)
 //data = ({g}|[10-31]){minus}({g}|[10-12]){minus}((199{digit})|(20{digit}{digit}))
 sep_data= {sep_dir}|{minus}|{sp}
 data	= {day}{sep_data}{month}{sep_data}{year}
 day	= 0[1-9]|[1-2][0-9]|3[0-1]//|{Day}
-month	= 0[1-9]|1[0-2]|{Month}
+month	= 0[1-9]|1[0-2]
 year	= [0-9]{4}
 
 //conf = (i|a|e)
@@ -196,8 +191,7 @@ file = ({sp_char}*|{id}*)+("."{sp_char}*|{id}*)+
 						Utility.mf("Data trimmed: " +tdata);
 						return symbol(sym.Data, new String(tdata));
 					}
-//{month}					{return symbol(sym.Month);}
-//{giorn}					{return symbol(sym.Day);}
+
 
 {where}					{return symbol(sym.Where);}
 //({times}?".")?{ext}			{return symbol(sym.Ext,new String(yytext()));}
