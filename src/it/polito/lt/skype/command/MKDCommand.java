@@ -119,4 +119,19 @@ public class MKDCommand implements ICommand {
     public void setAdditionalParameters(VarManager manager, ArrayList<String> token_list) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
+
+	@Override
+	public ArrayList<String> getTokenListAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void setTokenListAt(int index, ArrayList<String> list) {
+
+	}
 }

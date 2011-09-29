@@ -93,27 +93,17 @@ public class FINDCommand implements ICommand {
         public void recursive_cmd() throws CommandException{
         	int i=1;
         	rec_cmd.setCommandParameterAt(3,rec_cmd.getCommandParameterAt(2));
+        	ArrayList<String> app= new ArrayList<String>();
+        	rec_cmd.setCommandParameterAt(2,null);
         	env.appOutputString("FIND EXEC: ");
+        	if(rec_cmd.getCommandParameterAt(3).getParamType().equals(ParamType.COMPOSITO)){
+            	rec_cmd.setAdditionalParameters(this.manager, rec_cmd.getTokenListAt(0));
+        	}
+
         	for(Path curr_path : pathResult){
-        		//ICommand rec_cmd = FileEngine.iCommandFromString(params[5][0].getValue(),env);
-        		//Utility.mf("--------------------"+params[5][0].getValue());
-        		/*CommandParameter[] dyn_param = new CommandParameter[7];
-        		dyn_param=params[6].clone();
-        		dyn_param[2]=new CommandParameter(ParamType.PATH, curr_path.toString(), null) ;
-        		//dyn_param[3]=params[6][3];
-        		try {
-					rec_cmd.setCommandParameter(dyn_param);
-				} catch (ParserException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-        		
         		rec_cmd.setCommandParameterAt(2,new CommandParameter(ParamType.FILE, curr_path.toString(),null));
         		rec_cmd.exec();
-        		
         	}
-        
-                
         }
         
 	@Override
@@ -358,6 +348,18 @@ public class FINDCommand implements ICommand {
 	public CommandParameter getCommandParameterAt(int index) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTokenListAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTokenListAt(int index, ArrayList<String> list) {
+		// TODO Auto-generated method stub
+
 	}
 
     

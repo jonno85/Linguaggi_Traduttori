@@ -31,4 +31,7 @@ public interface ICommand {
         public void setCommandParameterAt(int index, CommandParameter cp);
         
         public CommandParameter getCommandParameterAt(int index);
+        
+        public ArrayList<String> getTokenListAt(int index);
+    	public void setTokenListAt(int index, ArrayList<String> list);
 }

@@ -34,15 +34,8 @@ public class VarManager{
             tmp_name = tmp;
         }
 
-    //Hash table in cui vengono memorizzati tutte le variabili dichiarate nel programma: nome,myVar
-//public void newVar(String name)    
-     
-   /*     public void add_tmp_var(myVar var)
-        {
-        var.setName("_tmp_"+tmp_name++);
-        var_tb.put(var.getName(),var);	
-		Utility.mf("add_tmp_var(): "+var.getName()+" = "+var.getStringValue());
-	}*/
+   
+        
 
     public String getTempName(){
     	return tmp_name+tmp_num++;
@@ -52,17 +45,7 @@ public class VarManager{
                 
                 //    Utility.mf("valore PRIMA di aggiornare " + (var_tb.get(var.getName())).getStringValue());
 		var_tb.put(var.getName(),var);	
-                //if(var_tb.get(var.getName())!=null)
-                //    Utility.mf("valore DOPO di aggiornare " + (var_tb.get(var.getName())).getStringValue());
-            //Utility.mf("Dichiarazione: "+var.getName()+" = "+var.getStringValue());
-            //if(var.getName().equals(""));
-            	//var.setName("_tmp_"+tmp_name++);
-            //var_tb.put(var.getName(),var);	
-            //Utility.mf("add_var(): "+var.getName()+" = "+var.getStringValue());
-            
-            
-            //***************************************************/
-                //Utility.mf(var.getName()+" stored"); 
+           
 	}
         
 	public void getListVar(){

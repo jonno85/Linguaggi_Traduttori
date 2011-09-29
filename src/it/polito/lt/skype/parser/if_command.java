@@ -193,5 +193,16 @@ public class if_command implements ICommand, IFlowCommandControl{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public ArrayList<String> getTokenListAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTokenListAt(int index, ArrayList<String> list) {
+
+	}
     
 }

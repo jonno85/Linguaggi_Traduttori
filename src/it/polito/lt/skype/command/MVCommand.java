@@ -73,6 +73,7 @@ public class MVCommand implements ICommand{
             pattern_src = "";
             token_list = new ArrayList<ArrayList<String>>();
     }
+
     
     public static void moveFile(Path source, Path target) throws IOException  {
         Utility.mf("target"+target.toString());
@@ -143,32 +144,8 @@ public class MVCommand implements ICommand{
         Utility.mf("params[3] "+params[3].getValue());
         Utility.mf("paramspath_src "+paramPath_src);
         Utility.mf("target "+target);
-/*
-        target= currentPath.resolve(target);
-        currentPath=env.getCurrentPath();
-        target = Paths.get(params[3].getValue()).normalize();
-        
-
-        paramPath_src = Paths.get(params[2].getValue()).normalize();
-        paramPath_src= currentPath.resolve(paramPath_src);
-        pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();
-        */
         Utility.mf("MV: da "+paramPath_src.toString()+" a "+target.toString());
-    	/*
-        DirectoryStream<Path> stream = null;
-        BasicFileAttributes b_attr = null;
-       
-        currentPath=env.getCurrentPath();
-        if(params[3]!=null)
-            target = Paths.get(params[3].getValue()).normalize();
-        target= currentPath.resolve(target);
-        
-        paramPath_src = Paths.get(params[2].getValue()).normalize();
-        paramPath_src= currentPath.resolve(paramPath_src);
-        pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();
-        */
+
         isRegFolder_src = false;
         isFile_src = false;
         BasicFileAttributes attr = null;
@@ -206,6 +183,7 @@ public class MVCommand implements ICommand{
                         result.add(file);
                         tot_elem++;
                     }
+                    env.appOutputString(dest.toString()+"\n");
                 } catch (IOException ex) {
                 	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                     		Thread.currentThread().getStackTrace()[2].getMethodName(), 
@@ -215,7 +193,6 @@ public class MVCommand implements ICommand{
                 }
             }
         }
-        env.appOutputString(getCommandStringResult());
         return true;
     }
 
@@ -233,28 +210,6 @@ public class MVCommand implements ICommand{
 			else 
 			Utility.mf("nulllll");
 		  }
-    	/*Utility.mf("dentro setcommandparameter" );
-       if (cpl.length==7||params[2]!=null)
-       {
-            params = cpl;
-            if(params[3]!=null)
-                target = Paths.get(params[3].getValue()).normalize();
-            target= currentPath.resolve(target);
-            
-            paramPath_src = Paths.get(params[2].getValue()).normalize();
-            paramPath_src= currentPath.resolve(paramPath_src);
-            pattern_src = paramPath_src.getFileName().toString();
-            position_src = paramPath_src.getParent();
-   
-    } 
-
-
-       else{
-    	   ParserException pe=new ParserException(ParserErrorType.INVALID_NUMBER_PARAMETER, this.getClass().getName(),
-                   Thread.currentThread().getStackTrace()[2].getMethodName(), "MV Parameter Exception");
-    	   Utility.mf(pe);
-    	   throw pe;
-       }*/
     } 
 
     @Override
@@ -369,7 +324,6 @@ public class MVCommand implements ICommand{
                 Files.move(dir, dest, REPLACE_EXISTING, ATOMIC_MOVE);
                 internal_result.add(dir);
                 num_dir++;
-            //}catch(FileAlreadyExistsException x){  
             }catch(IOException ioe){
                 Utility.mf(ioe);
                 return FileVisitResult.SKIP_SUBTREE;
@@ -419,6 +373,15 @@ public class MVCommand implements ICommand{
         public int get_n_dir(){
             return num_dir;
         }
-        
     }
+
+	@Override
+	public ArrayList<String> getTokenListAt(int index) {
+		return token_list.get(index);
+	}
+
+	@Override
+	public void setTokenListAt(int index, ArrayList<String> list) {
+		token_list.set(index, list);
+	}
 }

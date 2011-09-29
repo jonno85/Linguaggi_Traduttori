@@ -128,12 +128,6 @@ public class CPCommand implements ICommand{
                   throw ce;
                 }
             }
-            
-            
-            Utility.mf("inizio gestione secondo parametro");
-            
-            
-              //target = currentPath.resolve(target); 
          }
         if(params[3].getParamType().equals(ParamType.COMPOSITO)){
             Utility.mf("token list el 1 "+token_list.get(1));
@@ -155,24 +149,14 @@ public class CPCommand implements ICommand{
             target= currentPath.resolve(target);
         }
         paramPath_src = Paths.get(params[2].getValue()).normalize();
-            paramPath_src= currentPath.resolve(paramPath_src);
-            pattern_src = paramPath_src.getFileName().toString();
-            position_src = paramPath_src.getParent();
+        paramPath_src= currentPath.resolve(paramPath_src);
+        pattern_src = paramPath_src.getFileName().toString();
+        position_src = paramPath_src.getParent();
         Utility.mf("params[2] "+params[2].getValue());
         Utility.mf("params[3] "+params[3].getValue());
         Utility.mf("paramspath_src "+paramPath_src);
         Utility.mf("target "+target);
-/*
-        target= currentPath.resolve(target);
-        currentPath=env.getCurrentPath();
-        target = Paths.get(params[3].getValue()).normalize();
-        
 
-        paramPath_src = Paths.get(params[2].getValue()).normalize();
-        paramPath_src= currentPath.resolve(paramPath_src);
-        pattern_src = paramPath_src.getFileName().toString();
-        position_src = paramPath_src.getParent();
-        */
         Utility.mf("CP: da "+paramPath_src.toString()+" a "+target.toString());
         
         isRegFolder_src = false;
@@ -211,6 +195,7 @@ public class CPCommand implements ICommand{
                     result.add(file);
                     tot_elem++;
                 }
+                env.appOutputString(dest.toString()+"\n");
             } catch (IOException | UnsupportedOperationException ex) {
                 //File permission problems are caught here.
                 
@@ -221,7 +206,7 @@ public class CPCommand implements ICommand{
               throw ce;
             }
         }
-        env.appOutputString(getCommandStringResult());
+        
         return true;
     }
 
@@ -413,5 +398,16 @@ public class CPCommand implements ICommand{
 		if(index<=params.length)
 			return params[index];
 		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTokenListAt(int index) {
+		return token_list.get(index);
+		
+	}
+
+	@Override
+	public void setTokenListAt(int index, ArrayList<String> list) {
+		token_list.set(index, list);
 	}
 }

@@ -362,4 +362,15 @@ public class RMCommand implements ICommand{
         }
         
     }
+
+	@Override
+	public ArrayList<String> getTokenListAt(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTokenListAt(int index, ArrayList<String> list) {
+
+	}
 }
