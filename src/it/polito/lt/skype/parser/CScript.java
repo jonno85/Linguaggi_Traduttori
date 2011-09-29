@@ -54,7 +54,7 @@ public class CScript implements ICommand {
 				//stringResult=stringResult+""+c.getCommandStringResult();
 			}
 			
-		} catch (NullPointerException |  CommandException ex) {
+		} catch (CommandException ex) {
 			// TODO Auto-generated catch block
 			throw new CommandException (CommandErrorType.LIST_ERROR,this.getClass().getName(),
 		    		Thread.currentThread().getStackTrace()[2].getMethodName(),

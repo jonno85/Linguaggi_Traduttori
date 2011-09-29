@@ -129,11 +129,14 @@ public class VarManager{
 		return false;
 	}
         
-	public boolean chkType(myVar a, myVar b){
+	public boolean chkType(myVar a, myVar b)throws ManagerException{
 		if(a.getType()==b.getType())        
 			return true;
-		else
-			return false;
+		else{
+			throw new ManagerException(ManagerErrorType.TYPE_MISMATCH, this.getClass().getName(),
+                    Thread.currentThread().getStackTrace()[2].getMethodName(),
+                    "["+a.getName()+" "+b.getName()+"]: TYPE MISMATCH",null);
+		}
 	}
 	public boolean chkVar(myVar a){
 		boolean c = true;
@@ -180,7 +183,7 @@ public class VarManager{
             return ris_inter;
 	}
 
-	public myVar makeOper(myVar a, myVar b, String segno) {
+	public myVar makeOper(myVar a, myVar b, String segno) throws ManagerException {
             myVar x = new myVar();
 			myVar y = new myVar();
 			x.set(a);
@@ -214,7 +217,7 @@ public class VarManager{
          * Logic Operation >
          */
         
-    	public myVar makeLogicOper(myVar a, myVar b, String segno){
+    	public myVar makeLogicOper(myVar a, myVar b, String segno) throws ManagerException{
     		a.toString();
     		b.toString();
     		if( chkVar(a)&&chkVar(b)){

@@ -108,11 +108,13 @@ public class SkyBot {
 							catch (CommandException e) 
 							{
 								received.getSender().send("\n" + p.getOutput());
-								Utility.mf("COMMAND FAIL->"+e.getMessage());
+								Utility.mf("COMMAND FAIL->"+e.toString());
 								
 								//received.getSender().send("/set guidelines "+e.getMessage());
 								//received.getSender().send("/get guidelines ");
-								received.getSender().send("(blush) "+e.getMessage());
+								
+								String error="(blush) "+e.toString()+" "+e.getMessage();
+								received.getSender().send(error);
 								// TODO Auto-generated catch block
 								
 								//System.out.println(myInput.toString());
