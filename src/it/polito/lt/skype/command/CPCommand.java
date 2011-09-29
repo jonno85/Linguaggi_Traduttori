@@ -53,6 +53,7 @@ public class CPCommand implements ICommand{
     private Resolver ris = null;
     private VarManager manager = null;
     private ArrayList<ArrayList<String>> token_list = null;
+    private int index_token_list = 0;
  
     /*
      * vettore Params: 
@@ -103,7 +104,7 @@ public class CPCommand implements ICommand{
         
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        
+        currentPath = env.getCurrentPath();
         //dobbiamo estrarre il parametro dal vettore $RESULT
         Utility.mf("EXEC");
         if(manager!=null){
@@ -112,8 +113,8 @@ public class CPCommand implements ICommand{
             myVar p1 = null;
             myVar p2 = null;
             if(params[2].getParamType().equals(ParamType.COMPOSITO)){
-                Utility.mf("token list el 0 "+token_list.get(0));
-                ris = new Resolver(manager, token_list.get(0), "result_");
+                Utility.mf("token list el 0 "+token_list.get(index_token_list));
+                ris = new Resolver(manager, token_list.get(index_token_list++), "result_");
                 try {
                     p1 = ris.exec();
                     params[2] = new CommandParameter(ParamType.COMPOSITO, p1.getStringValue(), null);
@@ -130,13 +131,14 @@ public class CPCommand implements ICommand{
             }
          }
         if(params[3].getParamType().equals(ParamType.COMPOSITO)){
-            Utility.mf("token list el 1 "+token_list.get(1));
-            ris = new Resolver(manager, token_list.get(1), "result_");
+            Utility.mf("token list el 1 "+token_list.get(index_token_list));
+            ris = new Resolver(manager, token_list.get(index_token_list), "result_");
+            index_token_list=0;
             try {
                 params[3] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
                 Utility.mf("params_3: "+params[3].getValue());
                 target = Paths.get(params[3].getValue()).normalize();
-                target= currentPath.resolve(target);
+                //target= currentPath.resolve(target);
             } catch (ManagerException ex) {
             	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
@@ -144,10 +146,10 @@ public class CPCommand implements ICommand{
                 Utility.mf(ce);
               throw ce;
             }
-        }else{
+        }//else{
             target = Paths.get(params[3].getValue()).normalize();
             target= currentPath.resolve(target);
-        }
+        //}
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         paramPath_src= currentPath.resolve(paramPath_src);
         pattern_src = paramPath_src.getFileName().toString();

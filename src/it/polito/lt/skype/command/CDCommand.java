@@ -72,9 +72,7 @@ public class CDCommand implements ICommand {
 			target=current.resolve(target);
 			Utility.mf("CD: "+target.toString());
 			if(Files.exists(target)){
-					currentEnv.setCurrentPath(target);
-				//p.setEnviroment(target.toString());
-				return true;
+				currentEnv.setCurrentPath(target);
 			}
 			else
 				return false;

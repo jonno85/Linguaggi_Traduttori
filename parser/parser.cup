@@ -429,7 +429,6 @@ assig_stmt	::= Var:x C_Ug arit_stmt:y	{:
 						ASCommand ac = new ASCommand(parser.vm, x, parser.token_list,parser.enviroment);
 						if(!parser.script_enabled){
 							ac.setDeclaration(true);
-							
 						}
 						parser.com=ac;	
 						//Utility.mf("assig_stmt raccolto: "+x+"<--"+parser.token_list.toString());
@@ -639,26 +638,18 @@ LS_stmt		::= Com_Ls		{:
 					//Utility.mf("LS Order!");
 					parser.cp[0]=new CommandParameter(ParamType.BINARIO,o,null);
 					:}
-		
 		| LS_stmt Obj:o		{: 
 					//Utility.mf("LS obj!");
 						parser.cp[1]=new CommandParameter(ParamType.BINARIO,o,null);
 					:}
 		| LS_stmt param:p 	{: parser.cp[2]=p; :}
-		
 		| LS_stmt i_cc_conds
-		
-	
 ;
 
 // ***************** comando Find		DISTINGUERE tra parametri in pos 0 (estensioni) e 1 (percorsi)
 comm_find_stmt	::= Com_Find param:x	{: 
 					//Utility.mf("_FIND_!");
 					parser.comFind = new FINDCommand(parser.enviroment, parser.vm);
-
-//					parser.counter_file = 0; //posso usare una arraylist e poi convertire in array
-//					parser.counter_path = 0;
-
 					parser.add_param(x);
 					:}
 		| Com_Find i_cc_conds
@@ -673,6 +664,11 @@ comm_find_stmt	::= Com_Find param:x	{:
 						Utility.mf(parser.cp.toString());						
 						parser.comFind.set2Command(parser.com); 
 						parser.cp=new CommandParameter[7]; 
+					:}
+		| comm_find_stmt Com_Ex comm_find_stmt_2 error
+					{:
+					parser.appendOutput(" parameter error in comm_find_stmt not closed\n");
+					parser.report_error(" parameter error in comm_find_stmt not closed\n",null);
 					:}
 //		| comm_find_stmt error		{:
 //					parser.appendOutput(" parameter  error in comm_find_stmt\n");

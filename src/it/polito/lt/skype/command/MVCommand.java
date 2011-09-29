@@ -53,6 +53,7 @@ public class MVCommand implements ICommand{
     private Resolver ris = null;
     private VarManager manager = null;
     private ArrayList<ArrayList<String>> token_list = null;
+    private int index_token_list = 0;
    
     /*
          * vettore Params:                                          used:
@@ -93,15 +94,15 @@ public class MVCommand implements ICommand{
     public boolean exec() throws CommandException {
         DirectoryStream<Path> stream = null;
         BasicFileAttributes b_attr = null;
-        
+        currentPath = env.getCurrentPath();
         //dobbiamo estrarre il parametro dal vettore $RESULT
         Utility.mf("EXEC");
         if(manager!=null){
             Utility.mf("dentro manager manager "+manager.toString());
             Utility.mf("token list prima di exec "+token_list.toString());
             if(params[2].getParamType().equals(ParamType.COMPOSITO)){
-                Utility.mf("token list el 0 "+token_list.get(0));
-                ris = new Resolver(manager, token_list.get(0), "result_");
+                Utility.mf("token list el 0 "+token_list.get(index_token_list));
+                ris = new Resolver(manager, token_list.get(index_token_list++), "result_");
                 try {
                     params[2] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
                     Utility.mf("params_2: "+params[2].getValue());
@@ -119,12 +120,13 @@ public class MVCommand implements ICommand{
               //target = currentPath.resolve(target); 
          }
         if(params[3].getParamType().equals(ParamType.COMPOSITO)){
-            Utility.mf("token list el 1 "+token_list.get(1));
-            ris = new Resolver(manager, token_list.get(1), "result_");
+            Utility.mf("token list el 1 "+token_list.get(index_token_list));
+            ris = new Resolver(manager, token_list.get(index_token_list), "result_");
+            index_token_list=0;
             try {
                 params[3] = new CommandParameter(ParamType.COMPOSITO, ris.exec().getStringValue(), null);
                 Utility.mf("params_3: "+params[3].getValue());
-                target = Paths.get(params[3].getValue()).normalize();
+                //target = Paths.get(params[3].getValue()).normalize();
             } catch (ManagerException ex) {
             	CommandException ce = new CommandException(CommandErrorType.COPY_ERROR, this.getClass().getName(), 
                 		Thread.currentThread().getStackTrace()[2].getMethodName(), 
@@ -132,10 +134,10 @@ public class MVCommand implements ICommand{
                 Utility.mf(ce);
               throw ce;
             }
-        }else{
+        }//else{
             target = Paths.get(params[3].getValue()).normalize();
             target= currentPath.resolve(target);
-        }
+        //}
         paramPath_src = Paths.get(params[2].getValue()).normalize();
         paramPath_src= currentPath.resolve(paramPath_src);
         pattern_src = paramPath_src.getFileName().toString();
