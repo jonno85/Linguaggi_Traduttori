@@ -6,5 +6,7 @@ create $tmp = '/home/robizz/lt/tmp'
 cd /home/robizz/lt/tmp
 ls
 cp *.* /home/robizz/lt
-cp /home/robizz/lt/tmp/*.conf /home/robizz/lt
+cd /home/robizz/lt2/
+mkdir tmppp
+cp /home/robizz/lt/tmp/*.conf $home2+'/tmppp/'
 cp /home/robizz/lt/tmp/ciccio.txt /home/robizz/lt/tmp/ciccio2.txt

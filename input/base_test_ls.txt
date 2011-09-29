@@ -11,5 +11,5 @@ cd /home/robizz/lt2
 mostra
 
 show file /home/robizz permessi < 777 & data > 25-02-2010 
-show file where data < 20 feb 2010
+show file where data < 20 02 2010
 

@@ -32,7 +32,7 @@ import java.io.*;
                 Lexer l = new Lexer(new FileReader(argv[0]));
                 /* Istanzio il parser */
                 parser p = new parser(l);
-                p.setEnviroment(new CommandEnv("/home/robizz/lt"));
+                p.setEnviroment(new CommandEnv("/home"));
                 /* Avvio il parser */
                 Object result = p.parse();
                 //p.debug_parse();

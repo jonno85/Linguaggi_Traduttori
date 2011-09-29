@@ -1,6 +1,6 @@
 ##RM##
 cd /home/robizz/lt
-
+ls
 elimina pippo.c
 cancel /home/robizz/lt/file.conf
 delete *.conf
@@ -10,4 +10,6 @@ ls
 rm sd??.htm
 ls
 rm s*
+
+
 

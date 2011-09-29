@@ -8,9 +8,11 @@ ls
 trova *.htm esegui muovi /home/robizz/lt2 ;
 cd /home/robizz/lt
 find *.c $home esegui mv *.cpp ;
+create $tmp = '/home/robizz/lt/tmp'
 cd /home/robizz/lt
 seek ?ord?.c 
 trova S??nz.* $home2 permessi=131 esegui delete ;
 cerca  *.htm $home2
 seek  *.htm $home where data < 12/12/2010 and dimensione < 6000
 trova $home where dimension > 2000 and dimension < 5000
+
