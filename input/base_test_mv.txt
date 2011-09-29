@@ -1,13 +1,17 @@
-create $home = '/home/robizz/lt/'
-create $home2 = '/home/robizz/lt2/'
-create $tmp = '/home/robizz/lt/tmp'
+
+create $home = '/home/robizz/lt/' $home2 = '/home/robizz/lt2/' $tmp = '/home/robizz/lt/tmp'
 
 ##MV##
 ##rename##
+cd /home/robizz/lt
 muovi casa.pdf edificio.pdf
-mv /home/robizz/lt/1.pdf /home/robizz/lt/2.pdf
+ls
+mv /home/robizz/lt/temp1.pdf /home/robizz/lt/ciccia.pdf
 mv /home/robizz/lt/tmp /home/robizz/lt/
-
+ls /home/robizz/lt/
+cd /home/robizz/lt
 mv *.pdf /home/robizz/lt/tmp
-mv /tmp/ /home/user
+ls /home/robizz/lt/tmp
+mv $tmp $home2
 mv /home/robizz/lt/tmp/*.conf /home/robizz/lt
+

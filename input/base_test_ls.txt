@@ -4,11 +4,12 @@ cd /home/robizz/lt
 mostra file permessi = 777
 mostra cartelle permessi = 644
 mostra asc *.htm
+mostra tmp
 
 cd /home/robizz/lt2
 
 mostra
-mostra tmp
-show file /home/robizz permessi < 777 & data > 25-02-2010
+
+show file /home/robizz permessi < 777 & data > 25-02-2010 
 show file where data < 20 feb 2010
 

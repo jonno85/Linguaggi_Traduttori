@@ -2,6 +2,12 @@
 cd /home/robizz/lt
 
 elimina pippo.c
-delete *.conf
 cancel /home/robizz/lt/file.conf
-rm /home/robizz/lt/tmp2/
+delete *.conf
+rm /home/robizz/lt/tmp/
+cd /home/robizz/lt2
+ls
+rm sd??.htm
+ls
+rm s*
+
