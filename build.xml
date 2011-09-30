@@ -217,7 +217,7 @@
 		        </java>
 		    </target>
 	
-	<target name="run.skypeBot" depends="build,create-test-file" description="launch skype daemon">
+	<target name="run.skypeBot" depends="build" description="launch skype daemon">
 			        <echo>Running SKYPE DAEMON...</echo>
 			        <java classname="it.polito.lt.skype.bot.SkyBot" failonerror="true" fork="yes">
 			               
