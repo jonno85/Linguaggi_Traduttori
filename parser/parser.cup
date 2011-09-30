@@ -64,7 +64,7 @@ parser code {:
 	public CScript csc=null;
 	public String scriptMes =null;	
 
-	public CommandEnv enviroment = new CommandEnv("/home/robizz/lt2");
+	public CommandEnv enviroment = new CommandEnv("/home");
 
 	//public String output="";
 

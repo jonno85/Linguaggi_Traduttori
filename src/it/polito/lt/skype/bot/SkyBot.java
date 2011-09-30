@@ -48,7 +48,7 @@ import com.skype.SkypeException;
 
 public class SkyBot {
 	
-	private CommandEnv env=new CommandEnv("/home/robizz/lt2");
+	private CommandEnv env=new CommandEnv("/home");
 	
     public CommandEnv getEnv() {
 		return env;

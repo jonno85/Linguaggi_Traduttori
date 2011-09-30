@@ -1,21 +1,44 @@
 
-inizio scr1.ss
 
-create $a=2,$c=true,$d=5,$B,$w=true
-create $mio = 'cartella', $g
-if $a = 0 then $B=false endif
-if $c=true then $c=false else $a=0 endif
+start fichero.ss
+create $tmp='/home/robizz/lt/tmp' $elleti2='/home/robizz/lt2' $a=0 $b=1 $x=10 $resto=0
+cd /home/robizz/lt
 
-create $p='pippo.pdf'
-find *.pdf /home
-foreach $a 0 $lenght do
-    if $result[$a] = $p then
-     mv $result[$i] 'trovato' + $i + '.pdf'
-else
-    mv $result[$a] $i + '.pdf'
-    print 'elemento n:' + $i ' \n'
-endif
-next +1
+find *.pdf /home/robizz/lt 
+foreach $a 0 $length do
+	$b=$a/2
+	$resto = $a-2*$b   
+	print 'ora resto è: '+$resto
+	print 'ora a è: '+$a
+	if $resto == 0 then
+		print 'pari!'
+		mv $result[$a] 'pari' + $a + '.pdf'
+	else
+		if $resto==1 then
+			print 'dispari!'
+			mv $result[$a] 'dispari' + $a+ '.pdf'
+		endif
+	endif
+next +1 
 
-fine scr1.ss
+print 'fine'
+
+find *.pdf /home/robizz/lt exec cp $tmp;
+
+mv $tmp $elleti2
+
+
+fine pippo.ss
 lancia scr1.ss
+
+##
+start fichero.ss
+
+create $tmp='/home/robizz/lt/tmp',$tmpp='/home/robizz/lt/tmpp' $elleti2='/home/robizz/lt2' 
+mkdir /home/robizz/lt/tmpp
+rm /home/robizz/lt/tmp
+find *.pdf /home/robizz/lt exec cp $tmpp;
+
+fine pippo.ss
+lancia scr1.ss
+##

@@ -1,0 +1,31 @@
+create $s=1, $d=2, $f=0, $g=1.0, $h=1.5
+$f=($s*$d+4)
+
+$g=$g-$h
+
+
+inizio scr1.ss
+
+create $s=1, $d=2, $f, $h=1.5
+$f=($s*$d+4)
+
+$g=$g-$h
+
+print $f
+print $g
+
+fine scr1.ss
+lancia scr1.ss
+
+
+
+
+create $s=1, $d=2, $f=0, $h=1.5
+$f=($s*$h+4)
+
+$g=$g-$h
+
+print $f
+print $g
+
+
