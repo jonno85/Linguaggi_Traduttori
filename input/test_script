@@ -1,8 +1,8 @@
 #!/bin/bash
 
-P0="lt/"
-P1="lt/tmp"
-P2="lt2/"
+P0=$HOME"/lt/"
+P1=$HOME"/lt/tmp"
+P2=$HOME"/lt2/"
 cd ~
 rm -r -f $P0
 rm -r -f $P2
@@ -12,7 +12,7 @@ mkdir $P1
 mkdir $P2
 
 echo "generazione file cartella "$P0
-cd ~/$P0
+cd $P0
 for i in `seq 10`
 do
 	touch prova$i.htm
@@ -30,7 +30,7 @@ touch temp1.pdf casa.pdf file.conf
 chmod 777 temp1.pdf file.conf
 
 echo "generazione file cartella "$P2
-cd ~/$P2
+cd $P2
 for i in `seq 10`
 do
 	touch sda$i.htm
@@ -48,12 +48,12 @@ do
 	fi
 done
 
-chmod 123 *4*
-chmod 766 *6*
-chmod 600 *1*
+#chmod 123 *4*
+#chmod 766 *6*
+#chmod 600 *1*
 
 echo "generazione file cartella "$P
-cd ~/$P1
+cd $P1
 for i in `seq 10`
 do
 	touch f$i.cpp
@@ -63,6 +63,5 @@ done
 touch ciccio.txt
 
 exit
-
 
 
